@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+
+describe aaa do
+  let() { }
+  it 'can be created' do
+  end
+end

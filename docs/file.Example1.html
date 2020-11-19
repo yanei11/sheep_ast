@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: Example1
+  
+    &mdash; Documentation by YARD 0.9.25
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Example1";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: Example1</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-sheep_ast+example1">sheep_ast example1</h1>
+
+<p>This is the sheep_ast example. This works as Quick start guide. The
+example1 is at <code>./example/grep_like/main.rb</code> from the root
+directory of sheep_ast repository. The exampe1 is application like linux
+grep command. To execute example program, please do like:</p>
+
+<pre class="code ruby"><code class="ruby">sheep_ast$ make example1</code></pre>
+
+<p>After executing the command, it should be seen same output as grep command
+result. In the following, how to construct the application is shown step by
+step. Please see follwoing with example code and example test file.</p>
+
+<p>The test file is cpp sntax code.</p>
+
+<h2 id="label-package+include">package include</h2>
+
+<p>Firstly, you need to include sheep_ast package. It is done by</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>./lib/analyzer_core</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<h2 id="label-AnalyzerCore+obect">AnalyzerCore obect</h2>
+
+<p>The analyzer_core object is designed to aggregate the external interfaces.
+So, you should create the object.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Sheep.html" title="Sheep (module)">Sheep</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sheep/AnalyzerCore.html" title="Sheep::AnalyzerCore (class)">AnalyzerCore</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Sheep/AnalyzerCore.html#initialize-instance_method" title="Sheep::AnalyzerCore#initialize (method)">new</a></span></span>
+</code></pre>
+
+<h2 id="label-Tokenize">Tokenize</h2>
+
+<p>Before inputing expression to the AST, you have chance to combine the
+expression for simplifying subsequent AST process. In this example,
+&#39;#&#39; and &#39;include&#39; strings are combined to one string
+&#39;#include&#39;. And also &#39;/&#39; and &#39;/&#39; is combined to
+&#39;//&#39; for the simplifying handling cpp comment. It is done by:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_tok'>config_tok</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tok'>tok</span><span class='op'>|</span>
+  <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_add_token'>add_token</span> <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_cmp'>cmp</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>#</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>include</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_add_token'>add_token</span> <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_cmp'>cmp</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>Note that in this example, the above tokenize is not really necessary. It
+is just for the usae about tokenize process.</p>
+
+<h1 id="label-Register+AST+to+multiple+stages">Register AST to multiple stages</h1>
+
+<p>Following code block is the first AST registration.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>default.main</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>analyze</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:let</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:grep</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:show</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>disable:</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:debug</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+      <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
+        <span class='id identifier rubyid__S'>_S</span> <span class='op'>&lt;&lt;</span> <span class='const'>E</span><span class='lparen'>(</span><span class='symbol'>:encr</span><span class='comma'>,</span> <span class='id identifier rubyid_input_expr'>input_expr</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_str'>str</span>
+    <span class='kw'>end</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>always.continue</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>continue</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:na</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+      <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
+        <span class='id identifier rubyid__S'>_S</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_any'>any</span>
+      <span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>The meaning of syntax of the above codeblock is following:</p>
+<ol><li>
+<p>1st code block Ast name is constucted by two part; domain and name. The
+<code>default</code> is special domain. The default domain is called
+initially. It works as entry point. So, the none <code>default</code>
+domain will not be called initially and it will be called when user
+includes the Ast. This related to the recursive estimation of target
+strings and also related to namespace. In short, user can specify domain to
+include or exclude the next recursion process. But in this example, this
+function is not needed. This topic is shown by other example. The
+<code>always</code> domain has also special meaning. It is always called no
+matter user tries to exclude. It is always called.</p>
+</li><li>
+<p>2nd code block <code>register_syntax</code> is used to register name,
+action, match order. This is structure that when match is hit, then the
+action is called. In this case, :encr means encrosed_regex match. It
+matches input_expr for the start and end by "n". It means like, if string
+matches to regex input_expr is came, and after that "n" string is came,
+then :let object&#39;s :grep, :show, :debug function are called
+accordingly. The :show and :debug are the pre-made API function which is
+defined in let_xxx.rb files. But :grep function is user defined function
+and it is defined in the:</p>
+</li></ol>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_str'>str</span>
+    <span class='kw'>end</span>
+  <span class='rbrace'>}</span>
+</code></pre>
+
+<p>So, to see the signiture of the function, you find key, datastore, options
+are passed from the framework. But in this grep application, it is no need
+to use key and datastore, so they are not used inside the function. To see
+what kind of information passed from the framework, you can utilise :show
+function. It is kind of debug function to inspect what the passed data is.
+If you edit :disable =&gt; false, then you will see them. Please check it
+and you can see beter understanding about framework.</p>
+<ol><li>
+<p>3rd code bloc The Ast has domain <code>always</code> so it is called
+anytime. And action :na = NotAction is registered. It does not do specific
+action. The match is <code>any</code>. The syntax alias <code>any</code> is
+introduced in the syntax_alias.rb. In that file, you will see
+<code>any</code> is [:r. &#39;.<em>&#39;], and it means it is regex match
+and the match expression is &#39;.</em>&#39; which matches any string. That
+is why it is <code>any</code>. The expression is matched by AST of
+registered order. So, in this case, expression is processed by
+<code>default.main</code> and by <code>always.continue</code>. Strategy of
+finding expression in sheep_ast is to evaluate all the Ast in registered
+ordere, and if they could not match expression, then raise
+<code>NotFound</code> exception. If you execute <code>make
+example1_fail</code>, then you will see the sheep_ast sends Notound error.
+The failed version. this code block is missing. Since this block matches
+any expression, so NotFound error never occurs.</p>
+</li></ol>
+
+<h1 id="label-Feed+input+files+to+the+framework">Feed input files to the framework</h1>
+
+<p>Final code block is this:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_report'>report</span><span class='lparen'>(</span><span class='label'>raise:</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+  <span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_analyze_file'>analyze_file</span><span class='lparen'>(</span><span class='id identifier rubyid_input_files'>input_files</span><span class='rparen'>)</span>
+<span class='rbrace'>}</span>
+</code></pre>
+
+<p>It input files to analyze. The files are processed accordingly.
+<code>core.report</code> catches exception and prins debug data if it got
+exception. If raise is true, core.report sends another exception.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Tue Dec  8 19:19:18 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.4.1).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+# typed: false
+# frozen_string_literal: true
+
+require 'spec_helper'
+require 'tokenizer'
+
+describe Sheep::Tokenizer do  # rubocop: disable all
+  let(:basepath) { Dir.pwd }
+  let(:ok_str) { [["a", " ", "b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["123", " ", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{", "+", "*", "}", "<", ">", "?", "_", "\n"]] } # rubocop:disable all
+  let(:ok_str2) { [["a b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["111", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{+*", "}", "<>", "?", "_", "\n"]] } # rubocop: disable all
+  let(:tok) { Sheep::Tokenizer.new }
+  it 'can tokenize' do
+    buf, max_line = tok.tokenize(basepath + '/spec/test.txt')
+    expect(buf).to eq(ok_str)
+    expect(max_line).to eq(6)
+  end
+
+  it 'can tokenize2' do
+    _buf, max_line = tok.tokenize(basepath + '/spec/test2.txt')
+    expect(max_line).to eq(1)
+  end
+
+  it 'can tokenize3' do
+    str =
+'a b c d
+1 2 3 4
+123 456
+abc def
+!"#$%&\'()=~|
+`{+*}<>?_
+'
+    buf, max_line = tok << str
+    expect(buf).to eq(ok_str)
+    expect(max_line).to eq(6)
+  end
+
+  it 'can use tokenizer_rules' do
+    tok.add_token tok.cmp('{', '+')
+    tok.add_token tok.cmp('<', '>')
+    tok.add_token tok.cmp('a', ' ', 'b')
+    tok.add_token tok.cmp('123', ' '), '111'
+    tok.add_token tok.cmp('{+', '*')
+    buf, max_line = tok.tokenize(basepath + '/spec/test.txt')
+    expect(buf).to eq(ok_str2)
+    expect(max_line).to eq(6)
+  end
+
+  it 'can use regexp for ip address' do
+    oneto255 = /^[1-2][0-5]?[0-5]?$/
+    tok.add_token tok.cmp(oneto255, '.', oneto255, '.', oneto255, '.', oneto255)
+    buf, max_line = tok << '10.10.244.2/32'
+    expect(buf[0][0]).to eq('10.10.244.2')
+    expect(max_line).to eq(1)
+  end
+  it 'can use regexp for ip address. Fail for regex' do
+    oneto255 = /^[1-2][0-5]?[0-5]?$/
+    tok.add_token tok.cmp(oneto255, '.', oneto255, '.', oneto255, '.', oneto255)
+    buf, max_line = tok << '10.10.300.2/32'
+    expect(buf[0][0]).to eq('10')
+    expect(max_line).to eq(1)
+    tok.dump(:ldebug)
+  end
+  it 'can use regexp for ip address by recursive option' do
+    oneto255 = /^[1-2][0-5]?[0-5]?$/
+    tok.add_token tok.cmp(oneto255, '.')
+    tok.add_token tok.cmp(/.*\./, /.*\./), recursive: true
+    tok.add_token tok.cmp(/.*\./, oneto255)
+    buf, max_line = tok << '10.10.200.2/32'
+    tok.dump(:ldebug)
+  end
+end

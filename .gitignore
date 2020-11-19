@@ -1,0 +1,5 @@
+Gemfile.lock
+sorbet/rbi
+.yardoc
+doc
+coverage/

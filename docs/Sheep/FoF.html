@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Sheep::FoF
+  
+    &mdash; Documentation by YARD 0.9.25
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Sheep::FoF";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (F)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Sheep.html" title="Sheep (module)">Sheep</a></span></span>
+     &raquo; 
+    <span class="title">FoF</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Sheep::FoF
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Sheep::FoF</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd>T::Sig</dd>
+  </dl>
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Exception.html" title="Sheep::Exception (module)">Exception</a></span>, <span class='object_link'><a href="FactoryBase.html" title="Sheep::FactoryBase (module)">FactoryBase</a></span>, <span class='object_link'><a href="Log.html" title="Sheep::Log (module)">Log</a></span>, <span class='object_link'><a href="UseActionAlias.html" title="Sheep::UseActionAlias (module)">UseActionAlias</a></span>, <span class='object_link'><a href="UseMatchAlias.html" title="Sheep::UseMatchAlias (module)">UseMatchAlias</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/fof.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Factory of factories</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#data_store-instance_method" title="#data_store (instance method)">#<strong>data_store</strong>  &#x21d2; DataStore </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="UseActionAlias.html" title="Sheep::UseActionAlias (module)">UseActionAlias</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="UseActionAlias.html#action_factory-instance_method" title="Sheep::UseActionAlias#action_factory (method)">#action_factory</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="UseMatchAlias.html" title="Sheep::UseMatchAlias (module)">UseMatchAlias</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="UseMatchAlias.html#match_factory-instance_method" title="Sheep::UseMatchAlias#match_factory (method)">#match_factory</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="FactoryBase.html" title="Sheep::FactoryBase (module)">FactoryBase</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="FactoryBase.html#my_factory-instance_method" title="Sheep::FactoryBase#my_factory (method)">#my_factory</a></span>, <span class='object_link'><a href="FactoryBase.html#my_name-instance_method" title="Sheep::FactoryBase#my_name (method)">#my_name</a></span>, <span class='object_link'><a href="FactoryBase.html#root_node-instance_method" title="Sheep::FactoryBase#root_node (method)">#root_node</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Log.html" title="Sheep::Log (module)">Log</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Log.html#logger=-instance_method" title="Sheep::Log#logger= (method)">#logger</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(data_store)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Exception.html" title="Sheep::Exception (module)">Exception</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Exception.html#application_error-instance_method" title="Sheep::Exception#application_error (method)">#application_error</a></span>, <span class='object_link'><a href="Exception.html#expression_not_found-instance_method" title="Sheep::Exception#expression_not_found (method)">#expression_not_found</a></span>, <span class='object_link'><a href="Exception.html#missing_impl-instance_method" title="Sheep::Exception#missing_impl (method)">#missing_impl</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="FactoryBase.html" title="Sheep::FactoryBase (module)">FactoryBase</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="FactoryBase.html#bind_name-instance_method" title="Sheep::FactoryBase#bind_name (method)">#bind_name</a></span>, <span class='object_link'><a href="FactoryBase.html#create_id-instance_method" title="Sheep::FactoryBase#create_id (method)">#create_id</a></span>, <span class='object_link'><a href="FactoryBase.html#from_id-instance_method" title="Sheep::FactoryBase#from_id (method)">#from_id</a></span>, <span class='object_link'><a href="FactoryBase.html#from_name-instance_method" title="Sheep::FactoryBase#from_name (method)">#from_name</a></span>, <span class='object_link'><a href="FactoryBase.html#get_factory-instance_method" title="Sheep::FactoryBase#get_factory (method)">#get_factory</a></span>, <span class='object_link'><a href="FactoryBase.html#inspect-instance_method" title="Sheep::FactoryBase#inspect (method)">#inspect</a></span>, <span class='object_link'><a href="FactoryBase.html#name_defined%3F-instance_method" title="Sheep::FactoryBase#name_defined? (method)">#name_defined?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Log.html" title="Sheep::Log (module)">Log</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Log.html#ldebug-instance_method" title="Sheep::Log#ldebug (method)">#ldebug</a></span>, <span class='object_link'><a href="Log.html#ldebug2-instance_method" title="Sheep::Log#ldebug2 (method)">#ldebug2</a></span>, <span class='object_link'><a href="Log.html#lerror-instance_method" title="Sheep::Log#lerror (method)">#lerror</a></span>, <span class='object_link'><a href="Log.html#lfatal-instance_method" title="Sheep::Log#lfatal (method)">#lfatal</a></span>, <span class='object_link'><a href="Log.html#linfo-instance_method" title="Sheep::Log#linfo (method)">#linfo</a></span>, <span class='object_link'><a href="Log.html#lprint-instance_method" title="Sheep::Log#lprint (method)">#lprint</a></span>, <span class='object_link'><a href="Log.html#lwarn-instance_method" title="Sheep::Log#lwarn (method)">#lwarn</a></span>, <span class='object_link'><a href="Log.html#once-instance_method" title="Sheep::Log#once (method)">#once</a></span>, <span class='object_link'><a href="Log.html#pdebug-instance_method" title="Sheep::Log#pdebug (method)">#pdebug</a></span>, <span class='object_link'><a href="Log.html#pfatal-instance_method" title="Sheep::Log#pfatal (method)">#pfatal</a></span>, <span class='object_link'><a href="Log.html#pinfo-instance_method" title="Sheep::Log#pinfo (method)">#pinfo</a></span>, <span class='object_link'><a href="Log.html#set_logger-instance_method" title="Sheep::Log#set_logger (method)">#set_logger</a></span></p>
+
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(data_store)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>data_store</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="DataStore.html" title="Sheep::DataStore (class)">DataStore</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/fof.rb', line 24</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data_store'>data_store</span><span class='rparen'>)</span>
+  <span class='ivar'>@data_store</span> <span class='op'>=</span> <span class='id identifier rubyid_data_store'>data_store</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="data_store=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="data_store-instance_method">
+  
+    #<strong>data_store</strong>  &#x21d2; <tt><span class='object_link'><a href="DataStore.html" title="Sheep::DataStore (class)">DataStore</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="DataStore.html" title="Sheep::DataStore (class)">DataStore</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/fof.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_data_store'>data_store</span>
+  <span class='ivar'>@data_store</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Dec  8 19:19:19 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.4.1).
+</div>
+
+    </div>
+  </body>
+</html>
