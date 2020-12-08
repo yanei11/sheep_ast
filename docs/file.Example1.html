@@ -73,14 +73,14 @@ step. Please see follwoing with example code and example test file.</p>
 
 <p>The test file is cpp sntax code.</p>
 
-<h2 id="label-package+include">package include</h2>
+<h1 id="label-package+include">package include</h1>
 
 <p>Firstly, you need to include sheep_ast package. It is done by</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>./lib/analyzer_core</span><span class='tstring_end'>&#39;</span></span>
 </code></pre>
 
-<h2 id="label-AnalyzerCore+obect">AnalyzerCore obect</h2>
+<h1 id="label-AnalyzerCore+obect">AnalyzerCore obect</h1>
 
 <p>The analyzer_core object is designed to aggregate the external interfaces.
 So, you should create the object.</p>
@@ -107,7 +107,7 @@ is just for the usae about tokenize process.</p>
 
 <h1 id="label-Register+AST+to+multiple+stages">Register AST to multiple stages</h1>
 
-<p>Following code block is the first AST registration.</p>
+<p>Following code block is the AST registrations.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>default.main</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
   <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
@@ -139,8 +139,10 @@ is just for the usae about tokenize process.</p>
 </code></pre>
 
 <p>The meaning of syntax of the above codeblock is following:</p>
-<ol><li>
-<p>1st code block Ast name is constucted by two part; domain and name. The
+
+<h2 id="label-1st+code+block">1st code block</h2>
+
+<p>Ast name is constucted by two part; domain and name. The
 <code>default</code> is special domain. The default domain is called
 initially. It works as entry point. So, the none <code>default</code>
 domain will not be called initially and it will be called when user
@@ -150,17 +152,17 @@ include or exclude the next recursion process. But in this example, this
 function is not needed. This topic is shown by other example. The
 <code>always</code> domain has also special meaning. It is always called no
 matter user tries to exclude. It is always called.</p>
-</li><li>
-<p>2nd code block <code>register_syntax</code> is used to register name,
-action, match order. This is structure that when match is hit, then the
-action is called. In this case, :encr means encrosed_regex match. It
-matches input_expr for the start and end by "n". It means like, if string
-matches to regex input_expr is came, and after that "n" string is came,
-then :let object&#39;s :grep, :show, :debug function are called
-accordingly. The :show and :debug are the pre-made API function which is
-defined in let_xxx.rb files. But :grep function is user defined function
-and it is defined in the:</p>
-</li></ol>
+
+<h2 id="label-2nd+code+block">2nd code block</h2>
+
+<p><code>register_syntax</code> is used to register name, action, match order.
+This is structure that when match is hit, then the action is called. In
+this case, :encr means encrosed_regex match. It matches input_expr for the
+start and end by “n”. It means like, if string matches to regex input_expr
+is came, and after that “n” string is came, then :let object&#39;s :grep,
+:show, :debug function are called accordingly. The :show and :debug are the
+pre-made API function which is defined in let_xxx.rb files. But :grep
+function is user defined function and it is defined in the:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -178,29 +180,30 @@ what kind of information passed from the framework, you can utilise :show
 function. It is kind of debug function to inspect what the passed data is.
 If you edit :disable =&gt; false, then you will see them. Please check it
 and you can see beter understanding about framework.</p>
-<ol><li>
-<p>3rd code bloc The Ast has domain <code>always</code> so it is called
-anytime. And action :na = NotAction is registered. It does not do specific
-action. The match is <code>any</code>. The syntax alias <code>any</code> is
-introduced in the syntax_alias.rb. In that file, you will see
-<code>any</code> is [:r. &#39;.<em>&#39;], and it means it is regex match
-and the match expression is &#39;.</em>&#39; which matches any string. That
-is why it is <code>any</code>. The expression is matched by AST of
-registered order. So, in this case, expression is processed by
-<code>default.main</code> and by <code>always.continue</code>. Strategy of
-finding expression in sheep_ast is to evaluate all the Ast in registered
-ordere, and if they could not match expression, then raise
-<code>NotFound</code> exception. If you execute <code>make
-example1_fail</code>, then you will see the sheep_ast sends Notound error.
-The failed version. this code block is missing. Since this block matches
-any expression, so NotFound error never occurs.</p>
-</li></ol>
+
+<h2 id="label-3rd+code+bloc">3rd code bloc</h2>
+
+<p>The Ast has domain <code>always</code> so it is called anytime. And action
+:na = NotAction is registered. It does not do specific action. The match is
+<code>any</code>. The syntax alias <code>any</code> is introduced in the
+syntax_alias.rb. In that file, you will see <code>any</code> is <code>[:r.
+&#39;.*&#39;]</code>, and it means it is regex match and the match
+expression is &#39;.*&#39; which matches any string. That is why it is
+<code>any</code>. The expression is matched by AST of registered order. So,
+in this case, expression is processed by <code>default.main</code> and by
+<code>always.continue</code>. Strategy of finding expression in sheep_ast
+is to evaluate all the Ast in registered ordere, and if they could not
+match expression, then raise <code>NotFound</code> exception. If you
+execute <code>make example1_fail</code>, then you will see the sheep_ast
+sends <code>NotFound error</code>. The failed version. this code block is
+missing. Since this block matches any expression, so NotFound error never
+occurs.</p>
 
 <h1 id="label-Feed+input+files+to+the+framework">Feed input files to the framework</h1>
 
 <p>Final code block is this:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_report'>report</span><span class='lparen'>(</span><span class='label'>raise:</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_report'>report</span><span class='lparen'>(</span><span class='label'>raise:</span> <span class='kw'>false</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
   <span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_analyze_file'>analyze_file</span><span class='lparen'>(</span><span class='id identifier rubyid_input_files'>input_files</span><span class='rparen'>)</span>
 <span class='rbrace'>}</span>
 </code></pre>
@@ -211,7 +214,7 @@ exception. If raise is true, core.report sends another exception.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Tue Dec  8 19:19:18 2020 by
+  Generated on Tue Dec  8 19:49:25 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

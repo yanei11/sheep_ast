@@ -44,6 +44,6 @@ core.config_ast('always.continue') do |_ast, syn|
   }
 end
 
-core.report(raise: true) {
+core.report(raise: false) {
   core.analyze_file(input_files)
 }
