@@ -7,7 +7,7 @@ check:
 # Make Yard documentation
 doc:
 	rm -rf docs
-	bundle exec yardoc -m markdown --plugin sorbet -o docs/ - README.md example/grep_like/Example1.md
+	bundle exec yardoc -m markdown --plugin sorbet -o docs/ - README.md INSTALL.md example/grep_like/Example1.md
 
 # sheep_ast uses sorbet for static type checing. This command is for it at the init.
 srbinit:
