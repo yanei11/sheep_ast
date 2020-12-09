@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Top Level Namespace
+  File: INSTALL
   
     &mdash; Documentation by YARD 0.9.25
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "";
+  pathId = "INSTALL";
   relpath = '';
 </script>
 
@@ -28,7 +28,7 @@
   </head>
   <body>
     <div class="nav_wrap">
-      <iframe id="nav" src="class_list.html?1"></iframe>
+      <iframe id="nav" src="file_list.html?1"></iframe>
       <div id="resizer"></div>
     </div>
 
@@ -36,10 +36,8 @@
       <div id="header">
         <div id="menu">
   
-    <a href="_index.html">Index</a> &raquo;
-    
-    
-    <span class="title">Top Level Namespace</span>
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: INSTALL</span>
   
 </div>
 
@@ -59,45 +57,25 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Top Level Namespace
-  
-  
-  
-</h1>
-<div class="box_info">
-  
+      <div id="content"><div id='filecontents'>
+<p>To install the sheep_ast, proceding following steps:</p>
 
-  
-  
-  
-  
-  
+<pre class="code ruby"><code class="ruby">1. git clone this repository
+2. install ruby. The version in the development is &gt;= 2.4.1p111. You can use rbenv to install the ruby version you want
+3. execute `rbenv exec bundle install`
+4. export RBENV_COM=&quot;rbenv exec&quot;
+5. make srbinit</code></pre>
 
-  
+<p>If you use rbenv command, procedure 3 and 4 are required. <code>make
+srbinit</code> initialize sorbet.</p>
 
-  
-</div>
+<p>After steps 1 ~ 5, then you can use <code>make xxx</code> commands.<br> The
+well using command will be:</p>
 
-<h2>Defined Under Namespace</h2>
-<p class="children">
-  
-    
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Sheep.html" title="Sheep (module)">Sheep</a></span>
-    
-  
-    
-  
-</p>
-
-
-
-
-
-
-
-
-
-</div>
+<pre class="code ruby"><code class="ruby">make -&gt; execute rspec command
+make tc -&gt; execute type check using sorbet
+make exampleX -&gt; execute example no X program</code></pre>
+</div></div>
 
       <div id="footer">
   Generated on Wed Dec  9 01:42:03 2020 by
