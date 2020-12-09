@@ -10,11 +10,68 @@ After executing the command, it should be seen same output as grep command resul
 In the following, how to construct the application is shown step by step. Please see follwoing with example code and example test file.
 
 Followings are the test file. They are cpp sntax code.
+
 - spec/scoped_match_file/test1.cc
 - spec/scoped_match_file/test2.cc
 - spec/scoped_match_file/test3.cc
 
-# package include
+# Source Code
+
+The example overall source code is following:
+
+```
+# typed: false
+# frozen_string_literal: true
+
+require './lib/analyzer_core'
+require 'rainbow/refinement'
+
+using Rainbow
+
+input_expr = ARGV[0]
+input_files = ARGV[1..-1]
+
+core = Sheep::AnalyzerCore.new
+
+core.config_tok do |tok|
+  tok.add_token tok.cmp('#', 'include')
+  tok.add_token tok.cmp('/', '/')
+end
+
+core.config_ast('default.main') do |_ast, syn|
+  syn.within {
+    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
+      _SS(
+        _S << E(:encr, input_expr, "\n")
+      )
+    }
+  }
+
+  syn.action.within {
+    def grep(key, datastore, **options)
+      str = "#{@data.file_info.file}:".blue
+      str += @data.raw_line.chop.to_s
+      puts str
+    end
+  }
+end
+
+core.config_ast('always.continue') do |_ast, syn|
+  syn.within {
+    register_syntax('continue', A(:na)) {
+      _SS(
+        _S << any
+      )
+    }
+  }
+end
+
+core.report(raise: false) {
+  core.analyze_file(input_files)
+}
+```
+
+# Package include
 
 Firstly, you need to include sheep_ast package.
 It is done by
@@ -106,7 +163,7 @@ So, to see the signiture of the function, you find key, datastore, options are p
 To see what kind of information passed from the framework, you can utilise :show function. It is kind of debug function to inspect what the passed data is. If you edit :disable => false, then you will see them. Please check it and you can see beter understanding about framework.
 
 
-## 3rd code bloc
+## 3rd code block
 
 The Ast has domain `always` so it is called anytime. And action :na = NotAction is registered. It does not do specific action. The match is `any`. The syntax alias `any` is introduced in the syntax_alias.rb. In that file, you will see `any` is `[:r. '.*']`, and it means it is regex match and the match expression is '.*' which matches any string. That is why it is `any`.
 The expression is matched by AST of registered order. So, in this case, expression is processed by `default.main` and by `always.continue`.

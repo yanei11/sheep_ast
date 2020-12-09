@@ -71,9 +71,71 @@ grep command. To execute example program, please do like:</p>
 result. In the following, how to construct the application is shown step by
 step. Please see follwoing with example code and example test file.</p>
 
-<p>The test file is cpp sntax code.</p>
+<p>Followings are the test file. They are cpp sntax code.</p>
+<ul><li>
+<p>spec/scoped_match_file/test1.cc</p>
+</li><li>
+<p>spec/scoped_match_file/test2.cc</p>
+</li><li>
+<p>spec/scoped_match_file/test3.cc</p>
+</li></ul>
 
-<h1 id="label-package+include">package include</h1>
+<h1 id="label-Source+Code">Source Code</h1>
+
+<p>The example overall source code is following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># typed: false
+</span><span class='comment'># frozen_string_literal: true
+</span>
+<span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>./lib/analyzer_core</span><span class='tstring_end'>&#39;</span></span>
+<span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rainbow/refinement</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='id identifier rubyid_using'>using</span> <span class='const'>Rainbow</span>
+
+<span class='id identifier rubyid_input_expr'>input_expr</span> <span class='op'>=</span> <span class='const'>ARGV</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+<span class='id identifier rubyid_input_files'>input_files</span> <span class='op'>=</span> <span class='const'>ARGV</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span>
+
+<span class='id identifier rubyid_core'>core</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Sheep.html" title="Sheep (module)">Sheep</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sheep/AnalyzerCore.html" title="Sheep::AnalyzerCore (class)">AnalyzerCore</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Sheep/AnalyzerCore.html#initialize-instance_method" title="Sheep::AnalyzerCore#initialize (method)">new</a></span></span>
+
+<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_tok'>config_tok</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tok'>tok</span><span class='op'>|</span>
+  <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_add_token'>add_token</span> <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_cmp'>cmp</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>#</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>include</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_add_token'>add_token</span> <span class='id identifier rubyid_tok'>tok</span><span class='period'>.</span><span class='id identifier rubyid_cmp'>cmp</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>default.main</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>analyze</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:let</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:grep</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:show</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>disable:</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:debug</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+      <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
+        <span class='id identifier rubyid__S'>_S</span> <span class='op'>&lt;&lt;</span> <span class='const'>E</span><span class='lparen'>(</span><span class='symbol'>:encr</span><span class='comma'>,</span> <span class='id identifier rubyid_input_expr'>input_expr</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
+      <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_str'>str</span>
+    <span class='kw'>end</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>always.continue</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>continue</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:na</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+      <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
+        <span class='id identifier rubyid__S'>_S</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_any'>any</span>
+      <span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_report'>report</span><span class='lparen'>(</span><span class='label'>raise:</span> <span class='kw'>false</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+  <span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_analyze_file'>analyze_file</span><span class='lparen'>(</span><span class='id identifier rubyid_input_files'>input_files</span><span class='rparen'>)</span>
+<span class='rbrace'>}</span>
+</code></pre>
+
+<h1 id="label-Package+include">Package include</h1>
 
 <p>Firstly, you need to include sheep_ast package. It is done by</p>
 
@@ -88,7 +150,7 @@ So, you should create the object.</p>
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Sheep.html" title="Sheep (module)">Sheep</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sheep/AnalyzerCore.html" title="Sheep::AnalyzerCore (class)">AnalyzerCore</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Sheep/AnalyzerCore.html#initialize-instance_method" title="Sheep::AnalyzerCore#initialize (method)">new</a></span></span>
 </code></pre>
 
-<h2 id="label-Tokenize">Tokenize</h2>
+<h1 id="label-Tokenize">Tokenize</h1>
 
 <p>Before inputing expression to the AST, you have chance to combine the
 expression for simplifying subsequent AST process. In this example,
@@ -181,7 +243,7 @@ function. It is kind of debug function to inspect what the passed data is.
 If you edit :disable =&gt; false, then you will see them. Please check it
 and you can see beter understanding about framework.</p>
 
-<h2 id="label-3rd+code+bloc">3rd code bloc</h2>
+<h2 id="label-3rd+code+block">3rd code block</h2>
 
 <p>The Ast has domain <code>always</code> so it is called anytime. And action
 :na = NotAction is registered. It does not do specific action. The match is
@@ -214,7 +276,7 @@ exception. If raise is true, core.report sends another exception.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Tue Dec  8 19:49:25 2020 by
+  Generated on Wed Dec  9 00:21:43 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>
