@@ -10,20 +10,16 @@ sheep_ast supports following feature:
 - Parsing  
   sheep_ast has stages. The each stage can assign AST. Parsing by multiple stage is possible like, ignoring pattern by 1st AST, and extract pattern by 2nd AST, ...
 - Action  
-  At the end of AST, some action can be assigned. e.g. to store AST result to some symbol, to compile AST result to another file, etc.  
-  User can define customized methods to the Action class `Let`.  
+  At the end of AST, some action can be assigned. e.g. to store AST result to some symbol, to compile AST result to another file, etc. User can define customized methods to the Action class `Let`.  
 
 # Resource
-
-- Github repository
-
-  https://github.com/yanei11/sheep_ast
-
-- Yard page
-
+- Yard page   
   https://yanei11.github.io/sheep_ast/
 
-- Example1(Quick start guide1)
+- Github repository  
+  https://github.com/yanei11/sheep_ast
 
+- Example1(Quick start guide1)  
   https://yanei11.github.io/sheep_ast/file.Example1.html
   
+- Other examples are added in the Yard page. Please see the link.
