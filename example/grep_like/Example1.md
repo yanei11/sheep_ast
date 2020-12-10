@@ -47,7 +47,7 @@ core.config_ast('default.main') do |_ast, syn|
     }
   }
 
-  syn.action.within {
+  syn.let.within {
     def grep(key, datastore, **options)
       str = "#{@data.file_info.file}:".blue
       str += @data.raw_line.chop.to_s

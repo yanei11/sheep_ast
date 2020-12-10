@@ -18,13 +18,13 @@ module Sheep
     # A(:let, [:redirect, :<tag; symbol to data to redirect>, <Range>, [options]])
     #
     # redirect specified data to specified Ast. The data can be specified by tag and by specified range.
-    # Specified data will be iput again.  Ast stage to process the data can be specified at option
-    # The Ast specifying can be done by domain or full name of Ast Stage
+    # Specified data will be iput again.  Ast stage to process the data can be specified at option.
+    # The Ast specifying can be done by domain or full name of Ast Stage.
     #
     # Options:
-    # ast_include <string>: Only speficied Ast name will be applied at redirected expression
-    # ast_exclude <string>: after included Ast at ast_include, ast_exclude can specify to exclude the Ast
-    # namespace   <tag>   : namespace can be added in pair[_namespace] at redircted expression
+    # - ast_include <string>: Only speficied Ast name will be applied at redirected expression.
+    # - ast_exclude <string>: after included Ast at ast_include, ast_exclude can specify to exclude the Ast
+    # - namespace   <tag>   : namespace can be added in pair[_namespace] at redircted expression.
     sig {
       params(
         pair: T::Hash[Symbol, T::Array[String]],
@@ -34,7 +34,7 @@ module Sheep
         options: T.any(Symbol, String, T::Boolean)
       ).void
     }
-    def redirect(pair, datastore, key, range = 1..-1, **options)
+    def redirect(pair, datastore, key, range = 1..-2, **options)
       chunk = pair[key]
       application_error 'specified key did not hit' if chunk.nil?
 
