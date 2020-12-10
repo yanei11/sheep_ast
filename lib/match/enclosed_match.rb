@@ -5,7 +5,18 @@ require_relative 'scoped_match'
 require 'sorbet-runtime'
 
 module Sheep
-  # TBD
+  # Enclosed match instanc
+  #
+  # Syntax:
+  # E(:enc, <start exp>, <end expr>, :<store sym>)
+  #
+  # It matces from if given expression == <start exp>
+  # to if given expression == <end exp>.
+  # In contrast to ScopedRegexMatch, EnclosedRegexMatch exit immediately if
+  # the <end exp> matched.
+  #
+  # Options:
+  # regex_end : Use regexp match for the end_expr
   class EnclosedMatch < ScopedMatch
     extend T::Sig
 

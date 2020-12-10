@@ -6,9 +6,6 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-input_expr = ARGV[0]
-input_files = ARGV[1..-1]
-
 core = Sheep::AnalyzerCore.new
 
 core.config_tok do |tok|
@@ -16,34 +13,60 @@ core.config_tok do |tok|
   tok.add_token tok.cmp('/', '/')
 end
 
-core.config_ast('default.main') do |_ast, syn|
+core.config_ast('always.ignore') do |_ast, syn|
   syn.within {
-    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
+    register_syntax('ignore', A(:na)) {
       _SS(
-        _S << E(:encr, input_expr, "\n")
+        _S << space,
+        _S << E(:sc, '//', "\n")
       )
     }
   }
+end
 
-  syn.action.within {
-    def grep(key, datastore, **options)
-      str = "#{@data.file_info.file}:".blue
-      str += @data.raw_line.chop.to_s
-      puts str
-    end
+core.config_ast('default.main') do |_ast, syn|
+  syn.within {
+    register_syntax('analyze', A(:let, [:show, { disable: true }], [:debug, disable: true])) {
+      _SS(
+        _S << E(:e, '#include') << E(:enc, '<', '>'),
+        _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
+      )
+    }
+    register_syntax(
+      'analyze',
+      A(:let, [:redirect, :test, 1..-2, { namespace: :_2 }], [:show, { disable: true }], [:debug, disable: true])
+    ) {
+      _SS(
+        _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
+      )
+    }
+    register_syntax(
+      'analyze',
+      A(:let,
+        [:record_kv_by_id, :ns_test_H, :_2, :_3, { namespace: true }],
+        [:show, { disable: true }],
+        [:debug, disable: true])
+    ) {
+      _SS(
+        _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
+      )
+    }
   }
 end
 
-core.config_ast('always.continue') do |_ast, syn|
+core.config_ast('always.ignore2') do |_ast, syn|
   syn.within {
-    register_syntax('continue', A(:na)) {
+    register_syntax('ignore', A(:na)) {
       _SS(
-        _S << any
+        _S << crlf,
+        _S << lf,
+        _S << eof
       )
     }
   }
 end
 
 core.report(raise: true) {
-  core.analyze_file(input_files)
+  core.analyze_file(['spec/scoped_match_file/test2.cc'])
 }
+p core.data_store.value(:ns_test_H)

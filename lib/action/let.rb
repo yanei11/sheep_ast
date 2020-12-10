@@ -12,7 +12,13 @@ require 'rainbow/refinement'
 using Rainbow
 
 module Sheep
-  # TBD
+  # Let action instance
+  #
+  # Syntax:
+  # A(:let, [funcion1, *para, **option], [function2, *para, **options]] ...
+  #
+  # This let data to handle given functions.
+  # pre made API is included like LetRedirect module
   class Let < ActionBase
     extend T::Sig
     extend T::Helpers
@@ -70,6 +76,10 @@ module Sheep
         str += "Function : #{m}, para = #{para.inspect}, "
       end
       return str.chomp.chomp
+    end
+
+    def self.within(&blk)
+      class_eval(&blk)
     end
   end
 end

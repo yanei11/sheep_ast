@@ -84,6 +84,11 @@ module Sheep
       end
     end
 
+    sig { returns Class }
+    def let
+      Let
+    end
+
     sig { params(name: String).returns(AstManager) }
     def gen_ast(name)
       return AstManager.new(name, @data_store, @fof.match_factory)

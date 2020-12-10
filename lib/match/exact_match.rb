@@ -5,7 +5,13 @@ require_relative 'match_base'
 require 'sorbet-runtime'
 
 module Sheep
-  # Instance for Exact match to token
+  # Exact match instance
+  #
+  # Syntax:
+  # E(:e, '<expr>', :<store symbol>)
+  #
+  # It match if given expression == <expr>.
+  # It store matched data in :<store symbol> in data
   class ExactMatch < MatchBase
     extend T::Sig
 

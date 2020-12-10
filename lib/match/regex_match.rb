@@ -5,7 +5,13 @@ require_relative 'match_base'
 require 'sorbet-runtime'
 
 module Sheep
-  # RegexMatcher
+  # Regex Match instance
+  #
+  # Syntax:
+  # E(:re, '<regex exp>', :<store symbol>)
+  #
+  # It matces if given expression match <regex exp>.
+  # It store matced expression in the <store symbol>
   class RegexMatch < MatchBase
     extend T::Sig
 

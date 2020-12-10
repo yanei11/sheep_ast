@@ -78,6 +78,10 @@ module Sheep
       }
     end
 
+    def use_split_rule(&blk)
+      @split = blk
+    end
+
     # TBD
     sig { params(fpath: String).returns([T::Array[T::Array[String]], Integer, T::Array[String]]) }
     def tokenize(fpath)
@@ -127,7 +131,11 @@ module Sheep
 
     sig { params(line: String).returns(T::Array[String]) }
     def scan(line)
-      test = line.scan(/\w+|\W/)
+      if @split.nil?
+        test = line.scan(/\w+|\W/)
+      else
+        test = line.split(@split.call)
+      end
       if test.respond_to? :each
         # no process
       elsif test.nil?
