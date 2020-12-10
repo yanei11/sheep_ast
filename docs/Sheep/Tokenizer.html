@@ -324,6 +324,28 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#use_split_rule-instance_method" title="#use_split_rule (instance method)">#<strong>use_split_rule</strong>(&amp;blk)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -457,12 +479,12 @@
       <pre class="lines">
 
 
-109
-110
-111</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 109</span>
+      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='op'>&lt;&lt;</span><span class='lparen'>(</span><span class='id identifier rubyid_expr'>expr</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_tokenize_expr'>tokenize_expr</span><span class='lparen'>(</span><span class='id identifier rubyid_expr'>expr</span><span class='rparen'>)</span>
@@ -698,10 +720,6 @@
       <pre class="lines">
 
 
-113
-114
-115
-116
 117
 118
 119
@@ -709,10 +727,14 @@
 121
 122
 123
-124</pre>
+124
+125
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 113</span>
+      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 117</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dump'>dump</span><span class='lparen'>(</span><span class='id identifier rubyid_logs'>logs</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logf'>logf</span> <span class='op'>=</span> <span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='id identifier rubyid_logs'>logs</span><span class='rparen'>)</span>
@@ -785,10 +807,6 @@
       <pre class="lines">
 
 
-83
-84
-85
-86
 87
 88
 89
@@ -797,10 +815,14 @@
 92
 93
 94
-95</pre>
+95
+96
+97
+98
+99</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tokenize'>tokenize</span><span class='lparen'>(</span><span class='id identifier rubyid_fpath'>fpath</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_line_count'>line_count</span> <span class='op'>=</span> <span class='int'>0</span>
@@ -872,18 +894,18 @@
       <pre class="lines">
 
 
-98
-99
-100
-101
 102
 103
 104
 105
-106</pre>
+106
+107
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 98</span>
+      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tokenize_expr'>tokenize_expr</span><span class='lparen'>(</span><span class='id identifier rubyid_expr'>expr</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_line_count'>line_count</span> <span class='op'>=</span> <span class='int'>0</span>
@@ -899,12 +921,42 @@
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="use_split_rule-instance_method">
+  
+    #<strong>use_split_rule</strong>(&amp;blk)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/tokenizer.rb', line 81</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_use_split_rule'>use_split_rule</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_blk'>blk</span><span class='rparen'>)</span>
+  <span class='ivar'>@split</span> <span class='op'>=</span> <span class='id identifier rubyid_blk'>blk</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:06 2020 by
+  Generated on Thu Dec 10 18:39:53 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

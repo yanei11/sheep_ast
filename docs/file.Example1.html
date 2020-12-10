@@ -111,7 +111,7 @@ step. Please see follwoing with example code and example test file.</p>
     <span class='rbrace'>}</span>
   <span class='rbrace'>}</span>
 
-  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_let'>let</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -169,9 +169,10 @@ is just for the usae about tokenize process.</p>
 
 <h1 id="label-Register+AST+to+multiple+stages">Register AST to multiple stages</h1>
 
-<p>Following code block is the AST registrations.</p>
+<p>Following code blocks are the AST registrations.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>default.main</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+<pre class="code ruby"><code class="ruby"><span class='comment'># 1st code block
+</span><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>default.main</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
   <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>analyze</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:let</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:grep</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:show</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>disable:</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='symbol'>:debug</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
       <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
@@ -180,7 +181,8 @@ is just for the usae about tokenize process.</p>
     <span class='rbrace'>}</span>
   <span class='rbrace'>}</span>
 
-  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+<span class='comment'># 2nd code block
+</span>  <span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_let'>let</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -189,7 +191,8 @@ is just for the usae about tokenize process.</p>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span>
 
-<span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>always.continue</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+<span class='comment'># 3rd code block
+</span><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>always.continue</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
   <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>continue</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:na</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
       <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
@@ -204,29 +207,41 @@ is just for the usae about tokenize process.</p>
 
 <h2 id="label-1st+code+block">1st code block</h2>
 
-<p>Ast name is constucted by two part; domain and name. The
-<code>default</code> is special domain. The default domain is called
-initially. It works as entry point. So, the none <code>default</code>
-domain will not be called initially and it will be called when user
-includes the Ast. This related to the recursive estimation of target
-strings and also related to namespace. In short, user can specify domain to
-include or exclude the next recursion process. But in this example, this
-function is not needed. This topic is shown by other example. The
-<code>always</code> domain has also special meaning. It is always called no
-matter user tries to exclude. It is always called.</p>
+<pre class="code ruby"><code class="ruby">core.config_ast(&#39;default.main&#39;) do |_ast, syn|
+  syn.within {
+    register_syntax(&#39;analyze&#39;, A(:let, [:grep], [:show, { disable: true }], [:debug])) {
+      _SS(
+        _S &lt;&lt; E(:encr, input_expr, &quot;\n&quot;)
+      )
+    }
+  }</code></pre>
+
+<p>Ast fullname = default.main is registered. Ast fullname is constucted by
+two part; domain and name. The <code>default</code> is special domain. The
+default domain is called initially. It works as entry point. So, the none
+<code>default</code> domain will not be called initially and it will be
+called when user includes the Ast. This related to the recursive estimation
+of target strings and also related to namespace. In short, user can specify
+domain to include or exclude the next recursion process. But in this
+example, this function is not needed. This topic is shown by other example.
+The <code>always</code> domain has also special meaning. It is always
+called no matter user tries to exclude.</p>
+
+<p><code>register_syntax</code> parameters are name, action, match. AST
+perform that when registered matches are hit and reached to action, then
+the action is called. Here <code>_SS</code> means syntaxes, <code>_S</code>
+means syntax, <code>E</code> means expression, and <code>A</code> is
+action. In this syntax, the match is <code>:encr</code> which is
+enclosed_regex match. It matches input_expr for the start and end by “n”.
+If string matches to regex input_expr is came, and after some strings, when
+“n” string is came, then :let object&#39;s :grep, :show, :debug function
+are called accordingly. The :show and :debug are the pre-made API function
+which is defined in let_xxx.rb files. But :grep function is user defined
+function and it is defined in the 2nd code block.</p>
 
 <h2 id="label-2nd+code+block">2nd code block</h2>
 
-<p><code>register_syntax</code> is used to register name, action, match order.
-This is structure that when match is hit, then the action is called. In
-this case, :encr means encrosed_regex match. It matches input_expr for the
-start and end by “n”. It means like, if string matches to regex input_expr
-is came, and after that “n” string is came, then :let object&#39;s :grep,
-:show, :debug function are called accordingly. The :show and :debug are the
-pre-made API function which is defined in let_xxx.rb files. But :grep
-function is user defined function and it is defined in the:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_let'>let</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
     <span class='kw'>def</span> <span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_datastore'>datastore</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_file_info'>file_info</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_blue'>blue</span>
       <span class='id identifier rubyid_str'>str</span> <span class='op'>+=</span> <span class='ivar'>@data</span><span class='period'>.</span><span class='id identifier rubyid_raw_line'>raw_line</span><span class='period'>.</span><span class='id identifier rubyid_chop'>chop</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -235,18 +250,32 @@ function is user defined function and it is defined in the:</p>
   <span class='rbrace'>}</span>
 </code></pre>
 
-<p>So, to see the signiture of the function, you find key, datastore, options
-are passed from the framework. But in this grep application, it is no need
-to use key and datastore, so they are not used inside the function. To see
-what kind of information passed from the framework, you can utilise :show
-function. It is kind of debug function to inspect what the passed data is.
-If you edit :disable =&gt; false, then you will see them. Please check it
-and you can see beter understanding about framework.</p>
+<p>core.let returns Sheep::Let class and <code>within</code> is entering the
+scope (class_eval). In side the class, grep function is defined. To see the
+signiture of the function, you find key, datastore, options are passed from
+the framework. But in this grep application, it is no need to use key and
+datastore, so they are not used inside the function. To see what kind of
+information passed from the framework, you can utilise :show function. It
+is kind of debug function to inspect what the passed data is. If you edit
+:disable =&gt; false, then you will see them. Please check it and you can
+see beter understanding about framework.</p>
 
 <h2 id="label-3rd+code+block">3rd code block</h2>
 
-<p>The Ast has domain <code>always</code> so it is called anytime. And action
-:na = NotAction is registered. It does not do specific action. The match is
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_core'>core</span><span class='period'>.</span><span class='id identifier rubyid_config_ast'>config_ast</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>always.continue</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__ast'>_ast</span><span class='comma'>,</span> <span class='id identifier rubyid_syn'>syn</span><span class='op'>|</span>
+  <span class='id identifier rubyid_syn'>syn</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span> <span class='lbrace'>{</span>
+    <span class='id identifier rubyid_register_syntax'>register_syntax</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>continue</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>A</span><span class='lparen'>(</span><span class='symbol'>:na</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+      <span class='id identifier rubyid__SS'>_SS</span><span class='lparen'>(</span>
+        <span class='id identifier rubyid__S'>_S</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_any'>any</span>
+      <span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>Ast fullname = always.continue is registered. The Ast has domain
+<code>always</code> and it is called at any condition. And action :na =
+NotAction is registered. It does not do specific action. The match is
 <code>any</code>. The syntax alias <code>any</code> is introduced in the
 syntax_alias.rb. In that file, you will see <code>any</code> is <code>[:r.
 &#39;.*&#39;]</code>, and it means it is regex match and the match
@@ -257,9 +286,9 @@ in this case, expression is processed by <code>default.main</code> and by
 is to evaluate all the Ast in registered ordere, and if they could not
 match expression, then raise <code>NotFound</code> exception. If you
 execute <code>make example1_fail</code>, then you will see the sheep_ast
-sends <code>NotFound error</code>. The failed version. this code block is
-missing. Since this block matches any expression, so NotFound error never
-occurs.</p>
+sends <code>NotFound error</code>. The failed version does not have this
+&#39;any&#39; block and since the some expression does not match,
+&#39;NotFound&#39; error will be occured.</p>
 
 <h1 id="label-Feed+input+files+to+the+framework">Feed input files to the framework</h1>
 
@@ -276,7 +305,7 @@ exception. If raise is true, core.report sends another exception.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:03 2020 by
+  Generated on Thu Dec 10 18:39:50 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

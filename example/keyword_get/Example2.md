@@ -93,18 +93,18 @@ Explanation given in example1 is skipped.
 
 # Chain of match and action
 
-You will see the following Ast registration have multiple `E(...)`. `_S` can have multiple `E(...)` and `_SS(...)` an have multiple `_S`.
-For example this statement:
+You will see the following Ast registration have multiple `E(...)`. The `_S` can have multiple `E(...)`.
 
 ```
         _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
 ```
-means that, target strings that start from 'int', nextly it has string 'main', nextly it has enclosed block from '(' to ')', and such strings should be passed to the `:let` action. The action calls data to `:redirect`, `show`, and `debug` functions.
+For example this statement means that, target strings that has 'int', nextly 'main', nextly enclosed block from '(' to ')', and such strings should be passed to the `:let` action. The action calls data to `:redirect`, `show`, and `debug` functions.
 
 # Tag symbol
 
-The following syntax has `_2` or `_3`. It is called tag which is symboland it means which matched expression will be used in the action. The symbol `_2` and `_3` are tags which are assigned by framework defaultly. `_2` is correspnded to matched value E(:e, 'class'), and it is 2nd expression hence `_2`.
-The function`:record_kv_by_id` called with those tags. It stores key, value pair which are specified tag _2, _3 and it stores to `ns_test_H` specified hash in the datastore object. _2, and _3 corresonds to matched expression of `E(:e, 'class')` and `E(:r, '.*')`. The tag can be specified manually like `E(:sc, '{', '}', :test)`.
+The following syntax has `_2` or `_3`.
+It is called tag symbol. It means which matched expression will be used in the action. 
+
 ```
     register_syntax(
       'analyze',
@@ -119,9 +119,12 @@ The function`:record_kv_by_id` called with those tags. It stores key, value pair
     }
 ```
 
+The symbol `_2` and `_3` are used for the function `:record_kv_by_id`. It stores key, value pair which are specified tag `_2`, `_3` and it stores to `ns_test_H` specified hash in the datastore object. The tags are corresonds to matched expression of `E(:e, 'class')` and `E(:r, '.*')`. The tags are given by framework. But the tag also can be specified manually like `E(:sc, '{', '}', :test)`.
+
+
 # Let and redirect function
 
-As described sometimes, Let object has function to pass data to multiple functions defined inside Let object. And following syntax's Let calls `:redirect` function, and it has important function in the sheep_ast framework. It can put namespace.
+Let object has function to pass data to multiple functions defined inside Let object. Following syntax's Let calls `:redirect` function, and it is important function in the sheep_ast framework.
 
 ```
     register_syntax(
@@ -134,36 +137,31 @@ As described sometimes, Let object has function to pass data to multiple functio
     }
 ```
 
-The redirect function make specified data to re-input Ast stages but it can specify which Ast full name should process by option and also it can put namespace by tag symbol. Please see redirect yard document or `spec/` test case.
-This matche, expression like:
+The redirect function make specified data to re-input Ast stages, but it can specify which Ast should process also it can put namespace by tag symbol. Please see redirect yard document or `spec/` test case more detailed. The above syntax matches like:
 ```
-namespace hi_this_is_namespace {
+namespace example {
  someprocess();
  someprocess2();
 }
 ```
 
-And redirect function put namespace expression matched at `E(:r, '.*')`, and redirect data specified by :test symbol and range 1..-2 to re-input Ast stages again.
-In this case, redirect data will be `\n  someprocess();\n  someprocess2();\n`, and namespace will be `hi_this_is_namespace`
+And redirect function put namespace expression matched `E(:r, '.*')`at tag `_2`, and redirect data specified by :test symbol and range 1..-2 to Ast stages again.
+In this case, redirect data will be `\n  someprocess();\n  someprocess2();\n`, and namespace will be `example`
 `:redirect` function has options `ast_include` and `ast_exclude` and they can use to specify which Ast can use to process of redirected data.
 If you execute this example, you can see the result data has namespace.
 
-# crlf, lf, eof
+# crlf, lf
 
 The last syntax registration has crlf, lf, eof handling.
 It prevents NotFound exception by those input.
 
-## crlf, lf
+# eof validation
 
-Please see syntax_alias.rb, these expression is alias for the new line.
-
-## eof validation
-
-sheep_ast input special expression '__sheep_eof__'.
+sheep_ast input special expression `__sheep_eof__`.
 It is input after end of process of given file. The eof will never be input in case that core get expression by like `core << 'abc'` (sheep_ast has interface to feed just string as well as input by file path. Please see spec/ testcases)
 The eof has important role. It kicks eof validation.
 eof validationn is to validate Ast process is finished at the eof. sheep_ast raise error when Ast process is in progress at the timing eof is input.
-User can detect bug by this validation. If user wants to use the validatoin in the way of inputing string, user should do like 'core << 'abc' << '__sheep_eof__''
+User can detect bug by this validation. If user wants to use the validatoin in the way of inputing string, user should do like 'core << 'abc' << `__sheep_eof__`
 
 # Summary
 

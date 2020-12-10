@@ -33,3 +33,6 @@ example1_fail:
 example2:
 	echo "== Example2: key word extraction =="
 	bundler exec ruby example/keyword_get/main.rb
+
+pushf: doc
+	git add -u && git commit --amend --no-edit && git push origin main -f

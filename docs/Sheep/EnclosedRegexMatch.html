@@ -119,7 +119,16 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>TBD</p>
+<p>Enclosed Regex match instance</p>
+
+<p>Syntax: E(:scr, &lt;start exp&gt;, &lt;end expr&gt;, :&lt;store sym&gt;)</p>
+
+<p>It matces from if given expression matches regex expression &lt;start
+exp&gt; to if given expression == &lt;end exp&gt;. In contrast to
+ScopedRegexMatch, EnclosedRegexMatch exit immediately if the &lt;end
+exp&gt; matched.</p>
+
+<p>Options: regex_end : Use regexp match for the end_expr</p>
 
 
   </div>
@@ -338,12 +347,12 @@
       <pre class="lines">
 
 
-16
-17
-18</pre>
+27
+28
+29</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/enclosed_regex_match.rb', line 16</span>
+      <pre class="code"><span class="info file"># File 'lib/match/enclosed_regex_match.rb', line 27</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sem_dec'>sem_dec</span>
   <span class='ivar'>@sem</span> <span class='op'>=</span> <span class='int'>0</span>
@@ -368,12 +377,12 @@
       <pre class="lines">
 
 
-12
-13
-14</pre>
+23
+24
+25</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/enclosed_regex_match.rb', line 12</span>
+      <pre class="code"><span class="info file"># File 'lib/match/enclosed_regex_match.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sem_inc'>sem_inc</span>
   <span class='ivar'>@sem</span> <span class='op'>=</span> <span class='int'>1</span>
@@ -388,7 +397,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:10 2020 by
+  Generated on Thu Dec 10 18:39:58 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

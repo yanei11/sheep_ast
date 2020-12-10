@@ -117,7 +117,18 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>TBD</p>
+<p>Scoped Regex match instance</p>
+
+<p>Syntax: E(:scr, &lt;start exp&gt;, &lt;end expr&gt;, :&lt;store sym&gt;)</p>
+
+<p>It matces from if given expression matches regex expression &lt;start
+exp&gt; to if given expression == &lt;end exp&gt;. In contrast to
+EnclosedRgexMatch, ScopedRegexMatch exit if &lt;end exp&gt; matches same
+number of &lt;start exp&gt; matches. i.e. if given expression is <code>if {
+if { something } }</code> and &lt;start exp&gt;, &lt;end exp&gt; = { , }
+then, scoped_match exit at 2nd }, but enclosed match exit first }</p>
+
+<p>Options: regex_end : Use regexp match for the end_expr</p>
 
 
   </div>
@@ -328,12 +339,12 @@
       <pre class="lines">
 
 
-12
-13
-14</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/scoped_regex_match.rb', line 12</span>
+      <pre class="code"><span class="info file"># File 'lib/match/scoped_regex_match.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_kind?'>kind?</span>
   <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="MatchKind.html" title="Sheep::MatchKind (class)">MatchKind</a></span></span><span class='op'>::</span><span class='const'>RegexCondition</span>
@@ -348,7 +359,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:09 2020 by
+  Generated on Thu Dec 10 18:39:57 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

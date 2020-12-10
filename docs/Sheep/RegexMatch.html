@@ -111,7 +111,12 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>RegexMatcher</p>
+<p>Regex Match instance</p>
+
+<p>Syntax: E(:re, &#39;&lt;regex exp&gt;&#39;, :&lt;store symbol&gt;)</p>
+
+<p>It matces if given expression match &lt;regex exp&gt;. It store matced
+expression in the &lt;store symbol&gt;</p>
 
 
   </div>
@@ -306,12 +311,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_init'>init</span>
   <span class='ivar'>@expr</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
@@ -358,12 +363,12 @@
       <pre class="lines">
 
 
-18
-19
-20</pre>
+24
+25
+26</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_kind?'>kind?</span>
   <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="MatchKind.html" title="Sheep::MatchKind (class)">MatchKind</a></span></span><span class='op'>::</span><span class='const'>Regex</span>
@@ -449,12 +454,12 @@
       <pre class="lines">
 
 
-13
-14
-15</pre>
+19
+20
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'lib/match/regex_match.rb', line 19</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_sym'>sym</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="" title="Sheep::RegexMatch (class)">RegexMatch</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -469,7 +474,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:08 2020 by
+  Generated on Thu Dec 10 18:39:55 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>

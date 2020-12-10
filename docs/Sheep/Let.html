@@ -116,7 +116,13 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>TBD</p>
+<p>Let action instance</p>
+
+<p>Syntax: A(:let, [funcion1, <em>para, *</em>option], [function2, <em>para,
+*</em>options]] …</p>
+
+<p>This let data to handle given functions. pre made API is included like
+LetRedirect module</p>
 
 
   </div>
@@ -181,6 +187,37 @@
   <p class="inherited"><span class='object_link'><a href="SheepObject.html#domain-instance_method" title="Sheep::SheepObject#domain (method)">#domain</a></span>, <span class='object_link'><a href="SheepObject.html#full_name-instance_method" title="Sheep::SheepObject#full_name (method)">#full_name</a></span>, <span class='object_link'><a href="SheepObject.html#my_factory-instance_method" title="Sheep::SheepObject#my_factory (method)">#my_factory</a></span>, <span class='object_link'><a href="SheepObject.html#my_id-instance_method" title="Sheep::SheepObject#my_id (method)">#my_id</a></span>, <span class='object_link'><a href="SheepObject.html#name-instance_method" title="Sheep::SheepObject#name (method)">#name</a></span></p>
 
 
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#within-class_method" title="within (class method)">.<strong>within</strong>(&amp;blk)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
   
     <h2>
       Instance Method Summary
@@ -419,12 +456,12 @@
       <pre class="lines">
 
 
-26
-27
-28</pre>
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_fsyms'>fsyms</span>
   <span class='ivar'>@fsyms</span>
@@ -436,6 +473,42 @@
     
   </div>
 
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="within-class_method">
+  
+    .<strong>within</strong>(&amp;blk)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 81</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_within'>within</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_blk'>blk</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_class_eval'>class_eval</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_blk'>blk</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -504,12 +577,6 @@
       <pre class="lines">
 
 
-41
-42
-43
-44
-45
-46
 47
 48
 49
@@ -524,10 +591,16 @@
 58
 59
 60
-61</pre>
+61
+62
+63
+64
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_action'>action</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_node'>node</span><span class='rparen'>)</span>
   <span class='ivar'>@data</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span>
@@ -592,19 +665,19 @@
       <pre class="lines">
 
 
-64
-65
-66
-67
-68
-69
 70
 71
 72
-73</pre>
+73
+74
+75
+76
+77
+78
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
   <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='tstring_end'>&quot;</span></span>
@@ -684,14 +757,14 @@
       <pre class="lines">
 
 
-34
-35
-36
-37
-38</pre>
+40
+41
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/action/let.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fsyms'>fsyms</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_kwargs'>kwargs</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ins'>ins</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Sheep::Let (class)">Let</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -708,7 +781,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  9 01:42:06 2020 by
+  Generated on Thu Dec 10 18:39:53 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.4.1).
 </div>
