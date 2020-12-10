@@ -206,7 +206,7 @@ describe Sheep::ScopedMatch do
 
     core.config_ast('default.main') do |ast, syn|
       syn.within {
-        register_syntax('analyze', A(:let, [:show, disable: true], [:debug])) {
+        register_syntax('analyze', A(:let, [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, '#include', :test1) << E(:enc, '<', '>', :test2),
            _S << E(:e, 'namespace', :test3) << E(:r, '.*', :test4) << E(:sc, '{', '}', :test5),
@@ -254,18 +254,18 @@ describe Sheep::ScopedMatch do
 
     core.config_ast('default.main') do |ast, syn|
       syn.within {
-        register_syntax('analyze', A(:let,[:show, disable: true], [:debug])) {
+        register_syntax('analyze', A(:let,[:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, '#include', :test1) << E(:enc, '<', '>', :test2),
            _S << E(:e, 'int', :test6) << E(:e, 'main', :test7) << E(:enc, '(', ')', :test8) << E(:sc, '{', '}', :test9),
           )
         }
-        register_syntax('analyze', A(:let,[:redirect, :test5, 1..-2, namespace: :test4], [:show, disable: true], [:debug])) {
+        register_syntax('analyze', A(:let,[:redirect, :test5, 1..-2, namespace: :test4], [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'namespace', :test3) << E(:r, '.*', :test4) << E(:sc, '{', '}', :test5),
           )
         }
-        register_syntax('analyze', A(:let,[:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], [:show, disable: true], [:debug])) {
+        register_syntax('analyze', A(:let,[:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*', :test21) << E(:sc, '{', '}') << E(:e, ';')
           )
@@ -313,7 +313,7 @@ describe Sheep::ScopedMatch do
 
     core.config_ast('default.main') do |ast, syn|
       syn.within {
-        register_syntax('analyze', A(:let, [:show, disable: true], [:debug])) {
+        register_syntax('analyze', A(:let, [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, '#include', :test1) << E(:enc, '<', '>', :test2),
            _S << E(:e, 'namespace', :test3) << E(:r, '.*', :test4) << E(:sc, '{', '}', :test5),

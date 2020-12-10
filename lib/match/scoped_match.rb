@@ -5,7 +5,20 @@ require_relative 'scoped_match_base'
 require 'sorbet-runtime'
 
 module Sheep
-  # TBD
+  # Scoped match instanc
+  #
+  # Syntax:
+  # E(:sc, <start exp>, <end expr>, :<store sym>)
+  #
+  # It matces from if given expression == <start exp>
+  # to if given expression == <end exp>.
+  # In contrast to EnclosedMatch, ScopedMatch exit if <end exp> matches
+  # same number of <start exp> matches.
+  # i.e. if  given expression is `if { if { something } }` and <start exp>, <end exp> = { , }
+  # then, scoped_match exit at 2nd }, but enclosed match exit first }
+  #
+  # Options:
+  # regex_end : Use regexp match for the end_expr
   class ScopedMatch < ScopedMatchBase
     extend T::Sig
 

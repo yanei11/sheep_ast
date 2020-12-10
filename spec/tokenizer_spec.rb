@@ -1,3 +1,4 @@
+# rubocop:disable all
 # typed: false
 # frozen_string_literal: true
 
@@ -67,5 +68,10 @@ abc def
     tok.add_token tok.cmp(/.*\./, oneto255)
     buf, max_line = tok << '10.10.200.2/32'
     tok.dump(:ldebug)
+  end
+  it 'can use split rule' do
+    tok.use_split_rule { ' ' }
+    buf, max_line = tok << 'abc.a.a. 10.10.200.2/32'
+    expect(buf).to eq([['abc.a.a.', '10.10.200.2/32']])
   end
 end
