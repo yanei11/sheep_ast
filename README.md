@@ -14,13 +14,13 @@ sheep_ast supports following feature:
 
 # Resource
 - Yard page   
-  https://yanei11.github.io/sheep_ast/
+  https://yanei11.github.io/sheep_ast_pages/
 
 - Github repository  
   https://github.com/yanei11/sheep_ast
 
 - Example1(Quick start guide1)  
-  https://yanei11.github.io/sheep_ast/file.Example1.html
+  https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
 - Example2(Quick start guide2)  
-  https://yanei11.github.io/sheep_ast/file.Example2.html
+  https://yanei11.github.io/sheep_ast_pages/file.Example2.html

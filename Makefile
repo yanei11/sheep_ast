@@ -6,7 +6,7 @@ check:
 
 # Make Yard documentation
 doc:
-	bundle exec yardoc -m markdown --plugin sorbet -o docs/ - README.md INSTALL.md example/grep_like/Example1.md example/keyword_get/Example2.md
+	bundle exec yardoc -m markdown --plugin sorbet -o ${SHEEP_DOC_DIR} - README.md INSTALL.md example/grep_like/Example1.md example/keyword_get/Example2.md
 
 # sheep_ast uses sorbet for static type checing. This command is for it at the init.
 srbinit:
@@ -33,6 +33,3 @@ example1_fail:
 example2:
 	echo "== Example2: key word extraction =="
 	bundler exec ruby example/keyword_get/main.rb
-
-pushf: doc
-	git add -u && git commit --amend --no-edit && git push origin main -f
