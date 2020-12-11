@@ -10,12 +10,12 @@ describe SheepAst::ScopedMatch do
   let(:core) { SheepAst::AnalyzerCore.new }
   it 'can be created' do
     core.config_ast('default.test') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
+      syn.register_syntax('ignore', syn.A(:na)) {
         [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eof]
+          syn.space,
+          syn.crlf,
+          syn.lf,
+          syn.eof
         ]
       }
       ast.within do
@@ -26,14 +26,14 @@ describe SheepAst::ScopedMatch do
       end
     end
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-        [[:sc, 'f', 'aaa', :test, end_reinput: true]]
+      syn.register_syntax('match', syn.A(:na)) {
+        syn._S << syn.E(:sc, 'f', 'aaa', :test, end_reinput: true)
       }
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-        [[:e, 'aaa']]
+      syn.register_syntax('match', syn.A(:na)) {
+        syn._S << syn.E(:e, 'aaa')
       }
     end
     expect {
@@ -44,18 +44,20 @@ describe SheepAst::ScopedMatch do
   end
   it 'should occur not found error' do
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-        [[:sc, 'f', 'aaa', :test, end_reinput: true]]
+      syn.register_syntax('match', syn.A(:na)) {
+        syn._S << syn.E(:sc, 'f', 'aaa', :test, end_reinput: true)
       }
     end
     core.config_ast('default.test') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
-        [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eof]
-        ]
+      syn.within {
+      register_syntax('ignore', A(:na)) {
+        _SS(
+          _S << space,
+          _S << crlf,
+          _S << lf,
+          _S << eof
+        )
+      }
       }
     end
 
@@ -67,12 +69,12 @@ describe SheepAst::ScopedMatch do
   end
   it 'can detect nested scope' do
     core.config_ast('always.test') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
+      syn.register_syntax('ignore', syn.A(:na)) {
        [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eof]
+          syn._S << syn.space,
+          syn._S << syn.crlf,
+          syn._S << syn.lf,
+          syn._S << syn.eof
         ]
       }
       ast.within do
@@ -83,48 +85,44 @@ describe SheepAst::ScopedMatch do
       end
     end
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register(
+      syn.register_syntax(
         'match', 
-        af.gen(:let,
+        syn.A(:let,
                [:record_kv_by_id, :test_H, :test, :test],
                [:redirect, :test, 1..-2, namespace: 'test', ast_include: 'test']
               )
       ) {
-        [[:sc, 'f', 'aaa', :test]]
+        syn._S << syn.E(:sc, 'f', 'aaa', :test)
       }
-      syn.register(
-        'match2', af.gen(:na)
+      syn.register_syntax(
+        'match2', syn.A(:na)
       ) {
         [
-          [:e, 'abc'],
-          [:e, 'abc'],
-          [:e, 'abc'],
+          syn.E(:e, 'abc'),
+          syn.E(:e, 'abc'),
+          syn.E(:e, 'abc'),
         ]
       }
     end
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-        [[:e, 'aaa']]
+      syn.register_syntax('match', syn.A(:na)) {
+        [syn.E(:e, 'aaa')]
       }
     end
     core.config_ast('test.test') do |ast, syn, mf, af|
-      syn.register(
+      syn.register_syntax(
         'test.test', 
-        af.gen(:na)
+        syn.A(:na)
       ) {
-        [
-          [:e, 'd'],
-          [:e, 'aa'],
-          [:e, 'f'],
-          [:e, 'c'],
-          [:e, 'd'],
-          [:e, 'aaa'],
-        ]
+        syn._SS(
+          syn._S << syn.E(:e, 'd') << syn.E(:e, 'aa') << syn.E(:e, 'f') <<
+                    syn.E(:e, 'c')  << syn.E(:e, 'd') <<  syn.E(:e, 'aaa')
+        )
       }
     end
 
     expect {
-      core.report(raise: true) {
+      core.report(raise: false) {
         core << "f d"
         core << "aa f"
         core << "c d aaa aaa"
@@ -140,42 +138,42 @@ describe SheepAst::ScopedMatch do
       tok.add_token tok.cmp('/', '/')
     end
 
-    core.config_ast('always.ignore') do |ast, syn, mf, af|
+    core.config_ast('always.ignore') do |ast, syn|
       syn.within {
-      register_multi('ignore', af.gen(:na)) {
-          [
+      register_syntax('ignore', A(:na)) {
+          _SS(
             _S << space,
             _S << E(:sc, '//', "\n")
-          ]
+          )
         }
       }
     end
 
-    core.config_ast('default.main') do |ast, syn, mf, af|
+    core.config_ast('default.main') do |ast, syn|
       syn.within {
-        register_multi(
-          'ignore', af.gen(
+        register_syntax(
+          'ignore', A(
             :let,
             [:show, disable: true]
           )
         ) {
-          [
+          _SS(
            _S << E(:e, '#include') << E(:enc, '<', '>'),
            _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}'),
            _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
-          ]
+          )
         }
       }
     end
 
-    core.config_ast('always.ignore2') do |ast, syn, mf, af|
+    core.config_ast('always.ignore2') do |ast, syn|
       syn.within {
-        register_multi('ignore', af.gen(:na)) {
-         [
+        register_syntax('ignore', A(:na)) {
+         _SS(
             _S << crlf,
             _S << lf,
             _S << eof,
-          ]
+         )
         }
       }
     end
