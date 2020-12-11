@@ -3,7 +3,7 @@
 This is the sheep_ast example2. This works as Quick start guide. The example2 is at `./example/keyword_get/main.rb` from the root directory of sheep_ast repository. The exampe2 application extracts certain keyword from the cpp file. The application can execute by following.
 
 ```
-sheep_ast$ make example2
+sheep_ast$ rake example2
 ```
 
 Followings are the test file. It is cpp sntax code.

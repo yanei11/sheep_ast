@@ -3,7 +3,7 @@
 This is the sheep_ast example. This works as Quick start guide. The example1 is at `./example/grep_like/main.rb` from the root directory of sheep_ast repository. The exampe1 is application like linux grep command. To execute example program, please do like:
 
 ```
-sheep_ast$ make example1
+sheep_ast$ rake example1
 ```
 
 After executing the command, it should be seen same output as grep command result.
@@ -196,7 +196,7 @@ end
 
 Ast fullname = always.continue is registered. The Ast has domain `always` and it is called at any condition. And action :na = NotAction is registered. It does not do specific action. The match is `any`. The syntax alias `any` is introduced in the syntax_alias.rb. In that file, you will see `any` is `[:r. '.*']`, and it means it is regex match and the match expression is '.*' which matches any string. That is why it is `any`.
 The expression is matched by AST of registered order. So, in this case, expression is processed by `default.main` and by `always.continue`.
-Strategy of finding expression in sheep_ast is to evaluate all the Ast in registered ordere, and if they could not match expression, then raise `NotFound` exception. If you execute `make example1_fail`, then you will see the sheep_ast sends `NotFound error`. The failed version does not have this 'any' block and since the some expression does not match, 'NotFound' error will be occured.
+Strategy of finding expression in sheep_ast is to evaluate all the Ast in registered ordere, and if they could not match expression, then raise `NotFound` exception. If you execute `rake example1_fail`, then you will see the sheep_ast sends `NotFound error`. The failed version does not have this 'any' block and since the some expression does not match, 'NotFound' error will be occured.
 
 
 # Feed input files to the framework
