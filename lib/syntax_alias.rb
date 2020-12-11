@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
@@ -8,34 +8,8 @@ module SheepAst
   module SyntaxAlias
     extend T::Sig
 
-    sig {
-      params(
-        para: T.any(String, Symbol),
-        kwargs: T.any(T::Boolean)
-      ).returns(T::Array[T.any(JSON::Ext::Generator::GeneratorMethods::String, Symbol)])
-    }
-    def stx(*para, **kwargs)
-      return [*para, **kwargs] # rubocop:disable all
-    end
-
-    sig {
-      params(
-        para: T.any(String, Symbol),
-        kwargs: T.any(T::Boolean)
-      ).returns(T::Array[T.any(JSON::Ext::Generator::GeneratorMethods::String, Symbol)])
-    }
-    def exp(*para, **kwargs)
-      return [*para, **kwargs] # rubocop:disable all
-    end
-
-    # sig {
-    #   params(
-    #     para: T.any(String, Symbol),
-    #     kwargs: T.any(T::Boolean)
-    #   ).returns(T::Array[T.any(Stringm, Symbol)])
-    # }
-    def E(*para, **kwargs) # rubocop:disable all
-      return [*para, **kwargs] # rubocop:disable all
+    def E(kind, *para, **kwargs) # rubocop:disable all
+      @mf.gen(kind, *para, **kwargs)
     end
 
     def _S(*para, **kwargs) # rubocop:disable all
@@ -46,46 +20,38 @@ module SheepAst
       return para
     end
 
-    def _SS_pushback(action, &blk) #rubocop:disable all
-      arr = blk.call
-      arr.each do |elem|
-        elem << action
-      end
-      return arr
-    end
-
     def A(kind, *para, **kwargs) # rubocop:disable all
       @af.gen(kind, *para, **kwargs)
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def crlf
-      return [:e, "\r\n"]
+      E(:e, "\r\n")
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def lf
-      return [:e, "\n"]
+      E(:e, "\n")
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def eof
-      return [:e, '__sheep_eof__']
+      E(:e, '__sheep_eof__')
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def space
-      return [:e, ' ']
+      E(:e, ' ')
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def cpp_comment
-      return [:e, '//']
+      E(:e, '//')
     end
 
-    sig { returns T::Array[String] }
+    sig { returns SheepAst::MatchBase }
     def any
-      return [:r, '.*']
+      E(:r, '.*')
     end
   end
 end

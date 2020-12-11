@@ -44,37 +44,47 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test3') do |ast, syn, mf, af|
-      syn.register_array('default.test') { [[:e, 'f'], [:e, 'd'], [:r, '.*'], [:na]] }
+      syn.within {
+        register_syntax('default.test') { _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na) }
+      }
     end
 
     core.config_ast('default.test4') do |ast, syn, mf, af|
-      syn.register_array_multi('default.test') {
-        [
-          [[:e, 'f'], [:e, 'd'], [:r, '.*'], [:na]],
-          [[:e, 'a'], [:e, 'b'], [:r, '...'], [:r, '##a'], [:na]]
-        ]
+      syn.within {
+      register_syntax('default.test') {
+        _SS(
+          _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na),
+          _S << E(:e, 'a') << E(:e, 'b') << E(:r, '...') << E(:r, '##a') << A(:na)
+        )
+      }
       }
     end
 
     core.config_ast('default.test5') do |ast, syn, mf, af|
-      syn.register('default.test', af.gen(:na)) { [[:e, 'f'], [:e, 'd'], [:r, '.*']] }
+      syn.within {
+        register_syntax('default.test', A(:na)) { _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') }
+      }
     end
 
     core.config_ast('default.test6') do |ast, syn, mf, af|
-      syn.register_multi('default.test', af.gen(:na)) {
-        [
-          [[:e, 'f'], [:e, 'd'], [:r, '.*']],
-          [[:e, 'a'], [:e, 'b'], [:r, '...'], [:r, '##a']]
-        ]
+      syn.within {
+      register_syntax('default.test', A(:na)) {
+        _SS(
+          _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*'),
+          _S << E(:e, 'a') << E(:e, 'b') << E(:r, '...') << E(:r, '##a')
+        )
+      }
       }
     end
 
     core.config_ast('default.test7') do |ast, syn, mf, af|
-      syn.register_multi('default.test', [af.gen(:na), af.gen(:na)]) {
-        [
-          [[:e, 'f'], [:e, 'd'], [:r, '.*']],
-          [[:e, 'a'], [:e, 'b'], [:r, '...'], [:r, '##a']]
-        ]
+      syn.within {
+      register_syntax('default.test') {
+        _SS( 
+          _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na),
+          _S << E(:e, 'a') << E(:e, 'b') << E(:r, '...') << E(:r, '##a') << A(:na)
+        )
+      }
       }
     end
     core.dump(:pdebug)
@@ -83,11 +93,13 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
   it 'will raise exception when duplicated match' do
     core.config_ast('default.test7') do |ast, syn, mf, af|
       expect {
-        syn.register_multi('default.test', [af.gen(:na), af.gen(:na)]) {
-          [
-            [[:e, 'f'], [:e, 'd'], [:r, '.*']],
-            [[:e, 'f'], [:e, 'd'], [:r, '.*']]
-          ]
+        syn.within {
+        register_syntax('default.test') {
+          _SS(
+            _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na),
+            _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na)
+          ) 
+        }
         }
       }.to raise_error SheepAst::Exception::ApplicationError
     end
@@ -95,13 +107,13 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
 
   it 'can parse file' do
     core.config_ast('default.test1') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
-        [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eof]
-        ]
+      syn.register_syntax('ignore', syn.A(:na)) {
+        syn._SS(
+          syn._S << syn.space,
+          syn._S << syn.crlf,
+          syn._S << syn.lf,
+          syn._S << syn.eof
+        )
       }
       ast.within do 
         def not_found(data, _node)
@@ -112,8 +124,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-          [[:e, 'f'], [:e, 'd'], [:e, 'aa'], [:e,'ddd']]
+      syn.within {
+      register_syntax('match', A(:na)) {
+          _S << E(:e, 'f') << E(:e, 'd') << E(:e, 'aa') << E(:e,'ddd')
+      }
       }
     end
     core.dump(:pdebug)
@@ -123,13 +137,13 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
 
   it 'can parse file' do
     core.config_ast('default.test1') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
-        [
+      syn.register_syntax('ignore', syn.A(:na)) {
+        syn._SS(
           [syn.space],
           [syn.crlf],
           [syn.lf],
           [syn.eof]
-        ]
+        )
       }
       ast.within do 
         def not_found(data, _node)
@@ -140,8 +154,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-          [[:e, 'f'], [:e, 'd'], [:e, 'aa'], [:e,'ddd']]
+      syn.within {
+      register_syntax('match', A(:na)) {
+          _SS( _S << E(:e, 'f') << E(:e, 'd') << E(:e, 'aa') << E(:e,'ddd'))
+      }
       }
     end
     core.dump(:pdebug)
@@ -151,13 +167,13 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
 
   it 'can catch exception' do
     core.config_ast('default.test1') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
-        [
+      syn.register_syntax('ignore', syn.A(:na)) {
+        syn._SS(
           [syn.space],
           [syn.crlf],
           [syn.lf],
           [syn.eof]
-        ]
+        )
       }
       ast.within do 
         def not_found(data, _node)
@@ -168,8 +184,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-          [[:e, 'f'], [:e, 'd'], [:e, 'aa']]
+      syn.within {
+      register_syntax('match', A(:na)) {
+          _SS( _S << E(:e, 'f') << E(:e, 'd') << E(:e, 'aa'))
+      }
       }
     end
     core.report(:ldebug) {
@@ -179,7 +197,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
   end
   it 'parse multiple expr' do
     core.config_ast('default.test1') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
+      syn.register_syntax('ignore', syn.A(:na)) {
         [
           [syn.space],
           [syn.crlf],
@@ -196,8 +214,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-          [[:e, 'f'], [:e, 'd'], [:e, 'aa']]
+      syn.within {
+      register_syntax('match', A(:na)) {
+          _SS( _S << E(:e, 'f') << E(:e, 'd') << E(:e, 'aa'))
+      }
       }
     end
     core.report(:ldebug) {
@@ -208,7 +228,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
   end
   it 'validation fail when eof' do
     core.config_ast('default.test1') do |ast, syn, mf, af|
-      syn.register_multi('ignore', af.gen(:na)) {
+      syn.register_syntax('ignore', syn.A(:na)) {
         [
           [syn.space],
           [syn.crlf],
@@ -225,8 +245,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register('match', af.gen(:na)) {
-          [[:e, 'f'], [:e, 'd'], [:e, 'aa']]
+      syn.within {
+      register_syntax('match', A(:na)) {
+          _SS( _S << E(:e, 'f') << E(:e, 'd') << E(:e, 'aa'))
+      }
       }
     end
     expect {
