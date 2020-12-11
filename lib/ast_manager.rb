@@ -16,7 +16,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # interface class for the user
   # API class. User should use this class as Interface
   class AstManager < SheepObject
@@ -50,7 +50,7 @@ module Sheep
       @domain = name_arr[0]
       @name = name_arr[1]
       @full_name = name
-      @node_factory = Sheep::NodeFactory.new
+      @node_factory = SheepAst::NodeFactory.new
       @data_store = data_store
       @match_factory = match_factory
       setup

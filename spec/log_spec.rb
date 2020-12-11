@@ -6,7 +6,7 @@ require 'spec_helper'
 require 'log'
 
 class Child
-  include Sheep::Log
+  include SheepAst::Log
 end
 
 describe Child do

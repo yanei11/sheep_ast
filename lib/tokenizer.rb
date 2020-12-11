@@ -5,7 +5,7 @@ require_relative 'log'
 require_relative 'exception'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # TBD
   class Tokenizer # rubocop: disable all
     extend T::Sig

@@ -11,7 +11,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # Let action instance
   #
   # Syntax:

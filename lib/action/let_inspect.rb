@@ -7,7 +7,7 @@ require 'pry'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # Let inclde module
   module LetInspect
     extend T::Sig

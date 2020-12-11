@@ -4,8 +4,8 @@
 require 'spec_helper'
 require 'match/regex_match'
 
-describe Sheep::RegexMatch do
-  let(:rm) { Sheep::RegexMatch.new }
+describe SheepAst::RegexMatch do
+  let(:rm) { SheepAst::RegexMatch.new }
   it 'can be created' do
     rm.init
   end
@@ -17,7 +17,7 @@ describe Sheep::RegexMatch do
     expect(t_rm.key).to eq('abc..')
     expect(t_rm.node_info.node_id).to eq(1)
     expect(t_rm.node_info.match_id).to eq(2)
-    data = Sheep::AnalyzeData.new
+    data = SheepAst::AnalyzeData.new
     data.expr = 'abcde'
     t_rm.match(data)
     t_rm.matched(data)

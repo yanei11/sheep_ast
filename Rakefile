@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+
 task 'default' => 'check'
 
 desc 'Executing rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
@@ -15,12 +18,12 @@ end
 
 desc 'sorbet init'
 task 'srbinit' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore=/spec"
+  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example"
 end
 
 desc 'Execute sorbet type check'
 task 'tc' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore=/spec"
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example"
 end
 
 desc 'Execute sorbet type check with auto correct'
@@ -53,3 +56,6 @@ desc 'Push document repository'
 task 'pushd' => 'doc' do
   sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && make push"
 end
+
+desc 'Before release check'
+task 'prepare' => %w[check tc example1 example1_fail example2 pushd]

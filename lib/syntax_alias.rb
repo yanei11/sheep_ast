@@ -3,7 +3,7 @@
 
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # utility to perform deep copy for Hash or Array
   module SyntaxAlias
     extend T::Sig

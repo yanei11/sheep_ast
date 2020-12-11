@@ -6,7 +6,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   module LetCompile
     extend T::Sig

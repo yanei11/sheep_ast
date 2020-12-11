@@ -23,7 +23,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-core = Sheep::AnalyzerCore.new
+core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
   tok.add_token tok.cmp('#', 'include')

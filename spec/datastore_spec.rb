@@ -7,8 +7,8 @@ require 'analyzer_core'
 require 'messages'
 require 'syntax'
 
-describe Sheep::DataStore do
-  let(:core) { Sheep::AnalyzerCore.new }
+describe SheepAst::DataStore do
+  let(:core) { SheepAst::AnalyzerCore.new }
    it 'can parse file' do
      core.config_ast('default.test1') do |ast, syn, mf, af|
        syn.register_multi('ignore', af.gen(:na)) {
@@ -22,7 +22,7 @@ describe Sheep::DataStore do
        ast.within do
          def not_found(data, _node)
            linfo "'#{data.expr}' not found"
-           return Sheep::MatchAction::Continue
+           return SheepAst::MatchAction::Continue
          end
        end
      end

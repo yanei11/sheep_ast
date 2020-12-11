@@ -13,7 +13,7 @@ require_relative 'enclosed_match'
 require_relative 'enclosed_regex_match'
 require_relative 'scoped_regex_match'
 
-module Sheep
+module SheepAst
   # Match fatiory
   class MatchFactory < SheepObject
     extend T::Sig

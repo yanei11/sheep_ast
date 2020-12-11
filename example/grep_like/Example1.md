@@ -31,7 +31,7 @@ using Rainbow
 input_expr = ARGV[0]
 input_files = ARGV[1..-1]
 
-core = Sheep::AnalyzerCore.new
+core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
   tok.add_token tok.cmp('#', 'include')
@@ -86,7 +86,7 @@ The analyzer_core object is designed to aggregate the external interfaces.
 So, you should create the object.
 
 ```
-core = Sheep::AnalyzerCore.new
+core = SheepAst::AnalyzerCore.new
 ```
 
 # Tokenize
@@ -175,7 +175,7 @@ The `always` domain has also special meaning. It is always called no matter user
   }
 ```
 
-core.let returns Sheep::Let class and `within` is entering the scope (class_eval). In side the class, grep function is defined.
+core.let returns SheepAst::Let class and `within` is entering the scope (class_eval). In side the class, grep function is defined.
 To see the signiture of the function, you find key, datastore, options are passed from the framework. But in this grep application, it is no need to use key and datastore, so they are not used inside the function.
 To see what kind of information passed from the framework, you can utilise :show function. It is kind of debug function to inspect what the passed data is. If you edit :disable => false, then you will see them. Please check it and you can see beter understanding about framework.
 

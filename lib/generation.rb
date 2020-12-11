@@ -6,7 +6,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   module Generation
     extend T::Sig

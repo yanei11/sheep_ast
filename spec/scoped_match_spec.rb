@@ -6,8 +6,8 @@ require 'spec_helper'
 require 'match/scoped_match'
 require 'analyzer_core'
 
-describe Sheep::ScopedMatch do
-  let(:core) { Sheep::AnalyzerCore.new }
+describe SheepAst::ScopedMatch do
+  let(:core) { SheepAst::AnalyzerCore.new }
   it 'can be created' do
     core.config_ast('default.test') do |ast, syn, mf, af|
       syn.register_multi('ignore', af.gen(:na)) {
@@ -21,7 +21,7 @@ describe Sheep::ScopedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -63,7 +63,7 @@ describe Sheep::ScopedMatch do
       core << "f d"
       core << "aa"
       core << "c d aaa"
-    }.to raise_error  Sheep::Exception::NotFound
+    }.to raise_error  SheepAst::Exception::NotFound
   end
   it 'can detect nested scope' do
     core.config_ast('always.test') do |ast, syn, mf, af|
@@ -78,7 +78,7 @@ describe Sheep::ScopedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -337,7 +337,7 @@ describe Sheep::ScopedMatch do
 
     expect {
       core.analyze_file(['spec/scoped_match_file/test3.cc'])
-    }.to raise_error Sheep::Exception::ApplicationError
+    }.to raise_error SheepAst::Exception::ApplicationError
   end
 
 end

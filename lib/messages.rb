@@ -5,7 +5,7 @@ require_relative 'exception'
 require_relative 'file_manager'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Enum for kind of matcher
   class MatchKind < T::Enum
     include Exception

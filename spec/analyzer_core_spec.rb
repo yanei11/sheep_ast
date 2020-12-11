@@ -7,8 +7,8 @@ require 'analyzer_core'
 require 'messages'
 require 'syntax'
 
-describe Sheep::AnalyzerCore do # rubocop: disable all
-  let(:core) { Sheep::AnalyzerCore.new }
+describe SheepAst::AnalyzerCore do # rubocop: disable all
+  let(:core) { SheepAst::AnalyzerCore.new }
   it 'can be ceated' do
     ast = core.config_ast('default.test') do |_ast, _syn, _mf, _af|; end
     expect(core.from_id(ast.my_id).object_id).to eq(
@@ -89,7 +89,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
             [[:e, 'f'], [:e, 'd'], [:r, '.*']]
           ]
         }
-      }.to raise_error Sheep::Exception::ApplicationError
+      }.to raise_error SheepAst::Exception::ApplicationError
     end
   end
 
@@ -106,7 +106,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       ast.within do 
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -134,7 +134,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       ast.within do 
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -162,7 +162,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       ast.within do 
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -190,7 +190,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       ast.within do 
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -219,7 +219,7 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -234,6 +234,6 @@ describe Sheep::AnalyzerCore do # rubocop: disable all
       core << "aa"
       core << "f d "
       core << "__sheep_eof__"
-    }.to raise_error Sheep::Exception::ApplicationError
+    }.to raise_error SheepAst::Exception::ApplicationError
   end
 end

@@ -5,7 +5,7 @@ require_relative 'match_base'
 require_relative '../log'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # TBD
   class ConditionMatch < MatchBase
     extend T::Sig

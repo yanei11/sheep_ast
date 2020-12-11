@@ -4,7 +4,7 @@
 require_relative 'condition_match'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # TBD
   class ScopedMatchBase < ConditionMatch
     extend T::Sig

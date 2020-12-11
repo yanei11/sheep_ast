@@ -7,7 +7,7 @@ require_relative '../exception'
 require_relative 'no_action'
 require_relative 'let'
 
-module Sheep
+module SheepAst
   # Match fatiory
   class ActionFactory < SheepObject
     extend T::Sig

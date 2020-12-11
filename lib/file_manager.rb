@@ -8,7 +8,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   class FileManager #rubocop: disable all
     extend T::Sig

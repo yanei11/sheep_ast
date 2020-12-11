@@ -4,7 +4,7 @@
 require_relative 'log'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # utility to perform deep copy for Hash or Array
   module DeepCopy
     extend T::Sig

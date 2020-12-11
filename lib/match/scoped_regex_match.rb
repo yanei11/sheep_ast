@@ -4,7 +4,7 @@
 require_relative 'scoped_match'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Scoped Regex match instance
   #
   # Syntax:

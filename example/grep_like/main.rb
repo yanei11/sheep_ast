@@ -9,7 +9,7 @@ using Rainbow
 input_expr = ARGV[0]
 input_files = ARGV[1..-1]
 
-core = Sheep::AnalyzerCore.new
+core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
   tok.add_token tok.cmp('#', 'include')

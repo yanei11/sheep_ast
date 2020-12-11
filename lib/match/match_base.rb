@@ -8,7 +8,7 @@ require_relative '../sheep_obj'
 require_relative 'match_util'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Matcher base class
   class MatchBase < SheepObject
     extend T::Sig

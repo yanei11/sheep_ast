@@ -5,11 +5,11 @@
 require 'spec_helper'
 require 'tokenizer'
 
-describe Sheep::Tokenizer do  # rubocop: disable all
+describe SheepAst::Tokenizer do  # rubocop: disable all
   let(:basepath) { Dir.pwd }
   let(:ok_str) { [["a", " ", "b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["123", " ", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{", "+", "*", "}", "<", ">", "?", "_", "\n"]] } # rubocop:disable all
   let(:ok_str2) { [["a b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["111", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{+*", "}", "<>", "?", "_", "\n"]] } # rubocop: disable all
-  let(:tok) { Sheep::Tokenizer.new }
+  let(:tok) { SheepAst::Tokenizer.new }
   it 'can tokenize' do
     buf, max_line = tok.tokenize(basepath + '/spec/test.txt')
     expect(buf).to eq(ok_str)

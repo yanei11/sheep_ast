@@ -15,7 +15,7 @@ require 'optparse'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   class AnalyzerCore < SheepObject # rubocop: disable all
     include Log
@@ -104,12 +104,12 @@ module Sheep
       if !name_defined?(name)
         ast = klass.new(name, @data_store, @fof.match_factory)
         create_id(ast, name)
-        syn = Sheep::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
+        syn = SheepAst::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
         blk.call(ast, syn, @fof.match_factory, @fof.action_factory)
         @stage_manager.add_stage(ast)
       else
         ast = from_name(name)
-        syn = Sheep::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
+        syn = SheepAst::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
         blk.call(ast, syn, @fof.match_factory, @fof.action_factory)
       end
       return ast

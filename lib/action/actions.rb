@@ -4,7 +4,7 @@
 require_relative 'action_base'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # This class is for the action to recprd the result
   class Actions < ActionBase
     extend T::Sig
