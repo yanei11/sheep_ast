@@ -10,6 +10,7 @@ gem 'rainbow'
 gem 'rspec', group: :test
 gem 'rubocop', group: :development
 gem 'rubocop-performance', group: :development
+gem 'code-scanning-rubocop', group: :development
 gem 'simplecov', require: false, group: :test
 gem 'sorbet', group: :development
 gem 'sorbet-runtime', group: :development
