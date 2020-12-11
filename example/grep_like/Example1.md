@@ -47,7 +47,7 @@ core.config_ast('default.main') do |_ast, syn|
     }
   }
 
-  syn.let.within {
+  core.let.within {
     def grep(key, datastore, **options)
       str = "#{@data.file_info.file}:".blue
       str += @data.raw_line.chop.to_s
@@ -154,6 +154,8 @@ core.config_ast('default.main') do |_ast, syn|
       )
     }
   }
+  # ...
+end
 ```
 
 Ast fullname = default.main is registered. Ast fullname is constucted by two part; domain and name.  The `default` is special domain. The default domain is called initially. It works as entry point. So, the none `default` domain will not be called initially and it will be called when user includes the Ast. This related to the recursive estimation of target strings and also related to namespace. In short, user can specify domain to include or exclude the next recursion process. But in this example, this function is not needed. This topic is shown by other example.
