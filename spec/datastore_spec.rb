@@ -11,7 +11,7 @@ describe SheepAst::DataStore do
   let(:core) { SheepAst::AnalyzerCore.new }
    it 'can parse file' do
      core.config_ast('default.test1') do |ast, syn, mf, af|
-       syn.register_multi('ignore', af.gen(:na)) {
+       syn.register_syntax('ignore', syn.A(:na)) {
          [
            [syn.space],
            [syn.crlf],
@@ -28,19 +28,21 @@ describe SheepAst::DataStore do
      end
 
      core.config_ast('default.test2') do |ast, syn, mf, af|
-       syn.register(
+       syn.within {
+       register_syntax(
          'match',
-         af.gen(
+         A(
            :let,
            [:fff, :a], [:fff, :b],
            [:record_kv_by_id, :test_H, :test5, :test1_A],
            [:record_kv_by_id, :test_H, :test6, :test1_A]
          )
        ) {
-         [[:e, 'f', :test1_A], [:e, 'd', :test1_A], [:e, 'aa', :test3], [:e, 'ddd', :test4],
-          [:r, '.*', :test6], [:r, '.*', :test5]]
+         _S << E(:e, 'f', :test1_A) << E(:e, 'd', :test1_A) << E(:e, 'aa', :test3) << E(:e, 'ddd', :test4) <<
+               E(:r, '.*', :test6) << E(:r, '.*', :test5)
        }
-       syn.action.within {
+       }
+       core.let.within {
          def fff(key, datastore, test)
            ldebug key.inspect
            ldebug datastore.inspect
