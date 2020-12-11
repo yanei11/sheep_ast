@@ -10,7 +10,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD give brief explanation
   class NodeBuf
     extend T::Sig

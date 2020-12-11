@@ -7,7 +7,7 @@ require_relative 'datastore'
 require_relative 'match/match_factory'
 require_relative 'action/action_factory'
 
-module Sheep
+module SheepAst
   # Factory of factories
   class FoF
     extend T::Sig

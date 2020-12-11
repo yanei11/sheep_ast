@@ -3,7 +3,7 @@
 
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Matcher base class
   class SheepObject
     extend T::Sig

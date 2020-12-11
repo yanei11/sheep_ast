@@ -7,7 +7,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # Logger Wrapper module
   module Log
     extend T::Sig

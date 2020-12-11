@@ -6,8 +6,8 @@ require 'spec_helper'
 require 'match/scoped_match'
 require 'analyzer_core'
 
-describe Sheep::ScopedMatch do
-  let(:core) { Sheep::AnalyzerCore.new }
+describe SheepAst::ScopedMatch do
+  let(:core) { SheepAst::AnalyzerCore.new }
   it 'can be created' do
     core.config_ast('test') do |ast, _tok, mf, af, syn|
       syn.register_multi('ignore', af.gen(:na)) {
@@ -21,7 +21,7 @@ describe Sheep::ScopedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end

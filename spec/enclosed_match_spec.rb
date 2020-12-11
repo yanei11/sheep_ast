@@ -6,8 +6,8 @@ require 'spec_helper'
 require 'match/scoped_match'
 require 'analyzer_core'
 
-describe Sheep::EnclosedMatch do
-  let(:core) { Sheep::AnalyzerCore.new }
+describe SheepAst::EnclosedMatch do
+  let(:core) { SheepAst::AnalyzerCore.new }
   it 'can be created' do
     core.config_ast('default.test') do |ast, syn, mf, af|
       syn.register_multi('ignore', af.gen(:na)) {
@@ -21,7 +21,7 @@ describe Sheep::EnclosedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -55,7 +55,7 @@ describe Sheep::EnclosedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -69,7 +69,7 @@ describe Sheep::EnclosedMatch do
     #   core << "f d"
     #   core << "aa"
     #   core << "c d aaa"
-    # }.to raise_error Sheep::Exception::NotFound
+    # }.to raise_error SheepAst::Exception::NotFound
   end
   it 'enclosed match ignore scope unlike scoped match' do
     core.config_ast('default.test') do |ast, syn, mf, af|
@@ -84,7 +84,7 @@ describe Sheep::EnclosedMatch do
       ast.within do
         def not_found(data, _node)
           linfo "'#{data.expr}' not found"
-          return Sheep::MatchAction::Continue
+          return SheepAst::MatchAction::Continue
         end
       end
     end
@@ -97,6 +97,6 @@ describe Sheep::EnclosedMatch do
     #   core << "f d"
     #   core << "aa f"
     #   core << "c d aaa aaa"
-    # }.to raise_error Sheep::Exception::NotFound
+    # }.to raise_error SheepAst::Exception::NotFound
   end
 end

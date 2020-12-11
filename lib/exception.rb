@@ -3,7 +3,7 @@
 
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Exception handler
   module Exception
     extend T::Sig

@@ -9,7 +9,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   class Stage
     extend T::Sig

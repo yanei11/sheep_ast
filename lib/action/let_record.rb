@@ -6,7 +6,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # Let include module
   module LetRecord
     extend T::Sig

@@ -9,7 +9,7 @@ require_relative 'match/match_factory'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # TBD
   class Node < SheepObject
     include Log
@@ -26,7 +26,7 @@ module Sheep
     sig { returns(T::Array[Method]) }
     attr_accessor :methods_array
 
-    sig { returns(Sheep::NodeBuf) }
+    sig { returns(SheepAst::NodeBuf) }
     attr_reader :node_buffer
 
     sig { returns(T.nilable(ActionBase)) }

@@ -9,7 +9,7 @@ require_relative 'action/action_base'
 require_relative 'syntax_alias'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # utility to perform deep copy for Hash or Array
   class Syntax < SheepObject
     extend T::Sig

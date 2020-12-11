@@ -6,7 +6,7 @@ require 'rainbow/refinement'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # Let included module
   module LetRedirect
     extend T::Sig

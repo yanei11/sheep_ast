@@ -4,7 +4,7 @@
 require_relative 'scoped_match'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # Enclosed match instanc
   #
   # Syntax:

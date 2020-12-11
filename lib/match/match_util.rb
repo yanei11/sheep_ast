@@ -1,7 +1,7 @@
 # typed: true
 # frozen_string_literal: true
 
-module Sheep
+module SheepAst
   # TBD
   module MatchUtil
     def prio(prio, method)

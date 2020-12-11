@@ -6,7 +6,7 @@ require_relative 'exception'
 require_relative 'messages'
 require_relative 'node_buf'
 
-module Sheep
+module SheepAst
   # Node fatiory
   class NodeFactory
     extend T::Sig

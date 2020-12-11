@@ -4,8 +4,8 @@
 require 'spec_helper'
 require 'match/exact_match'
 
-describe Sheep::ExactMatch do
-  let(:em) { Sheep::ExactMatch.new }
+describe SheepAst::ExactMatch do
+  let(:em) { SheepAst::ExactMatch.new }
   it 'can be created' do
     em.init
   end
@@ -17,7 +17,7 @@ describe Sheep::ExactMatch do
     expect(t_em.key).to eq(')')
     expect(t_em.node_info.node_id).to eq(1)
     expect(t_em.node_info.match_id).to eq(2)
-    data = Sheep::AnalyzeData.new
+    data = SheepAst::AnalyzeData.new
     data.expr = ')'
     t_em.matched(data)
     expect(t_em.matched_expr).to eq(')')

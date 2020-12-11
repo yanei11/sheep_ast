@@ -7,7 +7,7 @@ require 'sorbet-runtime'
 
 using Rainbow
 
-module Sheep
+module SheepAst
   # This class is for the action to recprd the result
   class IncludeHandler < ActionBase
     extend T::Sig

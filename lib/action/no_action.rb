@@ -4,7 +4,7 @@
 require_relative 'action_base'
 require 'sorbet-runtime'
 
-module Sheep
+module SheepAst
   # NoAction action instance
   #
   # Syntax:
