@@ -33,3 +33,6 @@ example1_fail:
 example2:
 	echo "== Example2: key word extraction =="
 	bundler exec ruby example/keyword_get/main.rb
+
+pushd:doc
+	cd ${SHEEP_DOC_DIR}/.. && ${MAKE} push

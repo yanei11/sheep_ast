@@ -1,0 +1,114 @@
+AllCops:
+  TargetRubyVersion: 2.6
+
+# This file overrides https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+
+# Use UTF-8 as the source file encoding.
+Style/Encoding:
+  Enabled: false
+
+# Limit lines to 80 characters.
+Layout/LineLength:
+  Enabled: true
+
+# Avoid methods longer than 10 lines of code
+Metrics/MethodLength:
+  Enabled: false
+
+# Favor modifier if/unless usage when you have a single-line body.
+Style/IfUnlessModifier:
+  Enabled: false
+
+# Favor modifier while/until usage when you have a single-line body.
+Style/WhileUntilModifier:
+  Enabled: false
+
+# Preferred collection methods.
+Style/CollectionMethods:
+  Enabled: false
+
+# Don't interpolate global, instance and class variables directly in strings.
+Style/VariableInterpolation:
+  Enabled: false
+
+# Use only ascii symbols in comments.
+Style/AsciiComments:
+  Enabled: false
+
+# TODO: Change it to true when $redis and $mixpanel is removed
+#
+# Do not introduce global variables.
+Style/RedundantReturn:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/ModuleLength:
+  Max: 150
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/AccessorGrouping:
+  EnforcedStyle: separated
+
+Style/SoleNestedConditional:
+  AllowModifier: true
+
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+  #Lint/ConstantDefinitionInBlock:
+Style/SymbolArray:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 30
+
+Metrics/ParameterLists:
+  Max: 7
+
+Style/SlicingWithRange:
+  Enabled: false
