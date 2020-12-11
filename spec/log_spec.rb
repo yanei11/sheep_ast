@@ -1,6 +1,6 @@
 # typed: false
+# frozen_string_literal: true
 # rubocop:disable all
-# -*- encoding: utf-8 -*-
 
 require 'spec_helper'
 require 'log'
