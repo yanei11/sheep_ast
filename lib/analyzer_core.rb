@@ -47,51 +47,9 @@ module SheepAst
       super()
     end
 
-    sig { params(argv: T::Array[String]).void }
-    def option(argv)
-      OptionParser.new do |opt|
-        opt.on(
-          '-E [VALUE]', Array,
-          'Specify directories for the files that should not be included'
-        ) { |v| @option[:E] = v }
-        opt.on(
-          '-I [VALUE]', Array, 'Specify directories for the include files'
-        ) { |v| @option[:I] = v }
-
-        opt.parse!(argv)
-        linfo "Application starts with option => #{@option.inspect.cyan}"
-      end
-    end
-
-    sig { void }
-    def parse_option
-      @option[:D]&.each do |item|
-        if item.include?('=')
-          key = item.split('=').first
-          data = item.split('=').last
-          @envdb[key] = data
-        else
-          @envdb[item] = '1'
-        end
-      end
-
-      @option[:I]&.each do |item|
-        @include_handler.register_dir_path(item)
-      end
-
-      @option[:E]&.each do |item|
-        @include_handler.register_exclude_dir_path(item)
-      end
-    end
-
     sig { returns Class }
     def let
       Let
-    end
-
-    sig { params(name: String).returns(AstManager) }
-    def gen_ast(name)
-      return AstManager.new(name, @data_store, @fof.match_factory)
     end
 
     def config_tok(&blk)
@@ -171,5 +129,43 @@ module SheepAst
         raise
       end
     end
+
+    sig { params(argv: T::Array[String]).void }
+    def option(argv)
+      OptionParser.new do |opt|
+        opt.on(
+          '-E [VALUE]', Array,
+          'Specify directories for the files that should not be included'
+        ) { |v| @option[:E] = v }
+        opt.on(
+          '-I [VALUE]', Array, 'Specify directories for the include files'
+        ) { |v| @option[:I] = v }
+
+        opt.parse!(argv)
+        linfo "Application starts with option => #{@option.inspect.cyan}"
+      end
+    end
+
+    sig { void }
+    def parse_option
+      @option[:D]&.each do |item|
+        if item.include?('=')
+          key = item.split('=').first
+          data = item.split('=').last
+          @envdb[key] = data
+        else
+          @envdb[item] = '1'
+        end
+      end
+
+      @option[:I]&.each do |item|
+        @include_handler.register_dir_path(item)
+      end
+
+      @option[:E]&.each do |item|
+        @include_handler.register_exclude_dir_path(item)
+      end
+    end
+
   end
 end
