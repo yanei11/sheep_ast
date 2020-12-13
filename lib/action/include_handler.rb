@@ -69,7 +69,7 @@ module SheepAst
     sig { params(file: String).returns(T::Boolean) }
     def exclude_file?(file)
       top.exclude_dir_path_array.each do |epath|
-        rp = Regexp.new(File.expand_path(epath) + '/*')
+        rp = Regexp.new("#{File.expand_path(epath)}/*")
 
         if !rp.match(file).nil?
           linfo "[SKIPPED]:#{file}(ex)".yellow
@@ -83,7 +83,7 @@ module SheepAst
     def find_next_file(relative_path)
       found_paths = []
       top.dir_path_array.each do |base|
-        test_path = base + '/' + relative_path
+        test_path = "#{base}/#{relative_path}"
         if File.exist?(test_path)
           ldebug "file exist: #{test_path}"
           found_paths << File.expand_path(test_path)
