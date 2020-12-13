@@ -22,7 +22,8 @@ module SheepAst
       params(
         args: T.any(String, Regexp)
       ).returns(
-        T.proc.params(arg0: T::Array[T.any(String, Regexp)], arg1: Integer).returns([T::Array[T.any(String, Regexp)], T::Boolean])
+        T.proc.params(arg0: T::Array[T.any(String, Regexp)],
+                      arg1: Integer).returns([T::Array[T.any(String, Regexp)], T::Boolean])
       )
     }
     def cmp(*args)
@@ -152,6 +153,8 @@ module SheepAst
     def shaping(line)
       buf = line
 
+      ldebug2 "#{line} will be combined process"
+
       prev = T.let(nil, T.nilable(T::Array[String]))
       @tokenize_stage.each do |blk|
         loop do
@@ -229,5 +232,7 @@ module SheepAst
 
       return inc_count, store_str, options
     end
+
+    alias cmb cmp
   end
 end
