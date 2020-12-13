@@ -33,6 +33,11 @@ task 'tca' do
   sh "#{ENV['RBENV_COM']} bundle exec srb tc -a --ignore=/spec"
 end
 
+desc 'Introduction, Hello world program'
+task 'hello' do
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/hello_world/main.rb"
+end
+
 desc 'Execute example1 program'
 task 'example1' do
   sh 'echo "== Example1: Like Grep program by sheep_ast =="'
@@ -60,4 +65,4 @@ task 'pushd' => 'doc' do
 end
 
 desc 'Before release check'
-task 'prepare' => %w[check tc example1 example1_fail example2 pushd]
+task 'prepare' => %w[check tc hello example1 example1_fail example2 pushd]
