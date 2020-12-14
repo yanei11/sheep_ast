@@ -128,6 +128,11 @@ module SheepAst
       end
     end
 
+    sig { returns Regexp }
+    def split_space_only
+      / |([\t\r\n\f])/
+    end
+
     private
 
     sig { params(line: String).returns(T::Array[String]) }
@@ -136,9 +141,9 @@ module SheepAst
         test = line.scan(/\w+|\W/)
       else
         test = line.split(@split.call)
-        # split erase "\n" so added here
-        test << "\n"
       end
+
+      test.reject!(&:empty?)
       if test.respond_to? :each
         # no process
       elsif test.nil?
