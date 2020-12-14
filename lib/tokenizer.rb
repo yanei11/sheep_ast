@@ -136,6 +136,8 @@ module SheepAst
         test = line.scan(/\w+|\W/)
       else
         test = line.split(@split.call)
+        # split erase "\n" so added here
+        test << "\n"
       end
       if test.respond_to? :each
         # no process
