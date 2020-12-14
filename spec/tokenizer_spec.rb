@@ -35,6 +35,12 @@ abc def
     expect(max_line).to eq(6)
   end
 
+  it 'can tokenize3' do
+    tok.add_token tok.cmp('Hello',' ', 'world', '!')
+    buf, _max_line = tok << 'Hello world!'
+    expect(buf).to eq([['Hello world!']])
+  end
+
   it 'can use tokenizer_rules' do
     tok.add_token tok.cmp('{', '+')
     tok.add_token tok.cmp('<', '>')
@@ -63,15 +69,30 @@ abc def
   end
   it 'can use regexp for ip address by recursive option' do
     oneto255 = /^[1-2][0-5]?[0-5]?$/
-    tok.add_token tok.cmp(oneto255, '.')
-    tok.add_token tok.cmp(/.*\./, /.*\./), recursive: true
-    tok.add_token tok.cmp(/.*\./, oneto255)
-    buf, max_line = tok << '10.10.200.2/32'
+    tok.add_token tok.cmb(oneto255, '.')
+    tok.add_token tok.cmb(/.*\./, /.*\./), recursive: true
+    tok.add_token tok.cmb(/.*\./, oneto255)
+    _buf, _max_line = tok << '10.10.200.2/32'
     tok.dump(:ldebug)
   end
   it 'can use split rule' do
-    tok.use_split_rule { ' ' }
-    buf, max_line = tok << 'abc.a.a. 10.10.200.2/32'
+    tok.use_split_rule { tok.split_space_only }
+    buf, _max_line = tok << 'abc.a.a. 10.10.200.2/32'
     expect(buf).to eq([['abc.a.a.', '10.10.200.2/32']])
+  end
+  it 'can use split rule2' do
+    buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
+    # p buf
+    tok.use_split_rule { tok.split_space_only }
+    buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
+    # p buf
+  end
+  it 'can use split rule2' do
+    buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
+    # p buf
+    tok.use_split_rule { tok.split_space_only }
+    buf, _max_line = tok << "Hello, world. Now 2020/12/14 1:43 \n Hello again"
+    expect(buf).to eq([["Hello,", "world.", "Now", "2020/12/14", "1:43", "\n"], ["Hello", "again"]])
+    # p buf
   end
 end

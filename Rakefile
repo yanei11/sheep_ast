@@ -12,8 +12,10 @@ end
 
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
 task 'doc' do
+  sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
   sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
-      INSTALL.md example/grep_like/Example1.md example/keyword_get/Example2.md"
+      INSTALL.md example/grep_like/Example1.md example/keyword_get/Example2.md\
+      manual/API.md"
 end
 
 desc 'sorbet init'
@@ -29,6 +31,11 @@ end
 desc 'Execute sorbet type check with auto correct'
 task 'tca' do
   sh "#{ENV['RBENV_COM']} bundle exec srb tc -a --ignore=/spec"
+end
+
+desc 'Introduction, Hello world program'
+task 'hello' do
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/hello_world/main.rb"
 end
 
 desc 'Execute example1 program'
@@ -58,4 +65,4 @@ task 'pushd' => 'doc' do
 end
 
 desc 'Before release check'
-task 'prepare' => %w[check tc example1 example1_fail example2 pushd]
+task 'prepare' => %w[check tc hello example1 example1_fail example2 pushd]

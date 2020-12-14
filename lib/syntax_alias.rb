@@ -1,6 +1,7 @@
 # typed: true
 # frozen_string_literal:true
 
+require_relative 'action/qualifier'
 require 'sorbet-runtime'
 
 module SheepAst
@@ -22,6 +23,10 @@ module SheepAst
 
     def A(kind, *para, **kwargs) # rubocop:disable all
       @af.gen(kind, *para, **kwargs)
+    end
+
+    def NEQ(expr, index = 1) # rubocop:disable all
+      Qualifier.new(index, expr)
     end
 
     sig { returns SheepAst::MatchBase }
