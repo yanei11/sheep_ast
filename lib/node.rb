@@ -74,11 +74,7 @@ module SheepAst
     # register action
     sig {
       params(
-        action: ActionBase, qualifier: T.nilable(
-          T.proc.params(a1: AnalyzeData).returns(
-            T::Boolean
-          )
-        )
+        action: ActionBase, qualifier: T.nilable(Qualifier)
       ).void
     }
     def reg_action(action, qualifier = nil)

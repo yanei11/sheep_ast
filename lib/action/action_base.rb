@@ -70,23 +70,22 @@ module SheepAst
 
     sig { params(data: AnalyzeData).returns(T::Boolean) }
     def really_end?(data)
+      ldebug 'really_end'
       if @qualifier.nil?
         lfatal warning
         missing_impl
       else
-        ret = @qualifier.call(data)
+        ret = @qualifier.qualify(data)
         ldebug "Really end? = #{ret}"
         return ret
       end
     end
 
     sig {
-      params(lambda_qa: T.nilable(
-        T.proc.params(a1: AnalyzeData).returns(T.nilable(T::Boolean))
-      )).void
+      params(qualifier: T.nilable(Qualifier)).void
     }
-    def register_qualifier(lambda_qa)
-      @qualifier = lambda_qa
+    def register_qualifier(qualifier)
+      @qualifier = qualifier
     end
 
     sig { returns(T::Boolean) }
