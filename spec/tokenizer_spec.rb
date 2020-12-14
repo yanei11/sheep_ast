@@ -76,15 +76,23 @@ abc def
     tok.dump(:ldebug)
   end
   it 'can use split rule' do
-    tok.use_split_rule { ' ' }
+    tok.use_split_rule { tok.split_space_only }
     buf, _max_line = tok << 'abc.a.a. 10.10.200.2/32'
     expect(buf).to eq([['abc.a.a.', '10.10.200.2/32']])
   end
   it 'can use split rule2' do
     buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
     # p buf
-    tok.use_split_rule { ' ' }
+    tok.use_split_rule { tok.split_space_only }
     buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
+    # p buf
+  end
+  it 'can use split rule2' do
+    buf, _max_line = tok << 'Hello, world. Now 2020/12/14 1:43'
+    # p buf
+    tok.use_split_rule { tok.split_space_only }
+    buf, _max_line = tok << "Hello, world. Now 2020/12/14 1:43 \n Hello again"
+    expect(buf).to eq([["Hello,", "world.", "Now", "2020/12/14", "1:43", "\n"], ["Hello", "again"]])
     # p buf
   end
 end
