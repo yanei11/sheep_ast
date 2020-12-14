@@ -25,7 +25,7 @@ require './lib/analyzer_core'
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.use_split_rule { ' ' }
+  tok.use_split_rule { tok.split_space_only }
 end
 
 core.config_ast('default.main') do |_ast, syn|
