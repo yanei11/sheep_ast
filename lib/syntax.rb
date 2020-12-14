@@ -42,7 +42,7 @@ module SheepAst
       return 1 + depth(array[0])
     end
 
-    def register_syntax(name, action = nil, &blk)
+    def register_syntax(name, action = nil, &blk) # rubocop:disable all
       arrs = blk.call
       if depth(arrs) == 1
         arrs = [arrs]
@@ -52,6 +52,18 @@ module SheepAst
         arrs.each_with_index do |arr, i|
           match = T.must(arr[0..-2])
           action_ = T.must(arr[-1..-1])
+          qualifier = nil
+          if action_[0].instance_of? Qualifier
+            qualifier = action_[0]
+            match = T.must(arr[0..-3])
+            action_ = T.must(arr[-2..-2])
+          end
+
+          if !action_[0].is_a? ActionBase
+            application_error 'provided syntax mismatch class type => Action'
+          end
+
+          action_[0].register_qualifier(qualifier)
           @action = action_
           @ast.add(match, T.cast(action_[0], ActionBase), "group(#{name})-#{i + 1}")
         end

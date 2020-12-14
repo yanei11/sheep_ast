@@ -3,6 +3,18 @@
 In this file, external interface for sheep_ast user is written.
 Listed APIs are currenly supported.
 
+# Environment Variable
+
+sheep_ast has following environment parameter.
+
+## SHEEP_LOG
+
+If it is set DEBUG, emit ldebug result for debugging.
+
+## SHEEP_LET_DISABLE_DEBUG
+
+If this is defined, pry debug session in let's :debug fuction will be always disabled.
+
 
 # AnalyzerCore
 
@@ -240,6 +252,10 @@ _S(*para, **kwargs)
   - _S result.
 - kwargs
   - currently, not used
+
+## NEQ
+
+TBD
 
 ## register_syntax
 
