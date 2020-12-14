@@ -22,7 +22,8 @@ module SheepAst
       params(
         args: T.any(String, Regexp)
       ).returns(
-        T.proc.params(arg0: T::Array[T.any(String, Regexp)], arg1: Integer).returns([T::Array[T.any(String, Regexp)], T::Boolean])
+        T.proc.params(arg0: T::Array[T.any(String, Regexp)],
+                      arg1: Integer).returns([T::Array[T.any(String, Regexp)], T::Boolean])
       )
     }
     def cmp(*args)
@@ -127,6 +128,11 @@ module SheepAst
       end
     end
 
+    sig { returns Regexp }
+    def split_space_only
+      / |([\t\r\n\f])/
+    end
+
     private
 
     sig { params(line: String).returns(T::Array[String]) }
@@ -136,6 +142,8 @@ module SheepAst
       else
         test = line.split(@split.call)
       end
+
+      test.reject!(&:empty?)
       if test.respond_to? :each
         # no process
       elsif test.nil?
@@ -151,6 +159,8 @@ module SheepAst
     sig { params(line: T::Array[String]).returns(T::Array[String]) }
     def shaping(line)
       buf = line
+
+      ldebug2 "#{line} will be combined process"
 
       prev = T.let(nil, T.nilable(T::Array[String]))
       @tokenize_stage.each do |blk|
@@ -229,5 +239,7 @@ module SheepAst
 
       return inc_count, store_str, options
     end
+
+    alias cmb cmp
   end
 end

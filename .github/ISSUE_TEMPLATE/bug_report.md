@@ -10,17 +10,21 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Run script with SHEEP_LOG=DEBUG
-2. Submit logs with reproducing files or script
-3. If raw file or raw expression is not possible, reproducing simplified files or expressions are appreciated
+**Steps to reproduce the issue**
+Please describe procedure
+1. xxx
+2. yyy
+3. zzz
+
+Following log is appreciated to debug
+- Run script with SHEEP_LOG=DEBUG
+- Submit logs with reproducing files
+- If raw file or raw expression is not possible, reproducing simplified files and scrit are appreciated
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
 **Versions (please complete the following information):**
- - OS: [e.g. iOS]
  - ruby version
 
 **Additional context**

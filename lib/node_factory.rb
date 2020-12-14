@@ -31,20 +31,15 @@ module SheepAst
       params(
         matches: T::Array[MatchBase],
         action: ActionBase,
-        group: String,
-        qualifier: T.nilable(
-          T.proc.params(
-            arg0: T::Array[String]
-          ).returns(T::Boolean)
-        )
+        group: String
       ).void
     }
-    def register_nodes(matches, action, group, qualifier = nil)
+    def register_nodes(matches, action, group)
       init
       matches.each do |a_match|
         add(a_match, group)
       end
-      add_action(action, qualifier)
+      add_action(action)
     end
 
     sig { params(match: MatchBase, group: String).void }
@@ -63,16 +58,12 @@ module SheepAst
 
     sig {
       params(
-        action: ActionBase,
-        qualifier: T.nilable(T.proc.params(
-          a1: T::Array[String]
-        ).returns(T::Boolean))
+        action: ActionBase
       ).void
     }
-    def add_action(action, qualifier = nil)
-
+    def add_action(action)
       ldebug "action = #{action.name} is added to node id = #{@__node.my_id}"
-      @__node.reg_action(action, qualifier)
+      @__node.reg_action(action, nil)
     end
 
     sig { void }

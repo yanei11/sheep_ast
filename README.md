@@ -12,7 +12,56 @@ sheep_ast supports following feature:
 - Action  
   At the end of Ast, some action can be assigned. e.g. to store Ast result to some symbol, to compile Ast result to another file, etc. User can define customized methods to the Action class `Let`.  
 
-# Resource
+# Introduction
+
+Using sheep_ast, user can do pattern matching and extract data very easy like following:
+
+```
+# typed: false
+# frozen_string_literal: true
+
+require './lib/analyzer_core'
+
+core = SheepAst::AnalyzerCore.new
+
+core.config_tok do |tok|
+  tok.use_split_rule { tok.split_space_only }
+end
+
+core.config_ast('default.main') do |_ast, syn|
+  syn.within {
+    register_syntax('analyze') {
+      _SS(
+        _S << E(:e, 'Hello') << E(:r, '.*') << E(:e, 'World') <<
+           A(:let, [:record_kv_by_id, :test_H, :_1, :_2])
+      )
+    }
+  }
+end
+
+input = 'Hello sheep_ast World'
+
+core.report(raise: false) {
+  core << input
+}
+
+puts "Input string is #{input}"
+puts 'Extracted result is following:'
+p core.data_store.value(:test_H)
+```
+
+And the result will be
+
+```
+Input string is Hello sheep_ast World
+Extracted result is following:
+{"Hello"=>"sheep_ast"}
+```
+
+So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.
+
+
+# Resources
 - Yard page   
   https://yanei11.github.io/sheep_ast_pages/
 
@@ -24,3 +73,6 @@ sheep_ast supports following feature:
   
 - Example2(Quick start guide2)  
   https://yanei11.github.io/sheep_ast_pages/file.Example2.html
+
+- API  
+  https://yanei11.github.io/sheep_ast_pages/file.API.html

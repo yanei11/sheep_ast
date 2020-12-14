@@ -18,7 +18,8 @@ end
 
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
-    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug, disable: true])) {
+    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }],
+                                 [:debug, { disable: true }])) {
       _SS(
         _S << E(:encr, input_expr, "\n")
       )
