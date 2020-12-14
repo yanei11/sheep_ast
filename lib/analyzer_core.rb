@@ -82,9 +82,10 @@ module SheepAst
       end
     end
 
-    sig { params(expr: String).void }
+    sig { params(expr: String).returns(AnalyzerCore) }
     def <<(expr)
       analyze_expr(expr)
+      return self
     end
 
     sig { params(expr: String).void }
