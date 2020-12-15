@@ -134,7 +134,7 @@ module SheepAst
           # The action is nil.
           # This is the case to continue scanning
           node_info.status = MatchStatus::MatchingProgress
-        elsif !node.my_action.qualifier?
+        elsif !node.my_action.need_qualify?
           # Strategy 2
           # The action is not nil and condition match is not scope
           # This is the case of End AST lookup since there are no another nodes

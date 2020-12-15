@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2020-12-16
+### Added
+- DataStore object can handle multiple value tags
+- Matched expression can be edit at the matched timing by extract: x..y
+- E(:any) expression is added
+### Changed
+- MEQ usage changed
+
 ## [0.2.0] - 2020-12-15
 ### Added
 - Added NEQ syntax for supporting multiple Action shared syntax chain
