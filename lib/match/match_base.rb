@@ -7,6 +7,7 @@ require_relative '../messages'
 require_relative '../sheep_obj'
 require_relative 'match_util'
 require 'sorbet-runtime'
+require 'pry'
 
 module SheepAst
   # Matcher base class
@@ -49,13 +50,15 @@ module SheepAst
       params(
         key: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(T.any(T::Boolean, Symbol, String))
+        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
       ).void
     }
     def initialize(key = '', sym = nil, **options)
       @key = key
       @store_sym = sym
       @options = options
+      @debug = options[:debug]
+      @extract = options[:extract]
       super()
     end
 
@@ -67,14 +70,19 @@ module SheepAst
 
     sig { params(data: AnalyzeData).void }
     def matched(data)
+      expr_ = data.expr
+      if @extract
+        expr_ = expr_[@extract]
+      end
+
       if @store_sym.nil?
         @store_sym = "_#{my_chain_num}".to_sym
       end
 
       if @matched_expr.instance_of?(Array)
-        @matched_expr.push(data.expr)
+        @matched_expr.push(expr_)
       else
-        @matched_expr = data.expr
+        @matched_expr = expr_
       end
     end
 

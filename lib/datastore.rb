@@ -32,10 +32,18 @@ module SheepAst
         usage and application_error 'trying to assing array with key' unless key.nil?
         instance_variable_set(t_sym, []) unless is_defined
         add(t_sym, value)
-      elsif hash_var(sym)
+      elsif hash_l1_var(sym)
         usage and application_error 'trying to assign hash without key' if key.nil?
         instance_variable_set(t_sym, {}) unless is_defined
         add_pair(t_sym, key, value)
+      elsif hash_var(sym)
+        usage and application_error 'trying to assign hash without key' if key.nil?
+        instance_variable_set(t_sym, {}) unless is_defined
+        concat_pair(t_sym, key, value)
+      elsif hash_arr_var(sym)
+        usage and application_error 'trying to assign hash without key' if key.nil?
+        instance_variable_set(t_sym, {}) unless is_defined
+        add_arr_pair(t_sym, key, value)
       else
         unless key.nil?
           lfatal "key is not nil. Given sym should have _H suffix. sym = #{sym}"
@@ -80,9 +88,11 @@ module SheepAst
     def usage
       lfatal 'Usage ========================================='.yellow
       lfatal 'Use following store id depends on the types:'.yellow
-      lfatal '  :exampleId   - Hold single string'.yellow
-      lfatal '  :exampleId_A - Hold Array of string'.yellow
-      lfatal '  :exampleId_H - Hold Key Value pair of string'.yellow
+      lfatal '  :exampleId    - Hold single string'.yellow
+      lfatal '  :exampleId_A  - Hold Array of string'.yellow
+      lfatal '  :exampleId_H  - Hold Key Value pair of string. Array dim is hold to 1'.yellow
+      lfatal '  :exampleId_HL - Hold Key Last one Value pair of strin. One data'.yellow
+      lfatal '  :exampleId_HA - Hold Key Last one Value pair of string, Array dim can be 2'.yellow
       lfatal '================================================'.yellow
     end
 
@@ -115,6 +125,30 @@ module SheepAst
       val(sym).send(:store, key, value)
     end
 
+    sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
+    def concat_pair(sym, key, value)
+      val_ = val(sym).send(:[], key)
+      if val_.nil?
+        val_ = []
+      end
+      if value.is_a? Enumerable
+        val_.concat(value)
+      else
+        val_ << value
+      end
+      val(sym).send(:store, key, val_)
+    end
+
+    sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
+    def add_arr_pair(sym, key, value)
+      val_ = val(sym).send(:[], key)
+      if val_.nil?
+        val_ = []
+      end
+      val_ << value
+      val(sym).send(:store, key, val_)
+    end
+
     # sig { params(sym: Symbol).returns(T::Boolean) }
     # def temporal_var(sym)
     #   return sym.to_s.start_with?('__')
@@ -128,6 +162,16 @@ module SheepAst
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_var(sym)
       return sym.to_s.end_with?('_H')
+    end
+
+    sig { params(sym: Symbol).returns(T::Boolean) }
+    def hash_l1_var(sym)
+      return sym.to_s.end_with?('_HL')
+    end
+
+    sig { params(sym: Symbol).returns(T::Boolean) }
+    def hash_arr_var(sym)
+      return sym.to_s.end_with?('_HA')
     end
   end
 end
