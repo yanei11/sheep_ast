@@ -29,12 +29,18 @@ module SheepAst
         datastore: DataStore,
         store_id: Symbol,
         key_id: Symbol,
-        value_id: Symbol,
+        value_id: T.any(T::Array[Symbol], Symbol),
         options: T.any(Symbol, String, T::Boolean)
       ).void
     }
     def record_kv_by_id(pair, datastore, store_id, key_id, value_id, **options)
-      value = pair[value_id]
+      value = nil
+      if value_id.is_a? Enumerable
+        value = []
+        value_id.each { |elem| value << pair[elem] }
+      else
+        value = pair[value_id]
+      end
       key = pair[key_id]
       namespace = pair[:_namespace]
       ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\

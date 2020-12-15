@@ -46,9 +46,13 @@ module SheepAst
     def add(match, group)
       next_node = @__node.find(match.key)
       if next_node.nil?
-        if @__node.my_action && !@__node.my_action&.qualifier?
-          lfatal @__node.my_action.warning
-          missing_impl 'qualifier is needed for previous action'
+        if @__node.my_action
+          if !@__node.my_action.qualifier?
+            lfatal @__node.my_action.warning
+            missing_impl 'qualifier is needed for previous action'
+          else
+            @__node.my_action.need_qualify
+          end
         end
         next_node = @__node.create(@__chain_num, match, group)
       end

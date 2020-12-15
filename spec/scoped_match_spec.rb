@@ -263,7 +263,11 @@ describe SheepAst::ScopedMatch do
            _S << E(:e, 'namespace', :test3) << E(:r, '.*', :test4) << E(:sc, '{', '}', :test5),
           )
         }
-        register_syntax('analyze', A(:let,[:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], [:show, disable: true], [:debug, disable: true])) {
+        register_syntax('analyze', A(:let,
+                                     [:record_kv_by_id, :ns_test_HL, :test21, :test21, namespace: true], 
+                                     [:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], 
+                                     [:record_kv_by_id, :ns_test_HA, :test21, [:test21, :test21], namespace: true], 
+                                     [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*', :test21) << E(:sc, '{', '}') << E(:e, ';')
           )
@@ -288,8 +292,9 @@ describe SheepAst::ScopedMatch do
         core.analyze_file(['spec/scoped_match_file/test2.cc'])
       }
     }.not_to raise_error
-    # expect( core.data_store.value(:ns_test_H)['abc::bbb::ccc::test'] ).to eq('test')
-    expect(core.data_store.value(:ns_test_H)).to eq({"abc::test3"=>"test3", "abc::bbb::test2"=>"test2", "abc::bbb::ccc::test"=>"test"})
+    expect(core.data_store.value(:ns_test_HL)).to eq({"abc::test3"=>"test3", "abc::bbb::test2"=>"test2", "abc::bbb::ccc::test"=>"test"})
+    expect(core.data_store.value(:ns_test_H)).to eq({"abc::test3"=>["test3"], "abc::bbb::test2"=>["test2"], "abc::bbb::ccc::test"=>["test"]})
+    expect(core.data_store.value(:ns_test_HA)).to eq({"abc::test3"=>[["test3", "test3"]], "abc::bbb::test2"=>[["test2", "test2"]], "abc::bbb::ccc::test"=>[["test", "test"]]})
   end
 
   it 'validates fail at eof' do
