@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - DataStore object can handle multiple value tags
 - Matched expression can be edit at the matched timing by extract: x..y
+- E(:any) expression is added
 ### Changed
 - MEQ usage changed
 
