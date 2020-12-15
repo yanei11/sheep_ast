@@ -15,7 +15,13 @@ module SheepAst
   class RegexMatch < MatchBase
     extend T::Sig
 
-    sig { params(key: String, sym: T.nilable(Symbol), options: T.nilable(T::Boolean)).returns(RegexMatch) }
+    sig {
+      params(
+        key: String,
+        sym: T.nilable(Symbol),
+        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+      ).returns(RegexMatch)
+    }
     def new(key, sym = nil, **options)
       return RegexMatch.new(key, sym, **options)
     end

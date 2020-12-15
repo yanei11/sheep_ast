@@ -54,9 +54,9 @@ module SheepAst
       E(:e, '//')
     end
 
-    sig { returns SheepAst::MatchBase }
-    def any
-      E(:r, '.*')
+    sig { params(tag: T.nilable(Symbol)).returns SheepAst::MatchBase }
+    def any(tag = nil)
+      tag.nil? ? E(:r, '.*') : E(:r, '.*', tag)
     end
   end
 end
