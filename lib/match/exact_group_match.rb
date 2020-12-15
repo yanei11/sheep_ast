@@ -13,8 +13,11 @@ module SheepAst
     attr_accessor :keys
 
     sig {
-      params(keys: T::Array[String],
-             sym: T.nilable(Symbol), options: T.nilable(T::Boolean)).returns(ExactGroupMatch)
+      params(
+        keys: T::Array[String],
+        sym: T.nilable(Symbol),
+        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+      ).returns(ExactGroupMatch)
     }
     def new(keys, sym = nil, **options)
       ins = ExactGroupMatch.new(keys.inspect.to_s, sym, **options)

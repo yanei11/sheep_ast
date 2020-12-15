@@ -40,7 +40,7 @@ describe SheepAst::Qualifier do
       syn.within {
         register_syntax('analyze') {
           _SS(
-           _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(:na) << NEQ('d'),
+           _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << NEQ('d')  << A(:na),
            _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << E(:e, 'd') << E(:e, 'e') << A(:na)
           )
         }

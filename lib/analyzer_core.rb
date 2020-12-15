@@ -12,6 +12,7 @@ require_relative 'stage_manager'
 require_relative 'fof'
 require 'rainbow/refinement'
 require 'optparse'
+require 'pry'
 
 using Rainbow
 
@@ -126,6 +127,7 @@ module SheepAst
       end
       method(logs).call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
       dump(logs)
+      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil?
       if options[:raise]
         raise
       end
