@@ -65,6 +65,7 @@ module SheepAst
       end
 
       hash[:_namespace] = stack
+      hash[:_raw_line] = data.raw_line
       return hash
     end
 
