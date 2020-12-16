@@ -35,27 +35,58 @@ module SheepAst
       ).void
     }
     def redirect(pair, datastore, key, range = 1..-2, **options)
-      chunk = pair[key]
-      application_error 'specified key did not hit' if chunk.nil?
+      chunk = nil
+      line_from_en  = options[:redirect_line_from]
+      line_to_en  = options[:redirect_line_to]
 
-      chunk2 = chunk[range]
-      application_error 'cannot redirect exp for no Array' unless chunk2.instance_of?(Array)
+      line_matched = options[:redirect_line_matched]
 
-      ldebug "received expr = #{chunk.inspect}, pair = #{pair.inspect}, key = #{key.inspect}", :blue
-      ldebug "redirect expr = #{chunk2.inspect}", :blue
-      ldebug "options = #{options.inspect}", :blue
+      if line_matched
+        data = pair[:_data]
+        start_match = get_first_match(data)
+        end_match = get_last_match(data)
+        start_line = start_match.start_line
+        end_line = end_match.end_line
+        lprint "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+        range = start_line..end_line
+        chunk = data.file_info&.tokenized[range]
+      elsif line_from_en && line_to_en
+        data = pair[:_data]
+        start_match = get_match(data, line_from_en)
+        end_match = get_match(data, line_to_en)
+        start_line = start_match.start_line
+        end_line = end_match.end_line
+        lprint "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+        range = start_line..end_line
+        chunk = data.file_info&.tokenized[range]
+      else
+        chunk = pair[key]
+        application_error 'specified key did not hit' if chunk.nil?
 
-      ns_t = options[:namespace]
+        chunk2 = chunk[range]
+        application_error 'cannot redirect exp for no Array' unless chunk2.instance_of?(Array)
 
-      if ns_t.instance_of? Symbol
-        ns_t = pair[ns_t]
-        if ns_t.nil?
-          lfatal "namespace symbol cannot be found in the given data => #{pair.inspect}"
-          apprecation_error
+        ldebug "received expr = #{chunk.inspect}, pair = #{pair.inspect}, key = #{key.inspect}", :blue
+        ldebug "redirect expr = #{chunk2.inspect}", :blue
+        ldebug "options = #{options.inspect}", :blue
+
+        ns_t = options[:namespace]
+
+        if ns_t.instance_of? Symbol
+          ns_t = pair[ns_t]
+          if ns_t.nil?
+            lfatal "namespace symbol cannot be found in the given data => #{pair.inspect}"
+            apprecation_error
+          end
         end
+
+        ldebug "namespace is #{ns_t.inspect}", :blue
       end
 
-      ldebug "namespace is #{ns_t.inspect}", :blue
+      if options[:dry_run]
+        lprint "To be redirect : #{chunk}"
+        return
+      end
 
       save_req = SaveRequest.new(
         chunk: chunk2,

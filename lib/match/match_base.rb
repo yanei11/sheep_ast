@@ -25,6 +25,18 @@ module SheepAst
     attr_accessor :matched_expr
 
     sig { returns(Integer) }
+    attr_accessor :start_line
+
+    sig { returns(Integer) }
+    attr_accessor :start_index
+
+    sig { returns(Integer) }
+    attr_accessor :end_line
+
+    sig { returns(Integer) }
+    attr_accessor :end_index
+
+    sig { returns(Integer) }
     attr_accessor :node_id
 
     sig { returns(T.nilable(Symbol)) }
@@ -84,6 +96,18 @@ module SheepAst
       else
         @matched_expr = expr_
       end
+      start_info_set(data.file_info&.line, data.file_info&.index)
+      end_info_set(data.file_info&.line, data.file_info&.index)
+    end
+
+    def start_info_set(line, index)
+      @start_line = line
+      @start_index = index
+    end
+
+    def end_info_set(line, index)
+      @end_line = line
+      @end_index = index
     end
 
     sig { params(data: AnalyzeData).returns(T.nilable(T::Boolean)) }
