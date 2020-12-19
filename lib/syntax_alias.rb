@@ -2,6 +2,7 @@
 # frozen_string_literal:true
 
 require_relative 'action/qualifier'
+require_relative 'match/index_condition'
 require 'sorbet-runtime'
 
 module SheepAst
@@ -26,7 +27,7 @@ module SheepAst
     end
 
     def NEQ(expr, index = 1) # rubocop:disable all
-      Qualifier.new(index, expr)
+      Qualifier.new(expr, offset: index)
     end
 
     sig { returns SheepAst::MatchBase }
@@ -57,6 +58,10 @@ module SheepAst
     sig { params(tag: T.nilable(Symbol)).returns SheepAst::MatchBase }
     def any(tag = nil)
       tag.nil? ? E(:r, '.*') : E(:r, '.*', tag)
+    end
+
+    def idx(*par, **options)
+      IndexCondition.new(*par, **options)
     end
   end
 end

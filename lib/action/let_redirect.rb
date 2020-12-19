@@ -29,73 +29,103 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        key: Symbol,
+        key: T.nilable(Symbol),
         range: Range,
         options: T.any(Symbol, String, T::Boolean)
       ).void
     }
-    def redirect(pair, datastore, key, range = 1..-2, **options)
+    def redirect(pair, datastore, key = nil, range = 1..-2, **options)
       chunk = nil
-      line_from_en  = options[:redirect_line_from]
-      line_to_en  = options[:redirect_line_to]
-
+      line_from_en = options[:redirect_line_from]
+      line_to_en = options[:redirect_line_to]
       line_matched = options[:redirect_line_matched]
+      data = pair[:_data]
 
       if line_matched
-        data = pair[:_data]
-        start_match = get_first_match(data)
-        end_match = get_last_match(data)
-        start_line = start_match.start_line
-        end_line = end_match.end_line
-        lprint "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
-        range = start_line..end_line
-        chunk = data.file_info&.tokenized[range]
+        chunk = _redirect_line_matched(data)
       elsif line_from_en && line_to_en
-        data = pair[:_data]
-        start_match = get_match(data, line_from_en)
-        end_match = get_match(data, line_to_en)
-        start_line = start_match.start_line
-        end_line = end_match.end_line
-        lprint "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
-        range = start_line..end_line
-        chunk = data.file_info&.tokenized[range]
+        chunk = _redirect_line_from_to(data)
       else
-        chunk = pair[key]
-        application_error 'specified key did not hit' if chunk.nil?
-
-        chunk2 = chunk[range]
-        application_error 'cannot redirect exp for no Array' unless chunk2.instance_of?(Array)
-
-        ldebug "received expr = #{chunk.inspect}, pair = #{pair.inspect}, key = #{key.inspect}", :blue
-        ldebug "redirect expr = #{chunk2.inspect}", :blue
-        ldebug "options = #{options.inspect}", :blue
-
-        ns_t = options[:namespace]
-
-        if ns_t.instance_of? Symbol
-          ns_t = pair[ns_t]
-          if ns_t.nil?
-            lfatal "namespace symbol cannot be found in the given data => #{pair.inspect}"
-            apprecation_error
-          end
-        end
-
-        ldebug "namespace is #{ns_t.inspect}", :blue
+        chunk = _redirect_line_enclosed(T.must(key), pair, range)
       end
 
-      if options[:dry_run]
-        lprint "To be redirect : #{chunk}"
-        return
-      end
+      ldebug "received expr = #{chunk.inspect}, "\
+        "pair = #{pair.inspect}, key = #{key.inspect}", :blue
+      ldebug "options = #{options.inspect}", :blue
+      ns_t = _ns_get(pair, options[:namespace])
+
+      ldebug "To be redirect : #{chunk}" if options[:debug]
+      return if options[:dry_run]
 
       save_req = SaveRequest.new(
-        chunk: chunk2,
+        chunk: chunk,
         ast_include: options[:ast_include],
         ast_exclude: options[:ast_exclude],
         namespace: ns_t
       )
 
       @data.save_request = save_req
+    end
+
+    sig { params(data: AnalyzeData).returns(T::Array[T::Array[String]]) }
+    def _redirect_line_matched(data)
+      start_match = get_first_match(data)
+      end_match = get_last_match(data)
+      start_line = start_match.start_line
+      end_line = end_match.end_line
+      ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+      range = start_line..end_line
+      return data.file_info&.tokenized&.[](range)
+    end
+
+    sig { params(data: AnalyzeData).returns(T::Array[T::Array[String]]) }
+    def _redirect_line_from_to(data)
+      start_match = get_match(data, line_from_en)
+      end_match = get_match(data, line_to_en)
+      start_line = start_match.start_line
+      end_line = end_match.end_line
+      ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+      range = start_line..end_line
+      return data.file_info&.tokenized&.[](range)
+    end
+
+    sig {
+      params(
+        key: Symbol,
+        pair: T::Hash[Symbol, T::Array[String]],
+        range: Range
+      ).returns(T::Array[T::Array[String]])
+    }
+    def _redirect_line_enclosed(key, pair, range)
+      chunk = pair[key]
+      application_error 'specified key did not hit' if chunk.nil?
+
+      chunk = chunk[range]
+      application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)
+
+      chunk = [chunk]
+      return chunk
+    end
+
+    sig {
+      params(
+        pair: T::Hash[Symbol, T::Array[String]],
+        name: T.nilable(T.any(Symbol, String))
+      ).returns(T.nilable(String))
+    }
+    def _ns_get(pair, name)
+      return nil if name.nil?
+
+      if name.instance_of? Symbol
+        ns_t = pair[name]
+        if ns_t.nil?
+          lfatal "namespace symbol cannot be found in the given data => #{pair.inspect}"
+          apprecation_error
+        end
+      end
+
+      ldebug "namespace is #{ns_t.inspect}", :blue
+      return ns_t
     end
   end
 end

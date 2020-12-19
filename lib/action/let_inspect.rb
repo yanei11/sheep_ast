@@ -29,9 +29,9 @@ module SheepAst
     }
     def show(pair, datastore, **options)
       if !options[:disable]
-        lprint "pair = #{pair.inspect}", :lightgreen
-        lprint "datastore = #{datastore.inspect}", :lightgreen
-        lprint "data = #{@data.inspect}", :lightgreen
+        ldebug "pair = #{pair.inspect}", :lightgreen
+        ldebug "datastore = #{datastore.inspect}", :lightgreen
+        ldebug "data = #{@data.inspect}", :lightgreen
       end
     end
 
@@ -66,7 +66,7 @@ module SheepAst
     def _do_pry(**options)
       @count = 1 if @count.nil?
       @count += 1
-      lprint "Entering debug mode, @count = #{@count}"
+      ldebug "Entering debug mode, @count = #{@count}"
       return true
     end
   end

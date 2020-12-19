@@ -19,7 +19,7 @@ module SheepAst
       params(
         key: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+        options: T.untyped
       ).returns(ExactMatch)
     }
     def new(key, sym = nil, **options)

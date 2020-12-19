@@ -17,12 +17,20 @@ module SheepAst
     sig { returns(String) }
     attr_accessor :end_expr
 
+    sig { returns(T::Array[T.any(String, Regexp)]) }
+    attr_accessor :end_cond
+
     sig {
       params(
         start_expr: String,
         end_expr: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+        options: T.nilable(
+          T.any(
+            T::Boolean, Symbol, String, Range,
+            T::Array[T.any(String, Regexp)]
+          )
+        )
       ).returns(ScopedMatch)
     }
     def new(start_expr, end_expr, sym = nil, **options)
@@ -40,7 +48,7 @@ module SheepAst
       ret = false
       application_error('called when sem == 0') if @sem.zero?
 
-      if match_end(@end_expr, key)
+      if match_end(@end_expr, key) && additional_end_cond(data)
         if sem_get == 1
           ret = true
           sem_set 0
