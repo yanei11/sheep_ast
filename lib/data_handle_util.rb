@@ -9,6 +9,8 @@ module SheepAst
   # This class is for the action to recprd the result
   module DataIndexHandle
     extend T::Sig
+    include Log
+    include Exception
 
     sig {
       params(
@@ -32,14 +34,17 @@ module SheepAst
       return expr
     end
 
-    def expr_get(tokenized, line, offset, max_line, index, newline) # rubocop:disable all
+    def expr_get(tokenized, line, offset, max_line, index, newline)
       line_ = line
       index_no = offset + index
       expr_ = nil
 
       while line_ < max_line
         line_expr = tokenized[line_]
-        expr_ = nil and break if line_expr.nil?
+        if line_expr.nil?
+          expr_ = nil
+          break
+        end
 
         expr_ = line_expr[index_no]
         if newline.nil? && expr_ == "\n"

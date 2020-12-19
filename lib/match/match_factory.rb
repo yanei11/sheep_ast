@@ -50,7 +50,7 @@ module SheepAst
         when :scr  then @scoped_regex_match.new(*para, **kwargs)
         when :enc  then @enclosed_match.new(*para, **kwargs)
         when :encr then @enclosed_regex_match.new(*para, **kwargs)
-        when :any  then @regex_match.new(*['.*', *para], **kwargs)
+        when :any  then @regex_match.new('.*', *para, **kwargs)
         else
           application_error 'unknown match'
         end

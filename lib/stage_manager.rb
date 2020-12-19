@@ -11,7 +11,7 @@ using Rainbow
 
 module SheepAst
   # TBD
-  class Stage
+  class Stage # rubocop: disable all
     extend T::Sig
     extend T::Helpers
     include Exception
@@ -187,8 +187,9 @@ module SheepAst
       @match_symbol_array = []
     end
   end
+
   # TBD
-  class StageManager
+  class StageManager # rubocop: disable all
     extend T::Sig
     extend T::Helpers
     include Exception

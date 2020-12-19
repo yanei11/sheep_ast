@@ -127,7 +127,7 @@ module SheepAst
       end
       method(logs).call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
       dump(logs)
-      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil?
+      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil? # rubocop: disable all
       if options[:raise]
         raise
       end
@@ -169,6 +169,5 @@ module SheepAst
         @include_handler.register_exclude_dir_path(item)
       end
     end
-
   end
 end
