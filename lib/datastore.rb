@@ -134,6 +134,7 @@ module SheepAst
     def dump(id = nil)
       ldump dump_data(id).inspect
     end
+
     private
 
     sig { params(sym: Symbol).returns(T.untyped) }
