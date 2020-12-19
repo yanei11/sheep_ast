@@ -5,6 +5,7 @@ require_relative '../generation'
 require_relative '../exception'
 require_relative '../messages'
 require_relative '../sheep_obj'
+require_relative '../data_handle_util'
 require_relative 'match_util'
 require 'sorbet-runtime'
 require 'pry'
@@ -62,7 +63,7 @@ module SheepAst
       params(
         key: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+        options: T.untyped
       ).void
     }
     def initialize(key = '', sym = nil, **options)
@@ -71,6 +72,9 @@ module SheepAst
       @options = options
       @debug = options[:debug]
       @extract = options[:extract]
+      @head = options[:head]
+      @start_add_cond = options[:index_cond]
+      @end_add_cond = options[:end_cond]
       super()
     end
 
@@ -131,17 +135,44 @@ module SheepAst
       end
     end
 
+    def additional_cond(data)
+      if @options[:at_head]
+        if data.file_info.index != 1
+          ldebug 'at head : false'
+          return false
+        end
+        ldebug 'at head : true'
+      end
+
+      ret = iterate_cond(data, @start_add_cond)
+      ldebug "additional_cond : #{ret.inspect}"
+      return ret
+    end
+
+    def additional_end_cond(data)
+      ret = iterate_cond(data, @end_add_cond)
+      ldebug "additional_end_cond : #{ret.inspect}"
+      return ret
+    end
+
+    def iterate_cond(data, cond)
+      return true if cond.nil?
+
+      if cond.is_a? Enumerable
+        cond.each do |c|
+          ret = c.validate(data)
+          return false if !ret
+        end
+      else
+        ret = cond.validate(data)
+        return false if !ret
+      end
+
+      return true
+    end
+
     sig { abstract.void }
     def init; end
-
-    # sig { params(data: AnalyzeData).void }
-    # def matched_end(data)
-    #   if @store_sym.nil?
-    #     return
-    #   end
-
-    #   # data.data[@store_sym] = data.expr
-    # end
 
     sig { abstract.returns(MatchKind) }
     def kind?; end

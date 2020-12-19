@@ -8,7 +8,7 @@ require 'action/qualifier'
 
 describe SheepAst::Qualifier do
   it 'work' do
-    qual = SheepAst::Qualifier.new(5, 'abc')
+    qual = SheepAst::Qualifier.new('abc', offset: 5)
     data = SheepAst::AnalyzeData.new
     finfo = SheepAst::FileInfo.new
     data.file_info = finfo

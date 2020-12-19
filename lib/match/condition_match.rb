@@ -47,8 +47,9 @@ module SheepAst
       @end_index = data.file_info&.index
     end
 
-    def start_info_set(line,index); end
-    def end_info_set(line,index); end
+    def start_info_set(line, index); end
+
+    def end_info_set(line, index); end
 
     sig { override.void }
     def init

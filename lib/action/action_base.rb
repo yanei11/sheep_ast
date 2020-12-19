@@ -6,6 +6,7 @@ require_relative '../generation'
 require_relative '../exception'
 require_relative '../log'
 require_relative '../factory_base'
+require_relative '../data_handle_util'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
 

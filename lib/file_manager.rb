@@ -125,6 +125,9 @@ module SheepAst
           if !@file_info.file.nil?
             ldebug 'EOF'.red
             expr = '__sheep_eof__'
+            # else
+            # ldebug 'EOC'.red
+            # expr = '__sheep_eoc__'
           end
         else
           ldebug 'Bug route?'
@@ -135,7 +138,7 @@ module SheepAst
 
       if !rec
         ldebug "index = #{@file_info.index} is input"
-        ldebug "feed expr returned #{expr.inspect}".red
+        ldebug "feed expr returned #{expr.inspect} at #{@file_info.line}:#{@file_info.index}".red
       end
 
       return expr
@@ -197,13 +200,14 @@ module SheepAst
       @file_info.tokenized = @tokenizer.tokenize(file)
     end
 
-    sig { params(chunk: T::Array[String]).void }
+    sig { params(chunk: T::Array[T::Array[String]]).void }
     def register_next_chunk(chunk)
-      # file = @file_info.file
+      file = @file_info.file
       save_info
-      # @file_info.file = file
-      @file_info.tokenized = [chunk]
-      @file_info.max_line = 1
+      @file_info.file = file
+      @file_info.file = 'no file info found' if file.nil?
+      @file_info.tokenized = chunk
+      @file_info.max_line = chunk.size
     end
 
     sig { params(expr: String).void }
@@ -241,8 +245,11 @@ module SheepAst
 
       @stage_manager.restore_info
 
+      # analyze_data shall be init here
+      @analyze_data.init
+
       ldebug "Resumed info process!! resume_stack = #{@resume_info.length}"\
-        " for info = #{info.inspect}".color(:indianred)
+        " for info = #{info.inspect}, for analyze_data = #{@analyze_data.inspect}".color(:indianred)
       return info
     end
 

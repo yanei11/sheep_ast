@@ -34,8 +34,11 @@ describe SheepAst::DataStore do
          A(
            :let,
            [:fff, :a], [:fff, :b],
-           [:record_kv_by_id, :test_H, :test5, :test1_A],
-           [:record_kv_by_id, :test_H, :test6, :test1_A]
+           [:record_kv, :test_H, :test5, :test1_A],
+           [:record_kv, :test_H, :test6, :test1_A],
+           [:record, :test, :test1_A],
+           [:record_a, :test_A, :test1_A],
+           [:record_a, :test_A, :test1_A]
          )
        ) {
          _S << E(:e, 'f', :test1_A) << E(:e, 'd', :test1_A) << E(:e, 'aa', :test3) << E(:e, 'ddd', :test4) <<
@@ -58,5 +61,6 @@ describe SheepAst::DataStore do
      ddd c d"
      }.not_to raise_error
      expect(core.data_store.value(:test_H)['d']).to eq ['f', 'd']
+     p core.data_store.dump_data
    end
 end
