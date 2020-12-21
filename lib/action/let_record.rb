@@ -12,6 +12,24 @@ module SheepAst
     extend T::Sig
     extend T::Helpers
 
+    sig {
+      params(
+        pair: T::Hash[Symbol, T::Array[String]],
+        datastore: DataStore,
+        store_id: Symbol,
+        k_or_v: T.any(T::Array[Symbol], Symbol),
+        value: T.nilable(T.any(T::Array[Symbol], Symbol)),
+        options: T.untyped
+      ).void
+    }
+    def record(pair, datastore, store_id, k_or_v, value = nil, **options)
+      if value.nil?
+        record_v(pair, datastore, store_id, k_or_v, **options)
+      else
+        record_kv(pair, datastore, store_id, k_or_v, value, **options)
+      end
+    end
+
     # Record given key and value expression block to data store
     #
     # Syntax:
@@ -29,7 +47,7 @@ module SheepAst
         store_id: Symbol,
         key_id: Symbol,
         value_id: T.any(T::Array[Symbol], Symbol),
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def record_kv_by_id(pair, datastore, store_id, key_id, value_id, **options)
@@ -62,33 +80,10 @@ module SheepAst
         datastore: DataStore,
         store_id: Symbol,
         value_id: T.any(T::Array[Symbol], Symbol),
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
-    def record(pair, datastore, store_id, value_id, **options)
-      value = nil
-      if value_id.is_a? Enumerable
-        value = []
-        value_id.each { |elem| value << pair[elem] }
-      else
-        value = pair[value_id]
-      end
-      ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
-        "pair_data => '#{pair}', value_id => '#{value_id}', "\
-        "value => '#{value}'"
-      datastore.assign(store_id, value)
-    end
-
-    sig {
-      params(
-        pair: T::Hash[Symbol, T::Array[String]],
-        datastore: DataStore,
-        store_id: Symbol,
-        value_id: T.any(T::Array[Symbol], Symbol),
-        options: T.any(Symbol, String, T::Boolean)
-      ).void
-    }
-    def record_a(pair, datastore, store_id, value_id, **options)
+    def record_v(pair, datastore, store_id, value_id, **options)
       value = nil
       if value_id.is_a? Enumerable
         value = []

@@ -24,8 +24,7 @@ module SheepAst
 
     sig { params(expr1: String, expr2: String).returns(T.nilable(T::Boolean)) }
     def match_end(expr1, expr2)
-      options = options_get
-      if options[:regex_end]
+      if @options[:regex_end]
         reg_match(expr1, expr2)
       else
         expr1 == expr2

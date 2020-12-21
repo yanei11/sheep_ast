@@ -4,6 +4,9 @@
 require_relative 'log'
 require_relative 'exception'
 require 'sorbet-runtime'
+require 'rainbow/refinement'
+
+using Rainbow
 
 module SheepAst
   # TBD
@@ -75,7 +78,7 @@ module SheepAst
       add { |line, num|
         args, t_token = blk.call(line, num)
         t_token = token if !token.nil? && t_token
-        [args, t_token, options]
+        [args, t_token, options, token]
       }
     end
 
@@ -117,20 +120,29 @@ module SheepAst
 
     def dump(logs)
       logf = method(logs)
+      logf.call('')
+      logf.call('## Tokenizer information start ##')
       @tokenize_stage.each_with_index do |blk, idx|
-        args, _a, options = blk.call(nil, 0)
-        if options[:recursive]
-          logf.call("stage#{idx + 1} : ___\\  #{args.inspect}, #{options.inspect}")
-          logf.call('        |_______|')
-        else
-          logf.call("stage#{idx + 1} : #{args.inspect}, #{options.inspect}")
-        end
+        args, _, options, token = blk.call(nil, 0)
+        token = args.join if !token
+        dump_part(idx, args, token, options, logf)
+        logf.call('        |_______|') if options[:recursive]
       end
+      logf.call('')
+    end
+
+    def dump_part(idx, args, token, options, logf)
+      logf.call("stage#{idx + 1} :___\\ #{args.inspect.yellow} is combined to "\
+                "#{token.inspect.red} with options = #{options.inspect}")
     end
 
     sig { returns Regexp }
     def split_space_only
       / |([\t\r\n\f])/
+    end
+
+    def token_rule(*par)
+      add_token cmb(*par), yield
     end
 
     private

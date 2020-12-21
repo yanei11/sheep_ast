@@ -17,20 +17,12 @@ module SheepAst
     sig { returns(String) }
     attr_accessor :end_expr
 
-    sig { returns(T::Array[T.any(String, Regexp)]) }
-    attr_accessor :end_cond
-
     sig {
       params(
         start_expr: String,
         end_expr: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(
-          T.any(
-            T::Boolean, Symbol, String, Range,
-            T::Array[T.any(String, Regexp)]
-          )
-        )
+        options: T.untyped
       ).returns(ScopedMatch)
     }
     def new(start_expr, end_expr, sym = nil, **options)

@@ -24,7 +24,7 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def show(pair, datastore, **options)
@@ -49,7 +49,7 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def debug(pair, datastore, **options)
@@ -60,7 +60,7 @@ module SheepAst
 
     sig {
       params(
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def _do_pry(**options)

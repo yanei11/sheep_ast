@@ -19,7 +19,7 @@ module SheepAst
       params(
         exprs: T.any(String, Regexp, T::Array[T.any(String, Regexp)]),
         not_: T::Boolean,
-        options: T.nilable(T.any(T::Boolean, Symbol, String, Range, Integer))
+        options: T.untyped
       ).void
     }
     def initialize(exprs, not_ = true, **options) # rubocop:disable all

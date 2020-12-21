@@ -88,7 +88,7 @@ describe SheepAst::ScopedMatch do
       syn.register_syntax(
         'match', 
         syn.A(:let,
-               [:record_kv_by_id, :test_H, :test, :test],
+               [:record, :test_H, :test, :test],
                [:redirect, :test, 1..-2, namespace: 'test', ast_include: 'test']
               )
       ) {
@@ -264,9 +264,9 @@ describe SheepAst::ScopedMatch do
           )
         }
         register_syntax('analyze', A(:let,
-                                     [:record_kv_by_id, :ns_test_HL, :test21, :test21, namespace: true], 
-                                     [:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], 
-                                     [:record_kv_by_id, :ns_test_HA, :test21, [:test21, :test21], namespace: true], 
+                                     [:record, :ns_test_HL, :test21, :test21, namespace: true], 
+                                     [:record, :ns_test_H, :test21, :test21, namespace: true], 
+                                     [:record, :ns_test_HA, :test21, [:test21, :test21], namespace: true], 
                                      [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*', :test21) << E(:sc, '{', '}') << E(:e, ';')
@@ -349,8 +349,8 @@ describe SheepAst::ScopedMatch do
     end
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register_syntax('match', syn.A(:let, [:record, :test, :_1])) {
-        syn._S << syn.E(:enc, 'a', "\n", end_condition: ['i', 'j', 'k'])
+      syn.register_syntax('match', syn.A(:let, [:record, :test_A, :_1])) {
+        syn._S << syn.E(:enc, 'a', "\n", end_cond: syn.idx('i', 'j', 'k'))
       }
     end
 
@@ -367,10 +367,10 @@ describe SheepAst::ScopedMatch do
     expect {
       core.report(raise: true ) {
       core << "a b c d
-               e f g h
+               a f g h
                i j k" << '__sheep_eof__'
     }
     }.not_to raise_error
-    core.data_store.dump(:test)
+    core.data_store.dump(:test_A)
   end
 end
