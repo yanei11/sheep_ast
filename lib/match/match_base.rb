@@ -54,11 +54,6 @@ module SheepAst
       @kind_name = name
     end
 
-    sig { returns T.nilable(T::Hash[Symbol, T.any(T::Boolean, Symbol, String)]) }
-    def options_get
-      return @options
-    end
-
     sig {
       params(
         key: String,

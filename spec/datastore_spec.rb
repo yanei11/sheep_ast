@@ -34,11 +34,11 @@ describe SheepAst::DataStore do
          A(
            :let,
            [:fff, :a], [:fff, :b],
-           [:record_kv, :test_H, :test5, :test1_A],
-           [:record_kv, :test_H, :test6, :test1_A],
+           [:record, :test_H, :test5, :test1_A],
+           [:record, :test_H, :test6, :test1_A],
            [:record, :test, :test1_A],
-           [:record_a, :test_A, :test1_A],
-           [:record_a, :test_A, :test1_A]
+           [:record, :test_A, :test1_A],
+           [:record, :test_A, :test1_A]
          )
        ) {
          _S << E(:e, 'f', :test1_A) << E(:e, 'd', :test1_A) << E(:e, 'aa', :test3) << E(:e, 'ddd', :test4) <<

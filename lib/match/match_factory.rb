@@ -38,19 +38,19 @@ module SheepAst
       # @regex_enlosed_match = RegexEnclosedMatch.new
     end
 
-    sig { params(kind: Symbol, para: T.untyped, kwargs: T.untyped).returns(MatchBase) }
-    def gen(kind, *para, **kwargs) # rubocop: disable all
-      ldebug "kind = #{kind.inspect}, para = #{para.inspect}, kwargs = #{kwargs.inspect}"
+    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(MatchBase) }
+    def gen(kind, *para, **options) # rubocop: disable all
+      ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
       match =
         case kind
-        when :e    then @exact_match.new(*para, **kwargs)
-        when :r    then @regex_match.new(*para, **kwargs)
-        when :eg   then @exact_group_match.new(*para, **kwargs)
-        when :sc   then @scoped_match.new(*para, **kwargs)
-        when :scr  then @scoped_regex_match.new(*para, **kwargs)
-        when :enc  then @enclosed_match.new(*para, **kwargs)
-        when :encr then @enclosed_regex_match.new(*para, **kwargs)
-        when :any  then @regex_match.new('.*', *para, **kwargs)
+        when :e    then @exact_match.new(*para, **options)
+        when :r    then @regex_match.new(*para, **options)
+        when :eg   then @exact_group_match.new(*para, **options)
+        when :sc   then @scoped_match.new(*para, **options)
+        when :scr  then @scoped_regex_match.new(*para, **options)
+        when :enc  then @enclosed_match.new(*para, **options)
+        when :encr then @enclosed_regex_match.new(*para, **options)
+        when :any  then @regex_match.new('.*', *para, **options)
         else
           application_error 'unknown match'
         end

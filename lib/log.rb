@@ -153,7 +153,7 @@ module SheepAst
         when 'FATAL'
           sevr = T.unsafe('F').magenta
         when 'WARN'
-          sevr = T.unsafe('W').black.bg(:yellow)
+          sevr = T.unsafe('W').color(:indianred)
         when 'INFO'
           sevr = T.unsafe('I')
         else

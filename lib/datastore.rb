@@ -176,11 +176,6 @@ module SheepAst
       val(sym).send(:store, key, val_)
     end
 
-    # sig { params(sym: Symbol).returns(T::Boolean) }
-    # def temporal_var(sym)
-    #   return sym.to_s.start_with?('__')
-    # end
-
     sig { params(sym: Symbol).returns(T::Boolean) }
     def array_var(sym)
       return sym.to_s.end_with?('_A')

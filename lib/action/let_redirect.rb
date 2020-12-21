@@ -39,6 +39,7 @@ module SheepAst
       line_from_en = options[:redirect_line_from]
       line_to_en = options[:redirect_line_to]
       line_matched = options[:redirect_line_matched]
+      line_range = options[:redirect_line_range]
       data = pair[:_data]
 
       if line_matched
@@ -48,13 +49,14 @@ module SheepAst
       else
         chunk = _redirect_line_enclosed(T.must(key), pair, range)
       end
+      chunk = _redirect_line_range(chunk, line_range)
 
       ldebug "received expr = #{chunk.inspect}, "\
         "pair = #{pair.inspect}, key = #{key.inspect}", :blue
       ldebug "options = #{options.inspect}", :blue
       ns_t = _ns_get(pair, options[:namespace])
 
-      ldebug "To be redirect : #{chunk}" if options[:debug]
+      ldump "To be redirect : #{chunk}" if options[:debug]
       return if options[:dry_run]
 
       save_req = SaveRequest.new(
@@ -87,6 +89,20 @@ module SheepAst
       ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
       range = start_line..end_line
       return data.file_info&.tokenized&.[](range)
+    end
+
+    sig {
+      params(
+        chunk: T::Array[T::Array[String]],
+        range: T.nilable(Range)
+      ).returns(
+        T::Array[T::Array[String]]
+      )
+    }
+    def _redirect_line_range(chunk, range)
+      return chunk if range.nil?
+
+      return chunk[range]
     end
 
     sig {

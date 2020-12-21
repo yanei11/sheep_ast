@@ -14,7 +14,7 @@ describe SheepAst::IndexCondition do
     end
 
     core.config_ast('default.test') do |ast, syn, mf, af|
-      syn.register_syntax('match', syn.A(:let, [:record_a, :test_A, :_1])) {
+      syn.register_syntax('match', syn.A(:let, [:record, :test_A, :_1])) {
         syn._S << syn.E(:e, 'a', at_head: true)
       }
     end
