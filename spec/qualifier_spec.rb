@@ -3,8 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'analyzer_core'
-require 'action/qualifier'
+require 'sheep_ast'
 
 describe SheepAst::Qualifier do
   it 'work' do

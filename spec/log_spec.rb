@@ -3,7 +3,7 @@
 # rubocop:disable all
 
 require 'spec_helper'
-require 'log'
+require 'sheep_ast'
 
 class Child
   include SheepAst::Log
