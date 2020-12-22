@@ -3,9 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'analyzer_core'
-require 'messages'
-require 'syntax'
+require 'sheep_ast'
 
 describe SheepAst::DataStore do
   let(:core) { SheepAst::AnalyzerCore.new }

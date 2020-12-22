@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'tokenizer'
+require 'sheep_ast'
 
 describe SheepAst::Tokenizer do  # rubocop: disable all
   let(:basepath) { Dir.pwd }
