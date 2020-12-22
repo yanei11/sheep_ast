@@ -56,8 +56,16 @@ module SheepAst
       ldebug "options = #{options.inspect}", :blue
       ns_t = _ns_get(pair, options[:namespace])
 
-      ldump "To be redirect : #{chunk}" if options[:debug]
-      return if options[:dry_run]
+      if options[:dry_run]
+        ldump "To be redirect : #{chunk.inspect}"
+        return
+      end
+
+      if options[:debug]
+        ldump "To be redirect : #{chunk.inspect}"
+      end
+
+      ldebug "To be redirect : #{chunk.inspect}"
 
       save_req = SaveRequest.new(
         chunk: chunk,
@@ -109,17 +117,18 @@ module SheepAst
       params(
         key: Symbol,
         pair: T::Hash[Symbol, T::Array[String]],
-        range: Range
+        range: Range,
+        options: T.untyped
       ).returns(T::Array[T::Array[String]])
     }
-    def _redirect_line_enclosed(key, pair, range)
+    def _redirect_line_enclosed(key, pair, range, **options)
       chunk = pair[key]
       application_error 'specified key did not hit' if chunk.nil?
 
       chunk = chunk[range]
       application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)
 
-      chunk = [chunk]
+      chunk = data_shaping(chunk, options)
       return chunk
     end
 

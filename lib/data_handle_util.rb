@@ -26,7 +26,8 @@ module SheepAst
 
       application_error "index is invalid value: index = #{index}" if index.negative? || index.zero?
 
-      ldebug "Current data: expr = #{tokenized[line][offset - 1]}, for line = #{line}, offset = #{offset},"\
+      ldebug "Current data: expr = #{tokenized[line][offset - 1]}, "\
+        "for line = #{line}, offset = #{offset},"\
         " max_line = #{max_line}. From here to find expr after index = #{index}"
 
       expr = expr_get(tokenized, line, offset, max_line, index, newline)
@@ -38,76 +39,66 @@ module SheepAst
 
     def expr_get(tokenized, line, offset, max_line, index, newline) #rubocop:disable all
       line_diff = 0
-      target_index = index + offset - 1
-      current_index = offset
+      to_index = index + offset - 1
+      from_index = offset
       expr_test = nil
-      @compute_target_index = index
       @newline_count = 0
 
-      # This may hard to understand the algorithm. So added note.
-      # Following, I want to get expression after given "index" number.
-      # But, I want to exclude "\n" depends on the option.
       while line + line_diff < max_line
         line_expr = tokenized[line + line_diff]
-        if line_expr.nil?
-          expr_test = nil
-          break
-        end
 
-        expr_test = compute_expr(tokenized, line, current_index, target_index, newline, line_diff)
-        if !expr_test.nil?
-          break
-        end
+        expr_test = nil and break if line_expr.nil?
+
+        expr_test = compute_expr(tokenized, line, from_index, to_index, newline, line_diff)
+
+        break if !expr_test.nil?
 
         line_diff += 1
-        current_index = 0
-
+        from_index = 0
       end
-      lprint "Hit info: line = #{line_diff}, target_index = #{target_index}, line_expr = #{expr_test.inspect}"
+
+      ldebug "Hit info: line = #{line_diff}, to_index = #{to_index}, "\
+        "line_expr = #{expr_test.inspect}"
+
       return expr_test
     end
 
-    def compute_expr(tokenized, line, current_index, target_index, newline, line_diff, number = 0) # rubocop: disable all
+    def compute_expr(tokenized, line, from_index, to_index, newline, line_diff, number = 0) # rubocop: disable all
       line_expr = tokenized[line + line_diff]
-      test_index = current_index + number
+      test_index = from_index + number
       number += 1
 
-      # correct_number = target_expr_get(tokenized, line, target_index, line_diff)
+      ldebug "tokenized = #{tokenized.inspect}, line = #{line.inspect}, "\
+        "from_index = #{from_index.inspect},"\
+        " to_index = #{to_index.inspect}, number = #{number}, line_diff = #{line_diff}"
 
-      lprint "tokenized = #{tokenized.inspect}, line = #{line.inspect}, current_index = #{current_index.inspect},"\
-        " target_index = #{target_index.inspect}, number = #{number}, line_diff = #{line_diff}"
-
-      if current_index + number - 1 > target_index + @newline_count
+      if test_index - 1 > to_index + @newline_count
         application_error 'This is BUG case'
       end
 
       test_expr = line_expr[test_index]
 
-      lprint "test expr = #{test_expr.inspect}"
+      ldebug "test expr = #{test_expr.inspect}"
 
-      if test_expr.nil?
-        return nil
-      end
+      return nil if test_expr.nil?
 
       if newline.nil? && test_expr == "\n"
         @newline_count += 1
       end
 
-      offset = offset_get(tokenized, line, current_index, line_diff)
-      lprint "test_index + offset = #{test_index + offset},  target_index + @newline_count = #{target_index + @newline_count}"
-      if test_index + offset == target_index + @newline_count
+      offset = offset_get(tokenized, line, from_index, line_diff)
+
+      ldebug "test_index + offset = #{test_index + offset}, "\
+        "to_index + @newline_count = #{to_index + @newline_count}"
+
+      if test_index + offset == to_index + @newline_count
         expr = line_expr[test_index]
-        lprint "Find the expression fullfilled given condition. expr = #{expr}"
+        ldebug "Find the expression fullfilled given condition. expr = #{expr} !!"
         return expr
       end
 
-      expr = compute_expr(tokenized, line, current_index , target_index, newline, line_diff, number)
+      expr = compute_expr(tokenized, line, from_index, to_index, newline, line_diff, number)
 
-      lprint"test index = #{test_index}, offset = #{offset}, target_index = #{target_index}, newline_ount = #{@newline_count}"
-
-      if number == 1
-        p expr
-      end
       return expr
     end
 
@@ -116,9 +107,6 @@ module SheepAst
       (0..line_diff - 1).each do |num|
         offset += tokenized[line + num].length
       end
-      expr = tokenized[line + line_diff][index - offset + @newline_count]
-      lprint "target_expr is #{expr.inspect}, index = #{index}, offset = #{offset}, line = #{line.inspect}, line_diff = #{line_diff.inspect}, newline_count = #{@newline_count}"
-      lprint "The line is #{line + line_diff}, annd index = #{index - offset + @newline_count}"
       return offset
     end
 
@@ -129,7 +117,8 @@ module SheepAst
       end
 
       expr = tokenized[line + line_diff][index - offset + @newline_count]
-      lprint "target_expr is #{expr.inspect}, index = #{index}, offset = #{offset}, line = #{line.inspect}, line_diff = #{line_diff.inspect}"
+      ldebug "target_expr is #{expr.inspect}, index = #{index}, offset = #{offset}, "\
+        "line = #{line.inspect}, line_diff = #{line_diff.inspect}"
 
       return index - offset + @newline_count
     end

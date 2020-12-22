@@ -58,6 +58,7 @@ module SheepAst
       else
         value = pair[value_id]
       end
+      # value = data_shaping(value, options)
       key = pair[key_id]
       namespace = pair[:_namespace]
       ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\
@@ -91,6 +92,7 @@ module SheepAst
       else
         value = pair[value_id]
       end
+      # value = data_shaping(value, options)
       ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\
         "value => '#{value}'"

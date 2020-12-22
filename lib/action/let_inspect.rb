@@ -29,9 +29,9 @@ module SheepAst
     }
     def show(pair, datastore, **options)
       if !options[:disable]
-        ldebug "pair = #{pair.inspect}", :lightgreen
-        ldebug "datastore = #{datastore.inspect}", :lightgreen
-        ldebug "data = #{@data.inspect}", :lightgreen
+        ldump "pair = #{pair.inspect}", :lightgreen
+        ldump "datastore = #{datastore.inspect}", :lightgreen
+        ldump "data = #{@data.inspect}", :lightgreen
       end
     end
 
