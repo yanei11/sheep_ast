@@ -15,7 +15,17 @@ module SheepAst
     end
 
     def _S(*para, **kwargs) # rubocop:disable all
-      return []
+      elem = []
+      elem.instance_eval {
+        def <<(elem)
+          if elem.is_a? Enumerable
+            concat(elem)
+          else
+            push(elem)
+          end
+        end
+      }
+      return elem
     end
 
     def _SS(*para, **kwargs) # rubocop:disable all

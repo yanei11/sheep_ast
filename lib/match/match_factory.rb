@@ -38,27 +38,39 @@ module SheepAst
       # @regex_enlosed_match = RegexEnclosedMatch.new
     end
 
-    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(MatchBase) }
+    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(T.any(T::Array[MatchBase], MatchBase)) }
     def gen(kind, *para, **options) # rubocop: disable all
       ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
-      match =
-        case kind
-        when :e    then @exact_match.new(*para, **options)
-        when :r    then @regex_match.new(*para, **options)
-        when :eg   then @exact_group_match.new(*para, **options)
-        when :sc   then @scoped_match.new(*para, **options)
-        when :scr  then @scoped_regex_match.new(*para, **options)
-        when :enc  then @enclosed_match.new(*para, **options)
-        when :encr then @enclosed_regex_match.new(*para, **options)
-        when :any  then @regex_match.new('.*', *para, **options)
-        else
-          application_error 'unknown match'
-        end
 
-      create_id(match)
-      # match.data_store = @data_store
-      match.kind_name_set(kind.to_s)
-      return match
+      match_arr = []
+      repeat = options[:repeat].nil? ? 1..1 : 1..options[:repeat]
+
+      repeat.each {
+        match =
+          case kind
+          when :e    then @exact_match.new(*para, **options)
+          when :r    then @regex_match.new(*para, **options)
+          when :eg   then @exact_group_match.new(*para, **options)
+          when :sc   then @scoped_match.new(*para, **options)
+          when :scr  then @scoped_regex_match.new(*para, **options)
+          when :enc  then @enclosed_match.new(*para, **options)
+          when :encr then @enclosed_regex_match.new(*para, **options)
+          when :any  then @regex_match.new('.*', *para, **options)
+          else
+            application_error 'unknown match'
+          end
+
+        create_id(match)
+        # match.data_store = @data_store
+        match.kind_name_set(kind.to_s)
+        match_arr << match
+      }
+
+      if match_arr.length == 1
+        return match_arr[0]
+      else
+        return match_arr
+      end
     end
 
     def gen_array(arr)

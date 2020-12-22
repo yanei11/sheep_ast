@@ -81,5 +81,15 @@ module SheepAst
     def self.within(&blk)
       class_eval(&blk)
     end
+
+    def data_shaping(chunk, **options)
+      if !chunk.is_a? Enumerable
+        return chunk
+      elsif options[:raw]
+        [chunk]
+      else
+        chunk.slice_after("\n").to_a
+      end
+    end
   end
 end
