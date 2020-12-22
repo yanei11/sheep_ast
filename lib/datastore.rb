@@ -5,6 +5,7 @@ require_relative 'generation'
 require_relative 'exception'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
+require 'set'
 
 using Rainbow
 
@@ -17,10 +18,12 @@ module SheepAst
 
     sig { void }
     def initialize
-      @all_var = {}
+      @all_var = Set.new
       # @temp_var = {}
       super()
     end
+
+    alias inspect_bak inspect
 
     sig { params(sym: Symbol, value: T.untyped, key: T.untyped).void }
     def assign(sym, value, key = nil) # rubocop: disable all
@@ -53,7 +56,7 @@ module SheepAst
       end
 
       unless is_defined
-        @all_var[t_sym] = t_sym
+        @all_var << t_sym
         # if temporal_var(sym)
         #   @temp_var[t_sym] = t_sym
         # end
@@ -72,28 +75,34 @@ module SheepAst
 
     sig { params(sym: Symbol).returns(T.untyped) }
     def value(sym)
-      t_sym = :"@#{sym}"
-      return val(t_sym)
+      return val(:"@#{sym}")
     end
 
     sig { void }
     def cleanup_all
-      @all_var.each do |_k, v|
+      @all_var.each do |v|
         remove_instance_variable(v) if instance_variable_defined?(v)
       end
-      @all_var = {}
+      @all_var = Set.new
     end
 
     sig { returns(String) }
     def usage
+      lfatal ''
+      lfatal 'Please make sure the suffix of the store_id'.yellow
+      lfatal ''
       lfatal 'Usage ========================================='.yellow
       lfatal 'Use following store id depends on the types:'.yellow
-      lfatal '  :exampleId    - Hold single string'.yellow
-      lfatal '  :exampleId_A  - Hold Array of string'.yellow
-      lfatal '  :exampleId_H  - Hold Key Value pair of string. Array dim is hold to 1'.yellow
-      lfatal '  :exampleId_HL - Hold Key Last one Value pair of strin. One data'.yellow
-      lfatal '  :exampleId_HA - Hold Key Last one Value pair of string, Array dim can be 2'.yellow
+      lfatal '  :xxx    - Hold single string'.yellow
+      lfatal '  :xxx_A  - Hold Array of string'.yellow
+      lfatal '  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1'.yellow
+      lfatal '  :xxx_HA - Hold Key Value pair of string, push array so dim is 2'.yellow
+      lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin. One data'.yellow
+      lfatal ''
+      lfatal 'Note: let record_kv accept following kind:'.yellow
+      lfatal '      xxx_H, xxx_HL, xxx_HA'.yellow
       lfatal '================================================'.yellow
+      lfatal ''
     end
 
     def inspect
@@ -107,6 +116,24 @@ module SheepAst
     #   end
     #   @temp_var = {}
     # end
+
+    sig { params(id: T.nilable(Symbol)).returns(T.untyped) }
+    def dump_data(id = nil)
+      data = {}
+      if id.nil?
+        @all_var.each do |elem|
+          data[elem] = instance_variable_get(elem)
+        end
+      else
+        data[id] = instance_variable_get(:"@#{id}")
+      end
+      return data
+    end
+
+    sig { params(id: T.nilable(Symbol)).void }
+    def dump(id = nil)
+      ldump dump_data(id).inspect
+    end
 
     private
 
@@ -148,11 +175,6 @@ module SheepAst
       val_ << value
       val(sym).send(:store, key, val_)
     end
-
-    # sig { params(sym: Symbol).returns(T::Boolean) }
-    # def temporal_var(sym)
-    #   return sym.to_s.start_with?('__')
-    # end
 
     sig { params(sym: Symbol).returns(T::Boolean) }
     def array_var(sym)

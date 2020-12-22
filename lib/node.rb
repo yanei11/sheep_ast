@@ -106,10 +106,12 @@ module SheepAst
         match = m.call(data)
 
         ldebug "Got match #{match.inspect} at #{m.name}"
-        if !match.nil? && match.options_get[:head_match] && T.must(data.file_info).index != 0
-          ldebug 'head_match option is true, but index != 0. It judged not to be match'
-          match = nil
-        end
+
+        match = nil unless match&.additional_cond(data)
+        # if !match.nil? && !match.validate(data)
+        #   ldebug 'Additional condition cannot be fullfiled. set nil'
+        #   match = nil
+        # end
 
         node_info_ = match&.node_info
         next if node_info_.nil?

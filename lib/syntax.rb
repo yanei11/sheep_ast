@@ -53,7 +53,7 @@ module SheepAst
           match = T.must(arr[0..-2])
           action_ = T.must(arr[-1..-1])
           qualifier_ = nil
-          if T.must(arr[-2]).instance_of? Qualifier
+          if arr[-2].instance_of? Qualifier
             match = T.must(arr[0..-3])
             action_ = T.must(arr[-1..-1])
             qualifier_ = T.must(arr[-2])

@@ -25,6 +25,10 @@ module SheepAst
       ldebug "start condition with expr #{data.expr.inspect}"
       @sem = 1
       @start_info = "#{data.nil?}:#{data.to_enum}: start key:#{data.expr.inspect}"
+      @start_line = data.file_info&.line
+      @start_index = data.file_info&.index
+      @start_line = data.file_info&.line
+      @start_index = data.file_info&.index
     end
 
     sig { abstract.params(data: AnalyzeData).returns(T::Boolean) }
@@ -39,7 +43,13 @@ module SheepAst
       @sem = 0
       options_ = T.cast(@options, T::Hash[Symbol, T::Boolean])
       data.request_next_data = RequestNextData::Again if T.must(options_)[:end_reinput]
+      @end_line = data.file_info&.line
+      @end_index = data.file_info&.index
     end
+
+    def start_info_set(line, index); end
+
+    def end_info_set(line, index); end
 
     sig { override.void }
     def init

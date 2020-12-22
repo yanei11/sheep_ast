@@ -78,9 +78,7 @@ module SheepAst
     def analyze_file(files)
       @files = files
       @file_manager.register_files(files)
-      @file_manager.analyze do |data|
-        @stage_manager.analyze_stages(data)
-      end
+      do_analyze
     end
 
     sig { params(expr: String).returns(AnalyzerCore) }
@@ -92,6 +90,14 @@ module SheepAst
     sig { params(expr: String).void }
     def analyze_expr(expr)
       @file_manager.register_next_expr(expr)
+      do_analyze
+    end
+
+    sig { void }
+    def do_analyze
+      option(ARGV) unless ENV['SHEEP_RSPEC']
+      dump(:lwarn) and return if @option[:d]
+
       @file_manager.analyze do |data|
         @stage_manager.analyze_stages(data)
       end
@@ -127,7 +133,7 @@ module SheepAst
       end
       method(logs).call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
       dump(logs)
-      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil?
+      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil? # rubocop: disable all
       if options[:raise]
         raise
       end
@@ -143,6 +149,9 @@ module SheepAst
         opt.on(
           '-I [VALUE]', Array, 'Specify directories for the include files'
         ) { |v| @option[:I] = v }
+        opt.on(
+          '-d', 'Dump Debug information'
+        ) { @option[:d] = true }
 
         opt.parse!(argv)
         linfo "Application starts with option => #{@option.inspect.cyan}"
@@ -169,6 +178,5 @@ module SheepAst
         @include_handler.register_exclude_dir_path(item)
       end
     end
-
   end
 end

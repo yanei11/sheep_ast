@@ -5,6 +5,7 @@ require_relative '../generation'
 require_relative '../exception'
 require_relative '../messages'
 require_relative '../sheep_obj'
+require_relative '../data_handle_util'
 require_relative 'match_util'
 require 'sorbet-runtime'
 require 'pry'
@@ -25,6 +26,18 @@ module SheepAst
     attr_accessor :matched_expr
 
     sig { returns(Integer) }
+    attr_accessor :start_line
+
+    sig { returns(Integer) }
+    attr_accessor :start_index
+
+    sig { returns(Integer) }
+    attr_accessor :end_line
+
+    sig { returns(Integer) }
+    attr_accessor :end_index
+
+    sig { returns(Integer) }
     attr_accessor :node_id
 
     sig { returns(T.nilable(Symbol)) }
@@ -41,16 +54,11 @@ module SheepAst
       @kind_name = name
     end
 
-    sig { returns T.nilable(T::Hash[Symbol, T.any(T::Boolean, Symbol, String)]) }
-    def options_get
-      return @options
-    end
-
     sig {
       params(
         key: String,
         sym: T.nilable(Symbol),
-        options: T.nilable(T.any(T::Boolean, Symbol, String, Range))
+        options: T.untyped
       ).void
     }
     def initialize(key = '', sym = nil, **options)
@@ -59,6 +67,9 @@ module SheepAst
       @options = options
       @debug = options[:debug]
       @extract = options[:extract]
+      @head = options[:head]
+      @start_add_cond = options[:index_cond]
+      @end_add_cond = options[:end_cond]
       super()
     end
 
@@ -84,6 +95,18 @@ module SheepAst
       else
         @matched_expr = expr_
       end
+      start_info_set(data.file_info&.line, data.file_info&.index)
+      end_info_set(data.file_info&.line, data.file_info&.index)
+    end
+
+    def start_info_set(line, index)
+      @start_line = line
+      @start_index = index
+    end
+
+    def end_info_set(line, index)
+      @end_line = line
+      @end_index = index
     end
 
     sig { params(data: AnalyzeData).returns(T.nilable(T::Boolean)) }
@@ -107,17 +130,44 @@ module SheepAst
       end
     end
 
+    def additional_cond(data)
+      if @options[:at_head]
+        if data.file_info.index != 1
+          ldebug 'at head : false'
+          return false
+        end
+        ldebug 'at head : true'
+      end
+
+      ret = iterate_cond(data, @start_add_cond)
+      ldebug "additional_cond : #{ret.inspect}"
+      return ret
+    end
+
+    def additional_end_cond(data)
+      ret = iterate_cond(data, @end_add_cond)
+      ldebug "additional_end_cond : #{ret.inspect}"
+      return ret
+    end
+
+    def iterate_cond(data, cond)
+      return true if cond.nil?
+
+      if cond.is_a? Enumerable
+        cond.each do |c|
+          ret = c.validate(data)
+          return false if !ret
+        end
+      else
+        ret = cond.validate(data)
+        return false if !ret
+      end
+
+      return true
+    end
+
     sig { abstract.void }
     def init; end
-
-    # sig { params(data: AnalyzeData).void }
-    # def matched_end(data)
-    #   if @store_sym.nil?
-    #     return
-    #   end
-
-    #   # data.data[@store_sym] = data.expr
-    # end
 
     sig { abstract.returns(MatchKind) }
     def kind?; end
