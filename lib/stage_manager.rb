@@ -11,7 +11,7 @@ using Rainbow
 
 module SheepAst
   # TBD
-  class Stage
+  class Stage # rubocop: disable all
     extend T::Sig
     extend T::Helpers
     include Exception
@@ -162,6 +162,14 @@ module SheepAst
       return self
     end
 
+    sig { params(other: Stage).returns(Stage) }
+    def save(other)
+      T.must(@info).copy(other.info)
+      @match_id_array = []
+      @match_symbol_array = []
+      return self
+    end
+
     sig { returns(String) }
     def inspect
       "custom inspect <#{self.class.name} object_id = #{object_id}, ast = #{@ast.inspect},"\
@@ -171,7 +179,7 @@ module SheepAst
 
     sig { void }
     def init
-      ldebug "#{name.inspect} init the node_info now. the info => #{@info.inspect}, match_id_array =>"\
+      ldebug "#{name.inspect} init the node_info now. the info was #{@info.inspect}, match_id_array =>"\
         " #{@match_id_array.inspect}, match_stack => #{@match_symbol_array.inspect}"
       @info = NodeInfo.new if @info.nil?
       @info.init
@@ -179,8 +187,9 @@ module SheepAst
       @match_symbol_array = []
     end
   end
+
   # TBD
-  class StageManager
+  class StageManager # rubocop: disable all
     extend T::Sig
     extend T::Helpers
     include Exception
@@ -227,7 +236,7 @@ module SheepAst
         end
 
         if res
-          ldebug "#{comp} is included"
+          ldebug "#{comp} is included".yellow
           ret = true and break
         end
       end
@@ -240,7 +249,7 @@ module SheepAst
           res = comp =~ full_name if comp.instance_of? Regexp
         end
         if res
-          ldebug "#{comp} is excluded"
+          ldebug "#{comp} is excluded".yellow
           ret = false and break
         end
       end
@@ -281,7 +290,7 @@ module SheepAst
           found = true if !ret.nil?
           break if ret
         else
-          ldebug "#{stage.name} is filtered"
+          ldebug "#{stage.name} is filtered".yellow
         end
       end
 
@@ -301,7 +310,7 @@ module SheepAst
         eof_validation
       end
 
-      ldebug 'Analyze Stages Ended!'.red
+      ldebug 'Analyze Stages Finished!'.red
     end
 
     sig { void }
@@ -326,7 +335,7 @@ module SheepAst
       @stages.each do |stage|
         save_stage =
           Stage.new(stage.ast)
-        save_data[stage.name] = save_stage.copy(stage)
+        save_data[stage.name] = save_stage.save(stage)
         ldebug "#{stage.name} suspend process !!! info = #{stage.inspect}"
       end
       @save_stages << save_data

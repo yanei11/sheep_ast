@@ -6,6 +6,7 @@ require_relative '../generation'
 require_relative '../exception'
 require_relative '../log'
 require_relative '../factory_base'
+require_relative '../data_handle_util'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
 
@@ -66,7 +67,38 @@ module SheepAst
 
       hash[:_namespace] = stack
       hash[:_raw_line] = data.raw_line
+      hash[:_data] = data
       return hash
+    end
+
+    sig { params(data: AnalyzeData, key: Symbol).returns(MatchBase) }
+    def get_match(data, key)
+      test = data.stack_symbol.find_index { |i| i == key }
+      application_error 'specified key does not found in stack_symbol' if test.nil?
+
+      id_ = data.stack[test]
+      match = match_factory.from_id(id_)
+      application_error 'match did not found' if match.nil?
+
+      return match
+    end
+
+    sig { params(data: AnalyzeData).returns(MatchBase) }
+    def get_first_match(data)
+      id_ = data.stack.first
+      match = match_factory.from_id(id_)
+      application_error 'match did not found' if match.nil?
+
+      return match
+    end
+
+    sig { params(data: AnalyzeData).returns(MatchBase) }
+    def get_last_match(data)
+      id_ = data.stack.last
+      match = match_factory.from_id(id_)
+      application_error 'match did not found' if match.nil?
+
+      return match
     end
 
     sig { params(data: AnalyzeData).returns(T::Boolean) }

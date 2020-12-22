@@ -10,6 +10,11 @@ task 'check' do
   sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}  --fail-fast"
 end
 
+desc 'Executing all rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
+task 'allcheck' do
+  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}"
+end
+
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
 task 'doc' do
   sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"

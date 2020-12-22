@@ -24,14 +24,14 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def show(pair, datastore, **options)
       if !options[:disable]
-        lprint "pair = #{pair.inspect}", :lightgreen
-        lprint "datastore = #{datastore.inspect}", :lightgreen
-        lprint "data = #{@data.inspect}", :lightgreen
+        ldump "pair = #{pair.inspect}", :lightgreen
+        ldump "datastore = #{datastore.inspect}", :lightgreen
+        ldump "data = #{@data.inspect}", :lightgreen
       end
     end
 
@@ -49,7 +49,7 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def debug(pair, datastore, **options)
@@ -60,13 +60,13 @@ module SheepAst
 
     sig {
       params(
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def _do_pry(**options)
       @count = 1 if @count.nil?
       @count += 1
-      lprint "Entering debug mode, @count = #{@count}"
+      ldebug "Entering debug mode, @count = #{@count}"
       return true
     end
   end

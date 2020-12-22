@@ -9,7 +9,7 @@ using Rainbow
 
 module SheepAst
   # Logger Wrapper module
-  module Log
+  module Log # rubocop:disable all
     extend T::Sig
     include Kernel
     class << self
@@ -51,8 +51,14 @@ module SheepAst
         line = $2.to_i # rubocop: disable all
       end
       str = 'P: '
-      str += say_class_name + msg +
-             " (at #{File.basename(file)}:#{line})"
+      str += say_class_name + msg \
+             + " (at #{File.basename(file)}:#{line})"
+      puts str.color(color_)
+    end
+
+    sig { params(msg: String, color_: Symbol).void }
+    def ldump(msg = '', color_ = :pink)
+      str = msg
       puts str.color(color_)
     end
 
@@ -147,7 +153,7 @@ module SheepAst
         when 'FATAL'
           sevr = T.unsafe('F').magenta
         when 'WARN'
-          sevr = T.unsafe('W').black.bg(:yellow)
+          sevr = T.unsafe('W').color(:indianred)
         when 'INFO'
           sevr = T.unsafe('I')
         else
