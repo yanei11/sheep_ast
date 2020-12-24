@@ -23,7 +23,7 @@ The example overall source code is following:
 # typed: false
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
+require './lib/sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow
@@ -34,8 +34,8 @@ input_files = ARGV[1..-1]
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 
 core.config_ast('default.main') do |_ast, syn|
@@ -77,7 +77,7 @@ Firstly, you need to include sheep_ast package.
 It is done by
 
 ```
-require './lib/analyzer_core'
+require './lib/sheep_ast'
 ```
 
 # AnalyzerCore obect
@@ -96,8 +96,8 @@ It is done by:
 
 ```
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 ```
 

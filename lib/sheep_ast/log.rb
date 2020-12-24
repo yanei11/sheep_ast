@@ -9,7 +9,11 @@ using Rainbow
 
 module SheepAst
   # Logger Wrapper module
-  module Log # rubocop:disable all
+  #
+  # @api private
+  #
+  # rubocop:disable all
+  module Log
     extend T::Sig
     include Kernel
     class << self
@@ -65,6 +69,11 @@ module SheepAst
     sig { params(msg: String).void }
     def linfo(msg = '')
       @logger.info say_class_name + msg
+    end
+
+    sig { params(msg: String).void }
+    def pwarn(msg = '')
+      @logger.warn msg
     end
 
     sig { params(msg: String).void }

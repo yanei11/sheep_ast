@@ -9,6 +9,9 @@ require_relative 'action/action_factory'
 
 module SheepAst
   # Factory of factories
+  #
+  # @api private
+  #
   class FoF
     extend T::Sig
     include Log

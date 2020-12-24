@@ -6,6 +6,7 @@ require_relative 'let_redirect'
 require_relative 'let_inspect'
 require_relative 'let_compile'
 require_relative 'let_record'
+require_relative 'let_helper'
 require 'sorbet-runtime'
 require 'rainbow/refinement'
 
@@ -23,6 +24,7 @@ module SheepAst
     extend T::Sig
     extend T::Helpers
     include Log
+    include LetHelper
     include LetRedirect
     include LetInspect
     include LetCompile
@@ -80,16 +82,6 @@ module SheepAst
 
     def self.within(&blk)
       class_eval(&blk)
-    end
-
-    def data_shaping(chunk, **options)
-      if !chunk.is_a? Enumerable
-        return chunk
-      elsif options[:raw]
-        [chunk]
-      else
-        chunk.slice_after("\n").to_a
-      end
     end
   end
 end

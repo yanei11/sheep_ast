@@ -4,7 +4,12 @@
 require 'sorbet-runtime'
 
 module SheepAst
-  # Matcher base class
+  # To define common definition of sheep object.
+  # It is applied to be instanciated a lot in the sheep ast liibrary like
+  #  MatchBase, ActionBase
+  #
+  #  @api private
+  #
   class SheepObject
     extend T::Sig
 

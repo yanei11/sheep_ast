@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
+require './lib/sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow
@@ -9,8 +9,8 @@ using Rainbow
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 
 core.config_ast('always.ignore') do |_ast, syn|

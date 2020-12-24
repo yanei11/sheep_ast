@@ -11,7 +11,10 @@ require 'rainbow/refinement'
 using Rainbow
 
 module SheepAst
-  # TBD give brief explanation
+  # log buffer corresponded to the Node
+  #
+  # @api private
+  #
   class NodeBuf
     extend T::Sig
     include Exception

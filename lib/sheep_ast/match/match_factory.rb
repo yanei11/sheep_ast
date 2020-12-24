@@ -14,15 +14,22 @@ require_relative 'enclosed_regex_match'
 require_relative 'scoped_regex_match'
 
 module SheepAst
-  # Match fatiory
+  # Aggregated interface for the Matcher
+  #
+  # The user syntax like E(:e, ...) will be send to the #gen method.
+  # The gen method calls Object's new method.
+  #
+  # For the current supported Match kind and options please see links from
+  # the #initialize method's [View source] pull down.
+  #
+  # @see #gen
+  # @see #initialize
+  #
   class MatchFactory < SheepObject
     extend T::Sig
     include Log
     include Exception
     include FactoryBase
-
-    sig { returns(DataStore) }
-    attr_accessor :data_store
 
     sig { void }
     def initialize
@@ -35,7 +42,6 @@ module SheepAst
       @enclosed_regex_match = EnclosedRegexMatch.new
       @my_name = 'match_factory'
       super()
-      # @regex_enlosed_match = RegexEnclosedMatch.new
     end
 
     sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(T.any(T::Array[MatchBase], MatchBase)) }
@@ -72,13 +78,9 @@ module SheepAst
         return match_arr
       end
     end
-
-    def gen_array(arr)
-      gen(*arr)
-    end
   end
 
-  # TBD
+  # @private
   module UseMatchAlias
     extend T::Sig
     include Exception

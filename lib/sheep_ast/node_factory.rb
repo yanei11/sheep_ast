@@ -7,7 +7,10 @@ require_relative 'messages'
 require_relative 'node_buf'
 
 module SheepAst
-  # Node fatiory
+  # Factory object to create Node
+  #
+  # @api privte
+  #
   class NodeFactory
     extend T::Sig
     include Log
