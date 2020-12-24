@@ -24,7 +24,7 @@ module SheepAst
     }
     def initialize(exprs, not_ = true, **options) # rubocop:disable all
       super()
-      data_handle_init(exprs, **options)
+      T.unsafe(self).data_handle_init(exprs, **options)
       @not = not_
     end
 

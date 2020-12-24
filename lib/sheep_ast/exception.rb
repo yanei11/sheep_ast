@@ -4,7 +4,10 @@
 require 'sorbet-runtime'
 
 module SheepAst
-  # Exception handler
+  # Exception rase functions
+  #
+  # @api private
+  #
   module Exception
     extend T::Sig
     include Kernel

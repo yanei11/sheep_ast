@@ -6,7 +6,11 @@ require_relative 'match/index_condition'
 require 'sorbet-runtime'
 
 module SheepAst
-  # utility to perform deep copy for Hash or Array
+  # syntax wrapper to allow user to use syntax easily.
+  # This simplifies syntax user should input
+  #
+  # @api public
+  #
   module SyntaxAlias
     extend T::Sig
 
@@ -19,9 +23,9 @@ module SheepAst
       elem.instance_eval {
         def <<(elem)
           if elem.is_a? Enumerable
-            concat(elem)
+            T.unsafe(self).concat(elem)
           else
-            push(elem)
+            T.unsafe(self).push(elem)
           end
         end
       }
@@ -70,8 +74,9 @@ module SheepAst
       tag.nil? ? E(:r, '.*') : E(:r, '.*', tag)
     end
 
+    sig { params(par: T.untyped, options: T.untyped).returns(IndexCondition) }
     def idx(*par, **options)
-      IndexCondition.new(*par, **options)
+      T.unsafe(IndexCondition).new(*par, **options)
     end
   end
 end

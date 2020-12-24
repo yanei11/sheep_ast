@@ -1,7 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-require_relative '../generation'
 require_relative '../exception'
 require_relative '../messages'
 require_relative '../sheep_obj'
@@ -67,7 +66,6 @@ module SheepAst
       @options = options
       @debug = options[:debug]
       @extract = options[:extract]
-      @head = options[:head]
       @start_add_cond = options[:index_cond]
       @end_add_cond = options[:end_cond]
       super()

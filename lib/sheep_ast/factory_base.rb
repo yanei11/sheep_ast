@@ -7,7 +7,11 @@ require_relative 'sheep_obj'
 require_relative 'node_buf'
 
 module SheepAst
-  # Node fatiory
+  # This object is base object of the sheep fuctory pattern
+  # Factory abstract/wrap instanciation process and it absorb change impact inside the framework
+  #
+  # @api private
+  #
   module FactoryBase
     extend T::Sig
     include Log

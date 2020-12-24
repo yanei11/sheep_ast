@@ -5,13 +5,23 @@ require_relative 'log'
 require_relative 'exception'
 require 'sorbet-runtime'
 
-# TBD
 module SheepAst
-  # This class is for the action to recprd the result
+  # utility function to handle Index of tokenized sentence.
+  # This utility enable to compute expression from specified index.
+  #
+  # e.g. given tokenized sentence is  [[a, b, c, d, e, \n], [f, g, h, i, \n]] and
+  #      given that you have matched expression d, then this utility allow user to
+  #      give index 4 to specify 'h' word. It can handle multiline situation and
+  #      defaultly it ignores '\n' newline indication
+  #
+  # @api private
+  #
   module DataIndexHandle
     extend T::Sig
     include Log
     include Exception
+
+    private
 
     sig {
       params(
@@ -26,7 +36,7 @@ module SheepAst
 
       application_error "index is invalid value: index = #{index}" if index.negative? || index.zero?
 
-      ldebug "Current data: expr = #{tokenized[line][offset - 1]}, "\
+      ldebug "Current data: expr = #{tokenized&.[](line)&.[](offset - 1)}, "\
         "for line = #{line}, offset = #{offset},"\
         " max_line = #{max_line}. From here to find expr after index = #{index}"
 
@@ -37,17 +47,20 @@ module SheepAst
       return expr
     end
 
-    def expr_get(tokenized, line, offset, max_line, index, newline) #rubocop:disable all
+    # getting expression of specified index
+    #
+    # rubocop:disable all
+    def expr_get(tokenized, line, offset, max_line, index, newline)
       line_diff = 0
       to_index = index + offset - 1
       from_index = offset
-      expr_test = nil
+      expr_test = T.let(nil, T.untyped)
       @newline_count = 0
 
       while line + line_diff < max_line
         line_expr = tokenized[line + line_diff]
 
-        expr_test = nil and break if line_expr.nil?
+        break if line_expr.nil?
 
         expr_test = compute_expr(tokenized, line, from_index, to_index, newline, line_diff)
 
@@ -63,7 +76,10 @@ module SheepAst
       return expr_test
     end
 
-    def compute_expr(tokenized, line, from_index, to_index, newline, line_diff, number = 0) # rubocop: disable all
+    # Core algorithm to compute expression
+    #
+    # rubocop: disable all
+    def compute_expr(tokenized, line, from_index, to_index, newline, line_diff, number = 0)
       line_expr = tokenized[line + line_diff]
       test_index = from_index + number
       number += 1
@@ -124,7 +140,7 @@ module SheepAst
     end
   end
 
-  # This class is for the action to recprd the result
+  # This module is used to handle AnalyzeData bject
   module DataHandle
     extend T::Sig
     include Log
@@ -148,7 +164,7 @@ module SheepAst
     def validate(data)
       @exprs.each_with_index do |expr, idx|
         idata = index_data(data, @offset + idx, @include_newline)
-        if !match_(expr, idata)
+        if !match_dh(expr, T.must(idata))
           ldebug "validate fail: #{expr} is not hit for #{idata}"
           return false
         else
@@ -158,11 +174,22 @@ module SheepAst
       return true
     end
 
-    def match_(expr1, expr2)
+    private
+
+    sig { params(expr1: T.any(String, Regexp), expr2: String).returns(T::Boolean) }
+    def match_dh(expr1, expr2)
       if expr1.instance_of? String
-        expr1 == expr2
+        if expr1 == expr2
+          return true
+        else
+          return false
+        end
       else
-        expr1 =~ expr2
+        if expr1 =~ expr2
+          return true
+        else
+          return false
+        end
       end
     end
   end

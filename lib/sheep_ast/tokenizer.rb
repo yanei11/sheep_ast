@@ -9,8 +9,12 @@ require 'rainbow/refinement'
 using Rainbow
 
 module SheepAst
-  # TBD
-  class Tokenizer # rubocop: disable all
+  # Handle tokenie process.
+  #
+  # @api private
+  #
+  # rubocop: disable all
+  class Tokenizer
     extend T::Sig
     include Exception
     include Log
@@ -21,6 +25,12 @@ module SheepAst
       super()
     end
 
+    # Compare and combine expression to token
+    #
+    # @api private
+    #
+    # @deprecated
+    #
     sig {
       params(
         args: T.any(String, Regexp)
@@ -47,6 +57,9 @@ module SheepAst
     end
 
     # TBD
+    #
+    # @api private
+    #
     sig {
       params(
         blk: T.proc.params(
@@ -62,6 +75,9 @@ module SheepAst
     end
 
     # TBD
+    #
+    # @api private
+    #
     sig {
       params(
         blk: T.proc.params(
@@ -82,11 +98,21 @@ module SheepAst
       }
     end
 
+    # Give the split rule for the given strings.
+    # Currently assuming to be used with split_space_only.
+    #
+    # @example
+    #   core.config_tok do |tok|
+    #     tok.use_split_rule { tok.split_space_only }
+    #   end
+    #
+    # @api public
+    #
     def use_split_rule(&blk)
       @split = blk
     end
 
-    # TBD
+    # @api private
     sig { params(fpath: String).returns([T::Array[T::Array[String]], Integer, T::Array[String]]) }
     def tokenize(fpath)
       line_count = 0
@@ -102,6 +128,7 @@ module SheepAst
       return file_buf, line_count, raw_buf
     end
 
+    # @api private
     sig { params(expr: String).returns([T::Array[T::Array[String]], Integer]) }
     def tokenize_expr(expr)
       line_count = 0
@@ -113,11 +140,13 @@ module SheepAst
       return file_buf, line_count
     end
 
+    # @api private
     sig { params(expr: String).returns([T::Array[T::Array[String]], Integer]) }
     def <<(expr)
       tokenize_expr(expr)
     end
 
+    # @api private
     def dump(logs)
       logf = method(logs)
       logf.call('')
@@ -131,18 +160,46 @@ module SheepAst
       logf.call('')
     end
 
+    # @api private
     def dump_part(idx, args, token, options, logf)
       logf.call("stage#{idx + 1} :___\\ #{args.inspect.yellow} is combined to "\
                 "#{token.inspect.red} with options = #{options.inspect}")
     end
 
+    # To specify split rule as space only.
+    # Please note that split rule like ' ' is not suitable to use space as split rule.
+    # It drops "\n" and it is an issue. Assuming to be used with use_split_rule
+    #
+    # @example
+    #   core.config_tok do |tok|
+    #     tok.use_split_rule { tok.split_space_only }
+    #   end
+    #
+    # @api public
+    #
     sig { returns Regexp }
     def split_space_only
       / |([\t\r\n\f])/
     end
 
+    # Specify tokenizer to cobine the expression or convert to given string
+    #
+    # @example
+    #   core.config_tok do |tok|
+    #     tok.use_split_rule { tok.split_space_only }
+    #     tok.token_rule('show', 'isis', 'neighbor') { 'show isis neighbor' }
+    #     tok.token_rule('show', 'isis', 'database') { 'show isis database' }
+    #   end
+    #
+    # @api public
+    #
+    sig { params(par: T.untyped).void }
     def token_rule(*par)
-      add_token cmb(*par), yield
+      if block_given?
+        add_token T.unsafe(self).cmb(*par), yield
+      else
+        add_token T.unsafe(self).cmb(*par)
+      end
     end
 
     private

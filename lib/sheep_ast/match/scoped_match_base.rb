@@ -17,6 +17,31 @@ module SheepAst
     sig { returns(String) }
     attr_accessor :end_expr
 
+    # Creates Scoped/ScopedRegex/Enclosed/EnclosedRegex Match
+    #
+    # @example
+    #   E(:sc, <start exp>, <end expr>, [store sym], [options])
+    #   E(:enc, <start exp>, <end expr>, [store sym], [options])
+    #   E(:scr, <start exp>, <end expr>, [store sym], [options])
+    #   E(:encr, <start exp>, <end expr>, [store sym], [options])
+    #
+    # It matces from if given expression == <start exp>
+    # to if given expression == <end exp>.
+    # In contrast to EnclosedMatch, ScopedMatch exit if <end exp> matches
+    # same number of <start exp> matches.
+    #
+    # i.e. if  given expression is `if { if { something } }` and if <start exp>, = {  and <end exp> =  }
+    # then, scoped_match exit at 2nd }, but enclosed match exit first }
+    # It store matched expression to [store symbol] in the data.
+    # If store symbol is not specified, framework gives default symbol.
+    #
+    # @option options [Boolean] :at_head Match when the expression is head of the sentence
+    # @option options [IndexCondition] :index_cond Additional condition to match arbeitary index of sentence
+    # @option options [IndexCondition] :end_cond Additional condition to match arbeitary index of sentence at the end
+    # @see IndexCondition
+    #
+    # @api public
+    #
     sig {
       params(
         start_expr: String,

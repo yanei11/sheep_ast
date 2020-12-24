@@ -10,7 +10,10 @@ require_relative 'match/match_factory'
 using Rainbow
 
 module SheepAst
-  # TBD
+  # Sheep Ast node representation
+  #
+  # @api private
+  #
   class Node < SheepObject
     include Log
     include Exception

@@ -17,8 +17,9 @@ require 'sorbet-runtime'
 using Rainbow
 
 module SheepAst
-  # interface class for the user
-  # API class. User should use this class as Interface
+  # Ast hanling class
+  #
+  # @api private
   class AstManager < SheepObject
     extend T::Sig
     extend T::Helpers
@@ -40,6 +41,7 @@ module SheepAst
     sig { void }
     def setup; end
 
+    # @api public
     sig { params(name: String, data_store: DataStore, match_factory: MatchFactory).void }
     def initialize(name, data_store, match_factory)
       super()
@@ -79,6 +81,24 @@ module SheepAst
       @node_factory.register_nodes(matches, action, name)
     end
 
+    # Hook function when Ast is reached not found in its syntax tree.
+    # This function can override by redefining from the object passed from config_ast.
+    # It can be adjust sheep_ast behavior at when Ast cannot find any syntax in the tree.
+    #
+    # Default behavior is LazyAbort.
+    # LazyAbort will raise abort if all the AstManager process is indicate NotFound
+    #
+    # @example
+    #   core.config_ast do |ast, syn|
+    #     ast.within {
+    #       def not_found(data, node)
+    #         # override contents
+    #       end
+    #     }
+    #   end
+    #
+    # @api public
+    #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def not_found(data, _node)
       ldebug "'#{data.expr.inspect}' not found."
@@ -92,6 +112,12 @@ module SheepAst
       end
     end
 
+    # Same as not_found behavior, but this is used not found at the Ast tree is in progress.
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def not_found_in_progress(data, _node)
       ldebug "'#{data.expr.inspect}' not found in progress"
@@ -105,24 +131,48 @@ module SheepAst
       end
     end
 
+    # Hook function when condition match is in progress
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def condition_in_progress(data, _node)
       ldebug "matched '#{data.expr.inspect}' stay node"
       return MatchAction::StayNode
     end
 
+    # Hook function when condition match is at the start
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def condition_start(data, _node)
       ldebug "matched '#{data.expr.inspect}' condition start. stay node"
       return MatchAction::StayNode
     end
 
+    # Hook function during Ast is hit but not at the end
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def in_progress(data, _node)
       ldebug "matched '#{data.expr.inspect}' next data"
       return MatchAction::Next
     end
 
+    # Hook function when Ast reached to its action (end of Ast process)
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
     sig { params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def at_end(data, node)
       ldebug "matched '#{data.expr.inspect}' at end"

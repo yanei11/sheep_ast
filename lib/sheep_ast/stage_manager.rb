@@ -10,8 +10,13 @@ require 'sorbet-runtime'
 using Rainbow
 
 module SheepAst
-  # TBD
-  class Stage # rubocop: disable all
+
+  # Handle order delegation of analyze to Ast Maanger
+  #
+  # @api private
+  #
+  # rubocop: disable all
+  class Stage
     extend T::Sig
     extend T::Helpers
     include Exception

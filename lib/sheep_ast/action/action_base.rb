@@ -2,7 +2,6 @@
 # frozen_string_literal:true
 
 require_relative '../messages'
-require_relative '../generation'
 require_relative '../exception'
 require_relative '../log'
 require_relative '../factory_base'
@@ -18,7 +17,6 @@ module SheepAst
     extend T::Sig
     extend T::Helpers
     include Exception
-    include Generation
     include Log
     abstract!
 

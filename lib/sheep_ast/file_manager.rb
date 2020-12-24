@@ -9,7 +9,11 @@ require 'sorbet-runtime'
 using Rainbow
 
 module SheepAst
-  # TBD
+  # This object handles input of syntax element after parsing by tokenizer.
+  # It holds stack of processing info and provide functionality of saving data and resume data
+  #
+  # @api private
+  #
   class FileManager #rubocop: disable all
     extend T::Sig
     include Exception

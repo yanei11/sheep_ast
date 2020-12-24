@@ -1,7 +1,6 @@
 # typed: false
 # frozen_string_literal:true
 
-require_relative 'generation'
 require_relative 'exception'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
@@ -10,12 +9,16 @@ require 'set'
 using Rainbow
 
 module SheepAst
-  # TBD
+  # User can store data or fetch data from the object.
+  # This is used by Let object's :record fuction
+  #
+  # @api public
   class DataStore
     extend T::Sig
     include Exception
     include Log
 
+    # Constructor
     sig { void }
     def initialize
       @all_var = Set.new
@@ -23,10 +26,13 @@ module SheepAst
       super()
     end
 
-    alias inspect_bak inspect
-
+    # General function to assigh value to given store_id and key
+    #
+    # @api private
+    #
+    # rubocop: disable all
     sig { params(sym: Symbol, value: T.untyped, key: T.untyped).void }
-    def assign(sym, value, key = nil) # rubocop: disable all
+    def assign(sym, value, key = nil)
       t_sym = :"@#{sym}"
 
       is_defined = instance_variable_defined?(t_sym)
@@ -57,27 +63,30 @@ module SheepAst
 
       unless is_defined
         @all_var << t_sym
-        # if temporal_var(sym)
-        #   @temp_var[t_sym] = t_sym
-        # end
       end
     end
 
+    # remove by key symbol
+    #
+    # @api private
+    #
     sig { params(sym: Symbol).void }
     def remove(sym)
       t_sym = :"@#{sym}"
-      # if temporal_var(sym)
-      #   @temp_var.delete(t_sym)
-      # end
       @all_var.delete(t_sym)
       remove_instance_variable(t_sym) if instance_variable_defined?(t_sym)
     end
 
+    # get value from key symbol
+    #
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T.untyped) }
     def value(sym)
       return val(:"@#{sym}")
     end
 
+    # remove all the data
     sig { void }
     def cleanup_all
       @all_var.each do |v|
@@ -86,6 +95,13 @@ module SheepAst
       @all_var = Set.new
     end
 
+    # usage print out.
+    # Please see inline comment in the function.
+    # Depends on the given store_id suffix, it switches data struture inside the object
+    #
+    # e.g. If user specify store_id as xxx_H then datastore object creates Hash object
+    #      to allow user to prvide key/value pair to store the data
+    #
     sig { returns(String) }
     def usage
       lfatal ''
@@ -108,15 +124,10 @@ module SheepAst
     def inspect
       "custom inspect : <#{self.class.name} object_id = #{object_id}, all_var = #{@all_var.inspect}>"
     end
-    # sig { void }
-    # def cleanup_tmp
-    #   @temp_var.each do |_k, v|
-    #     remove_instance_variable(v) if instance_variable_defined?(v)
-    #     @all_var.delete(v)
-    #   end
-    #   @temp_var = {}
-    # end
 
+    # Dump data as string object.
+    # Dump only specified id if it is given
+    #
     sig { params(id: T.nilable(Symbol)).returns(T.untyped) }
     def dump_data(id = nil)
       data = {}
@@ -130,6 +141,9 @@ module SheepAst
       return data
     end
 
+    # Dump data to console.
+    # Dump only specified id if it is given
+    #
     sig { params(id: T.nilable(Symbol)).void }
     def dump(id = nil)
       ldump dump_data(id).inspect
@@ -137,21 +151,29 @@ module SheepAst
 
     private
 
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T.untyped) }
     def val(sym)
       return instance_variable_get(sym)
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol, value: T.untyped).void }
     def add(sym, value)
       val(sym).send(:<<, value)
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
     def add_pair(sym, key, value)
       val(sym).send(:store, key, value)
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
     def concat_pair(sym, key, value)
       val_ = val(sym).send(:[], key)
@@ -166,6 +188,8 @@ module SheepAst
       val(sym).send(:store, key, val_)
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
     def add_arr_pair(sym, key, value)
       val_ = val(sym).send(:[], key)
@@ -176,21 +200,29 @@ module SheepAst
       val(sym).send(:store, key, val_)
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def array_var(sym)
       return sym.to_s.end_with?('_A')
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_var(sym)
       return sym.to_s.end_with?('_H')
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_l1_var(sym)
       return sym.to_s.end_with?('_HL')
     end
 
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_arr_var(sym)
       return sym.to_s.end_with?('_HA')

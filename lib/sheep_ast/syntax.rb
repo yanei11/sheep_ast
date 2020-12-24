@@ -10,22 +10,16 @@ require_relative 'syntax_alias'
 require 'sorbet-runtime'
 
 module SheepAst
-  # utility to perform deep copy for Hash or Array
+  # Wrap Ast defining process from User input, and provides
+  #  better syntax to user
+  #
+  #  @api public
+  #
   class Syntax < SheepObject
     extend T::Sig
     include Exception
     include Log
     include SyntaxAlias
-
-    sig { returns(ActionBase) }
-    def action
-      return @action
-    end
-
-    sig { returns(T::Array[ActionBase]) }
-    def actions
-      return @action
-    end
 
     sig { params(ast: AstManager, mfctry: MatchFactory, afctry: ActionFactory).void }
     def initialize(ast, mfctry, afctry)
@@ -42,7 +36,27 @@ module SheepAst
       return 1 + depth(array[0])
     end
 
-    def register_syntax(name, action = nil, &blk) # rubocop:disable all
+    # Gives user to add Ast definition to handle analysis
+    #
+    # @example
+    #
+    #  core.config_ast do |ast, syn|
+    #    syn.within {
+    #      register_syntax('ast.name') {
+    #        _SS(
+    #          _S << E(..) << E(..),
+    #          _S << ...,,
+    #          _S << ...
+    #          ...
+    #          )
+    #      }
+    #    }
+    #  end
+    #
+    # @api public
+    # @note please see Example page for further example
+    # rubocop:disable all
+    def register_syntax(name, action = nil, &blk)
       arrs = blk.call
       if depth(arrs) == 1
         arrs = [arrs]

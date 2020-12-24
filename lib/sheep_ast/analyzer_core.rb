@@ -16,26 +16,41 @@ require 'pry'
 
 using Rainbow
 
+# api public
 module SheepAst
-  # TBD
+  # Aggregates User interface of sheep_ast library
+  #
+  # @api public
   class AnalyzerCore < SheepObject # rubocop: disable all
     include Log
     include Exception
     extend T::Sig
     include FactoryBase
 
+    # @api private
     sig { returns(StageManager) }
-    attr_reader :stage_manager
+    attr_accessor :stage_manager
 
+    # @api private
     sig { returns(Tokenizer) }
-    attr_reader :tokenizer
+    attr_accessor :tokenizer
 
+    # @api private
     sig { returns(IncludeHander) }
     attr_accessor :include_handler
 
+    # Returns DataStore object
+    # It holds user store data at the :record function in the Let action
+    #
+    # @api public
     sig { returns(DataStore) }
     attr_accessor :data_store
 
+    # Constructor
+    #
+    # @example
+    #   core = SheepAst::AnalyzerCore.new
+    #
     sig { void }
     def initialize
       @tokenizer = Tokenizer.new
@@ -48,17 +63,45 @@ module SheepAst
       super()
     end
 
+    # Return Let class object allow user to define method
+    #
+    # @example
+    #   core.let.within {
+    #     def user-defined-func
+    #       # define inside the let class
+    #     end
+    #   }
+    #
     sig { returns Class }
     def let
       Let
     end
 
+    # To configure tokenizer
+    #
+    # @example
+    #   core.config_tok do |tok|
+    #     tok.some_ethod
+    #   end
+    #
+    # @note Please see Example page for further usage
+    #
     def config_tok(&blk)
       blk.call(@tokenizer)
     end
 
-    # sig { params(name: String, klass: AstManager, blk:
-    #              T.
+    # To configure AST objects.
+    # Allow user to add AST analze
+    #
+    # @example
+    #   core.config_ast do |ast, syn|
+    #     syn.within {
+    #       #..
+    #     }
+    #   end
+    #
+    # @note Please see Example page for further usage
+    #
     def config_ast(name, klass = AstManager, &blk)
       if !name_defined?(name)
         ast = klass.new(name, @data_store, @fof.match_factory)
@@ -74,6 +117,16 @@ module SheepAst
       return ast
     end
 
+    # To add file paths to anayze
+    #
+    # @raise
+    #   Exception
+    #
+    # @example
+    #   core.analyze_file([file1, file2, ...]
+    #
+    # @note report function is used with this
+    #
     sig { params(files: T::Array[String]).void }
     def analyze_file(files)
       @files = files
@@ -81,46 +134,55 @@ module SheepAst
       do_analyze
     end
 
+    # To add expression to analyze
+    #
+    # @raise
+    #   Exception
+    #
+    # @example
+    #   core << "Some expression to analyze"
+    #
+    # @note report function is used with this
+    #
     sig { params(expr: String).returns(AnalyzerCore) }
     def <<(expr)
       analyze_expr(expr)
       return self
     end
 
+    # @api private
+    #
     sig { params(expr: String).void }
     def analyze_expr(expr)
       @file_manager.register_next_expr(expr)
       do_analyze
     end
 
-    sig { void }
-    def do_analyze
-      option(ARGV) unless ENV['SHEEP_RSPEC']
-      dump(:lwarn) and return if @option[:d]
-
-      @file_manager.analyze do |data|
-        @stage_manager.analyze_stages(data)
-      end
-    end
-
-    sig { params(file: String).returns(String) }
-    def tokenize(file)
-      tokenized = @tokenizer.feed_file(file)
-      ldebug "start #{File.expand_path(file).red}"
-      return tokenized
-    end
-
-    sig { void }
-    def disable_eof_validation
-      @stage_manager.disable_eof_validation
-    end
-
+    # Dump information function
+    # User can use this function to see the information
+    #
+    # @example
+    #   core.dump
+    #   # same output can be got by passing -d option to your program
+    #
     sig { params(logs: Symbol).void }
     def dump(logs = :pfatal)
       @tokenizer.dump(logs)
       @stage_manager.dump_tree(logs)
     end
 
+    # Handle exception
+    # It can pass log function to use, Default is pfatal
+    #
+    # @example
+    #   core.report {
+    #     core.analyze_file(...)
+    #   }
+    #
+    # @option raise [Boolean] :raise exception again if this is set to true
+    #
+    # @note If SHEEP_DEBUG_PRY is defined, pry debug session is started at the exception
+    #
     sig { params(logs: Symbol, options: T.nilable(T::Boolean)).void }
     def report(logs = :pfatal, **options)
       yield
@@ -139,6 +201,45 @@ module SheepAst
       end
     end
 
+    private
+
+    # @api private
+    #
+    sig { void }
+    def do_analyze
+      option(ARGV) unless ENV['SHEEP_RSPEC']
+      dump(:pwarn) and return if @option[:d]
+
+      @file_manager.analyze do |data|
+        @stage_manager.analyze_stages(data)
+      end
+    end
+
+    # @api private
+    #
+    sig { params(file: String).returns(String) }
+    def tokenize(file)
+      tokenized = @tokenizer.feed_file(file)
+      ldebug "start #{File.expand_path(file).red}"
+      return tokenized
+    end
+
+    # Not yet exposing function
+    #
+    # @api private
+    #
+    sig { void }
+    def disable_eof_validation
+      @stage_manager.disable_eof_validation
+    end
+
+    # Command line option
+    #
+    # @api private
+    #
+    # @example
+    #   ruby your_app.rb -h # shows usage
+    #
     sig { params(argv: T::Array[String]).void }
     def option(argv)
       OptionParser.new do |opt|
@@ -158,6 +259,8 @@ module SheepAst
       end
     end
 
+    # api private
+    #
     sig { void }
     def parse_option
       @option[:D]&.each do |item|

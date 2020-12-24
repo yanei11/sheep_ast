@@ -6,15 +6,25 @@ require 'sorbet-runtime'
 
 module SheepAst
   # Exact match instance
-  #
-  # Syntax:
-  # E(:e, '<expr>', :<store symbol>)
-  #
-  # It match if given expression == <expr>.
-  # It store matched data in :<store symbol> in data
   class ExactMatch < MatchBase
     extend T::Sig
 
+    # To create exact match
+    #
+    # @example
+    #   E(:e, '<expr>', [store symbol], [options])
+    #
+    # It match if given expression == <expr>.
+    # It store matched expression to [store symbol] in the data.
+    # If store symbol is not specified, framework gives default symbol.
+    #
+    # @option options [Range] :extract To modify matched string by range
+    # @option options [Boolean] :at_head Match when the expression is head of the sentence
+    # @option options [IndexCondition] :index_cond Additional condition to match arbeitary index of sentene
+    # @see IndexCondition
+    #
+    # @api public
+    #
     sig {
       params(
         key: String,
@@ -28,11 +38,13 @@ module SheepAst
       return em
     end
 
+    # @api private
     sig { override.returns(MatchKind) }
     def kind?
       return MatchKind::Exact
     end
 
+    # @api private
     sig { override.void }
     def init
       @expr = ''
@@ -40,6 +52,7 @@ module SheepAst
   end
 
   # to include exact match util
+  # @api private
   module ExactMatchUtil
     extend T::Sig
     include MatchUtil

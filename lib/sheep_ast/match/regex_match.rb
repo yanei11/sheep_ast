@@ -7,14 +7,27 @@ require 'sorbet-runtime'
 module SheepAst
   # Regex Match instance
   #
-  # Syntax:
-  # E(:re, '<regex exp>', :<store symbol>)
+  # @api public
   #
-  # It matces if given expression match <regex exp>.
-  # It store matced expression in the <store symbol>
   class RegexMatch < MatchBase
     extend T::Sig
 
+    # Create RegexMatch
+    #
+    # @example
+    #   E(:r, '<regex exp>', [store symbol], [options])
+    #
+    # It matces if given expression match <regex exp>.
+    # It store matched expression to [store symbol] in the data.
+    # If store symbol is not specified, framework gives default symbol.
+    #
+    # @option options [Range] :extract To modify matched string by range
+    # @option options [Boolean] :at_head Match when the expression is head of the sentence
+    # @option options [IndexCondition] :index_cond Additional condition to match arbeitary index of sentene
+    # @see IndexCondition
+    #
+    # @api public
+    #
     sig {
       params(
         key: String,
@@ -38,6 +51,9 @@ module SheepAst
   end
 
   # Regex match utility
+  #
+  # @api private
+  #
   module RegexMatchUtil
     extend T::Sig
     include MatchUtil

@@ -6,7 +6,10 @@ require_relative 'file_manager'
 require 'sorbet-runtime'
 
 module SheepAst
-  # Enum for kind of matcher
+  # Message struture between components
+  #
+  # @api private
+  #
   class MatchKind < T::Enum
     include Exception
 
@@ -34,6 +37,9 @@ module SheepAst
   end
 
   # Enum for action of matcher
+  #
+  # @api private
+  #
   class MatchAction < T::Enum
     enums do
       Abort = new
@@ -48,6 +54,9 @@ module SheepAst
   end
 
   # Enum for status of matcher
+  #
+  # @api private
+  #
   class MatchStatus < T::Enum
     enums do
       NotFound = new
@@ -61,6 +70,9 @@ module SheepAst
   end
 
   # Enum for action of matcher
+  #
+  # @api private
+  #
   class RequestNextData < T::Enum
     enums do
       Next = new
@@ -68,7 +80,10 @@ module SheepAst
     end
   end
 
-  # TBD
+  # Message to handle node object
+  #
+  # @api private
+  #
   class NodeInfo < T::Struct
     extend T::Sig
     prop :node_id, T.nilable(Integer), default: 0
@@ -96,7 +111,10 @@ module SheepAst
     end
   end
 
-  # TBD
+  # Structure to hold file info in analyze.
+  #
+  # @api private
+  #
   class FileInfo < T::Struct
     extend T::Sig
     include Log
@@ -143,11 +161,6 @@ module SheepAst
       @new_file_validation = false
     end
 
-    # def takeover(other)
-    #   @namespace_stack = other.namespace_stack.dup
-    #   lprint "#{self.class.name} takeover is called. #{inspect}"
-    # end
-
     sig { returns String }
     def inspect
       "custome inspect <#{self.class.name} object_id = #{object_id}, file = #{@file.inspect},"\
@@ -166,7 +179,11 @@ module SheepAst
     prop :namespace, T.nilable(T.any(String, Symbol)), default: nil
   end
 
-  # TBD
+  # This structure is passed fro file_manager to Match and Action.
+  # Transit elements add informaion to this structure
+  #
+  # @api private
+  #
   class AnalyzeData < T::Struct
     extend T::Sig
     prop :expr, T.nilable(String), default: nil

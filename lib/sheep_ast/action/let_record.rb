@@ -12,6 +12,24 @@ module SheepAst
     extend T::Sig
     extend T::Helpers
 
+    # Record given key and value expression block to data store
+    #
+    # @example
+    #   A(:let, [record, <store_id>, <tag symbol for key or value>, [tag symbol for value], [options]]
+    #
+    # Specified key or value by tag symbol will be stored to store_id symbol.
+    # If 4th parameter is not speified, then 3rd parameter is translated as value.
+    #
+    # It should have specific suffix: xxx_H, xxx_HA, xxx_HL, xxx_A, xxx(none suffix).
+    # Please see DataStore object usage for the store_id symbol.
+    #
+    # If 4th parameter is specified, the store_id suffix should be xxx_H, xxx_HA, xxx_HL
+    # If 4th parameter is not specified, the store_id suffix should be xxx_A, or xxx(none suffix).
+    #
+    # @option options [Boolean] :namespace if true, namespace is added in the form of 'ns1::ns2::' at the prefix of key
+    #
+    # @api public
+    #
     sig {
       params(
         pair: T::Hash[Symbol, T::Array[String]],
@@ -30,16 +48,9 @@ module SheepAst
       end
     end
 
-    # Record given key and value expression block to data store
+    # Please use record
     #
-    # Syntax:
-    # A(:let, [record_kv_by_id, :<store_id>, :<tag symbol for key>, :<tag symbol for value>, {options}]
-    #
-    # Specified data by key and value tag symbol will be stored to store_id symbol
-    # Note that store_id tag symbol mast have `_H` post fix which denote it is a Hash map
-    #
-    # Options:
-    # namespace <Boolean>  : if true, namespace is added in the form of ns1::ns2:: at the prefix of key
+    # @deprecated
     sig {
       params(
         pair: T::Hash[Symbol, T::Array[String]],
@@ -75,6 +86,9 @@ module SheepAst
 
     alias record_kv record_kv_by_id
 
+    # Please use record
+    #
+    # @deprecated
     sig {
       params(
         pair: T::Hash[Symbol, T::Array[String]],
