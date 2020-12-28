@@ -9,7 +9,7 @@ using Rainbow
 module SheepAst
   # Let included module. Utility functions to be used inside of Let
   #
-  # @api public
+  # @api private
   #
   module LetHelper
     extend T::Sig

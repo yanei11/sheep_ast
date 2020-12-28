@@ -44,8 +44,12 @@ module SheepAst
       super()
     end
 
+    # Aggregated interface for the creation of the Match
+    # This function is used from the syntax_alias like `E(:e, 'test')`.
+    #
+    # rubocop: disable all
     sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(T.any(T::Array[MatchBase], MatchBase)) }
-    def gen(kind, *para, **options) # rubocop: disable all
+    def gen(kind, *para, **options)
       ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
 
       match_arr = []

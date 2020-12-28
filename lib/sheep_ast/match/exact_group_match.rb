@@ -5,7 +5,10 @@ require_relative 'match_base'
 require 'sorbet-runtime'
 
 module SheepAst
-  # TBD
+  # ExactGroupMatch instance
+  #
+  # @see #new
+  #
   class ExactGroupMatch < MatchBase
     extend T::Sig
 

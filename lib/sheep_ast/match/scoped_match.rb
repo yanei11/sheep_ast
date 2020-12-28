@@ -7,6 +7,8 @@ require 'sorbet-runtime'
 module SheepAst
   # Scoped match instanc
   #
+  # @see #new
+  #
   class ScopedMatch < ScopedMatchBase
     extend T::Sig
 

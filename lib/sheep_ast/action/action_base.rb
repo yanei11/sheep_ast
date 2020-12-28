@@ -156,6 +156,7 @@ module SheepAst
                           -> another_node -> another_action
         In this case, qualification to continue node search or just do action is needed.
         You need to implement qualifier function.
+        Please use NEQ at syntax_alias.
       ERRORMSG
       return errmsg
     end

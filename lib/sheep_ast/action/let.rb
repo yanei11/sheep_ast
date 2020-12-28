@@ -15,8 +15,8 @@ using Rainbow
 module SheepAst
   # Let action instance
   #
-  # Syntax:
-  # A(:let, [funcion1, *para, **option], [function2, *para, **options]] ...
+  # @example
+  #   A(:let, [funcion1, *para, **option], [function2, *para, **options]] ...
   #
   # This let data to handle given functions.
   # pre made API is included like LetRedirect module
@@ -33,13 +33,22 @@ module SheepAst
     sig { returns(T.any(T::Array[Symbol], T::Array[T::Array[Symbol]])) }
     attr_accessor :fsyms
 
+    # To crate Let object
+    #
+    # Let object uses the function given by the symbol with processed data.
+    # Pease refer to included module for the supported function such as
+    # LetRedirect, LetRecord modules.
+    #
+    # @example
+    #   A(:let, [:redirect, ...], [:record, ...], ...)
+    #
     sig {
       params(
         fsyms: T.any(Symbol, T::Array[Symbol]),
-        kwargs: T.any(T::Boolean, Symbol, String)
+        options: T.any(T::Boolean, Symbol, String)
       ).returns(Let)
     }
-    def new(*fsyms, **kwargs)
+    def new(*fsyms, **options)
       ins = Let.new
       ins.fsyms = fsyms
       return ins
