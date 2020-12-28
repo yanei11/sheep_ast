@@ -14,6 +14,7 @@ module SheepAst
     include Exception
 
     enums do
+      Any = new
       Exact = new
       ExactGroup = new
       Regex = new
@@ -30,6 +31,7 @@ module SheepAst
       when Regex then 2
       when Condition then 3
       when RegexCondition then 4
+      when Any then 5
       else
         application_error
       end

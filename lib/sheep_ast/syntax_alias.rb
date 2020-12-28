@@ -20,7 +20,15 @@ module SheepAst
     # @see Syntax#register_syntax
     #
     # rubocop:disable all
-    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(MatchBase) }
+    sig {
+      params(
+        kind: Symbol,
+        para: T.untyped,
+        options: T.untyped
+      ).returns(
+        T.any(MatchBase, T::Array[MatchBase])
+      )
+    }
     def E(kind, *para, **options)
       @mf.gen(kind, *para, **options)
     end

@@ -21,6 +21,7 @@ module SheepAst
     include ExactGroupMatchUtil
     include RegexMatchUtil
     include ConditionMatchUtil
+    include AnyMatchUtil
     extend T::Sig
 
     sig { returns(T::Hash[Integer, T::Hash[String, MatchBase]]) }
