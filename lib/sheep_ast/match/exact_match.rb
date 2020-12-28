@@ -18,6 +18,7 @@ module SheepAst
     # It store matched expression to [store symbol] in the data.
     # If store symbol is not specified, framework gives default symbol.
     #
+    # @option options [Integer] :repeat Retruns same instance for specified count
     # @option options [Range] :extract To modify matched string by range
     # @option options [Boolean] :at_head Match when the expression is head of the sentence
     # @option options [IndexCondition] :index_cond Additional condition to match arbeitary index of sentene
