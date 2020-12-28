@@ -6,6 +6,7 @@ require_relative '../exception'
 require_relative '../factory_base'
 require_relative '../sheep_obj'
 require_relative 'exact_match'
+require_relative 'any_match'
 require_relative 'regex_match'
 require_relative 'exact_group_match'
 require_relative 'scoped_match'
@@ -34,6 +35,7 @@ module SheepAst
     sig { void }
     def initialize
       @exact_match = ExactMatch.new
+      @any_match = AnyMatch.new
       @regex_match = RegexMatch.new
       @exact_group_match = ExactGroupMatch.new
       @scoped_match = ScopedMatch.new
@@ -65,7 +67,7 @@ module SheepAst
           when :scr  then @scoped_regex_match.new(*para, **options)
           when :enc  then @enclosed_match.new(*para, **options)
           when :encr then @enclosed_regex_match.new(*para, **options)
-          when :any  then @regex_match.new('.*', *para, **options)
+          when :any  then @any_match.new('any', *para, **options)
           else
             application_error 'unknown match'
           end
