@@ -9,15 +9,14 @@ module SheepAst
   class AnyMatch < MatchBase
     extend T::Sig
 
-    # To create exact match
+    # To create any match
     #
     # @example
-    #   E(:e, '<expr>', [store symbol], [options])
+    #   E(:any, [store symbol], [options])
     #
-    # It match if given expression == <expr>.
-    # It store matched expression to [store symbol] in the data.
-    # If store symbol is not specified, framework gives default symbol.
+    # This matches any string.
     #
+    # @option options [Integer] :repeat Retruns same instance for specified count
     # @option options [Range] :extract To modify matched string by range
     # @option options [Boolean] :at_head Match when the expression is head of the sentence
     # @option options [IndexCondition] :index_cond Additional condition to match arbeitary index of sentene
