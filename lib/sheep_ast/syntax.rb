@@ -30,12 +30,6 @@ module SheepAst
       @action = nil
     end
 
-    def depth(array)
-      return 0 unless array.is_a?(Array)
-
-      return 1 + depth(array[0])
-    end
-
     # Gives user to add Ast definition to handle analysis
     #
     # @example
@@ -44,7 +38,7 @@ module SheepAst
     #    syn.within {
     #      register_syntax('ast.name') {
     #        _SS(
-    #          _S << E(..) << E(..),
+    #          _S << E(..) << E(..) << A(..),
     #          _S << ...,,
     #          _S << ...
     #          ...
@@ -88,6 +82,14 @@ module SheepAst
           @ast.add(match, T.cast(action, ActionBase), "group(#{name})-#{i + 1}")
         end
       end
+    end
+
+    private
+
+    def depth(array)
+      return 0 unless array.is_a?(Array)
+
+      return 1 + depth(array[0])
     end
   end
 end

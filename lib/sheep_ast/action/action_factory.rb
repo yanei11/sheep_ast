@@ -26,6 +26,10 @@ module SheepAst
       super()
     end
 
+    # Aggregated interface for the creation of the Action
+    # This function is used from the syntax_alias like `A(:let, ...)`.
+    #
+    # rubocop: disable all
     sig { params(kind: Symbol, para: T.untyped, kwargs: T.untyped).returns(ActionBase) }
     def gen(kind, *para, **kwargs) # rubocop: disable all
       action =

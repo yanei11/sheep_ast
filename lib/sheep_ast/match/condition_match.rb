@@ -75,7 +75,7 @@ module SheepAst
       @regex_condition_matches = {}
       @global_matches[MatchKind::RegexCondition.rank] = @regex_condition_matches
       @methods_array << prio(210, method(:check_regex_condition_match))
-      @methods_array << prio(1, method(:try_condition_scope))
+      @methods_array << prio(10, method(:try_condition_scope))
       super()
     end
 

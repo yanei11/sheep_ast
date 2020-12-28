@@ -14,11 +14,25 @@ module SheepAst
   module SyntaxAlias
     extend T::Sig
 
-    def E(kind, *para, **kwargs) # rubocop:disable all
-      @mf.gen(kind, *para, **kwargs)
+    # Returns Match instance.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(MatchBase) }
+    def E(kind, *para, **options)
+      @mf.gen(kind, *para, **options)
     end
 
-    def _S(*para, **kwargs) # rubocop:disable all
+    # Holds array of Expressions and Action.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
+    def _S(*para, **options)
       elem = []
       elem.instance_eval {
         def <<(elem)
@@ -32,15 +46,55 @@ module SheepAst
       return elem
     end
 
-    def _SS(*para, **kwargs) # rubocop:disable all
+    # Holds array of _S.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
+    def _SS(*para, **options)
       return para
     end
 
-    def A(kind, *para, **kwargs) # rubocop:disable all
-      @af.gen(kind, *para, **kwargs)
+    # Returns Action instance.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(ActionBase) }
+    def A(kind, *para, **options)
+      @af.gen(kind, *para, **options)
     end
 
-    def NEQ(expr, index = 1) # rubocop:disable all
+    # Returns Qualifier object.
+    #
+    # In the situation that Ast node has action and match to another node like:
+    #
+    # ```
+    # root -> this_node -> this_action
+    #                   -> another_node -> another_action
+    # ```
+    #
+    # The qualification to continue node search or just do action is needed.
+    # This function is to solve this issue.
+    #
+    # This function test next eqpression and execute following Action if the next action 
+    #  is NOT equal to the expression.
+    #
+    # @example
+    #   _SS(
+    #     _S << E(:e, 'a') << E(:e, 'b') << NEQ('c') << A(...),
+    #     _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(...)
+    #   )
+    #
+    # @param expr [String] expressin to test
+    # @param index [Integer] index to test. It test after index number expression
+    #
+    # rubocop:disable all
+    sig { params(expr: String, index: Integer).returns(Qualifier) } 
+    def NEQ(expr, index = 1)
       Qualifier.new(expr, offset: index)
     end
 

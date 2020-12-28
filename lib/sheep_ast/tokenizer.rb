@@ -78,6 +78,7 @@ module SheepAst
     #
     # @api private
     #
+    # rubocop: disable all
     sig {
       params(
         blk: T.proc.params(
@@ -90,7 +91,7 @@ module SheepAst
         options: T::Boolean
       ).void
     }
-    def add_token(blk, token = nil, **options)  # rubocop: disable all
+    def add_token(blk, token = nil, **options) 
       add { |line, num|
         args, t_token = blk.call(line, num)
         t_token = token if !token.nil? && t_token
@@ -100,6 +101,22 @@ module SheepAst
 
     # Give the split rule for the given strings.
     # Currently assuming to be used with split_space_only.
+    #
+    # Given that tokenizer got input as 'Hello, sheep_ast world', then 
+    # With usine default separator. it returns
+    #
+    # ```
+    # [["Hello", ",", " ", "world", ".", " ", "Now", " ", "2020", "/", "12", "/", "14", " ", "1", ":", "43"]]
+    # ```
+    #
+    # With  use_split_rule, it returns
+    #
+    # ```
+    # [["Hello,", "world.", "Now", "2020/12/14", "1:43"]]
+    # ```
+    # 
+    # So, split base tokenizer is more simple than default base tokenizer.
+    # But default base tokenizer has more fine-grain control.
     #
     # @example
     #   core.config_tok do |tok|

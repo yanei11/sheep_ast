@@ -20,8 +20,8 @@ module SheepAst
       extend T::Sig
     end
 
-    sig { params(logger: Logger).returns(Logger) }
-    attr_writer :logger
+    sig { returns(Logger) }
+    attr_accessor :logger
 
     sig { void }
     def initialize

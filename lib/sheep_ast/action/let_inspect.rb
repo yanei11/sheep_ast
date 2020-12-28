@@ -56,6 +56,8 @@ module SheepAst
       end
     end
 
+    private
+
     sig {
       params(
         options: T.untyped
