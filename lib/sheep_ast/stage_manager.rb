@@ -10,7 +10,6 @@ require 'sorbet-runtime'
 using Rainbow
 
 module SheepAst
-
   # Handle order delegation of analyze to Ast Maanger
   #
   # @api private
@@ -150,7 +149,7 @@ module SheepAst
         a_match = @ast.match_factory.from_id(id)
         application_error "match from id=#{id} not found" if a_match.nil?
 
-        str += "#{a_match.matched_expr} => "
+        str += "#{a_match.matched_expr.inspect} => "
       end
       str&.chop!&.chop!&.chop!&.chop!
       if str.empty? || str.nil?
@@ -369,10 +368,13 @@ module SheepAst
       logf.call
       logf.call 'Tokenized Expression'
       logf.call "- expr = #{@data&.expr}"
-      logf.call "- tokenized = #{@data&.tokenized_line}"
-      logf.call "- line_num = #{@data&.file_info&.line}"
+      logf.call "- tokenized line = #{@data&.tokenized_line}"
+      logf.call "- line no = #{@data&.file_info&.line + 1}"
       logf.call "- index = #{@data&.file_info&.index}"
       logf.call "- max_line = #{@data&.file_info&.max_line}"
+      logf.call "- namespacee = #{@data&.file_info&.namespace_stack.inspect}"
+      logf.call "- ast include = #{@data&.file_info&.ast_include.inspect}"
+      logf.call "- ast exclude = #{@data&.file_info&.ast_exclude.inspect}"
       logf.call
       @stages.each do |stage|
         logf.call '|'
@@ -395,9 +397,6 @@ module SheepAst
       logf.call '|'
       logf.call '|  |\\ Next Expression'
       logf.call '|__|'
-      logf.call ''
-      logf.call '## Resume Info ##'
-      logf.call @resume_info.inspect
       logf.call ''
     end
   end

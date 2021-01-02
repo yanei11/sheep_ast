@@ -25,8 +25,8 @@ module SheepAst
     # @option options [String] :ast_exclude after included Ast at ast_include, this specify to exclude the Ast
     # @option options [Symbol, String] :namespace is specified if String, it takes from pair if it is Symbol
     # @option options [Boolean] :redirect_line_matched redirect whole line from first matched until last matched
-    # @option options [Boolean] : dry_run it does not do redirect but output debug string which is to be redirected
-    # @option options [Boolean] : debug it print redirected sentence
+    # @option options [Boolean] :dry_run it does not do redirect but output debug string which is to be redirected
+    # @option options [Boolean] :debug it print redirected sentence
     #
     # rubocop: disable all
     sig {
@@ -35,7 +35,7 @@ module SheepAst
         datastore: DataStore,
         key: T.nilable(Symbol),
         range: Range,
-        options: T.any(Symbol, String, T::Boolean)
+        options: T.untyped
       ).void
     }
     def redirect(pair, datastore, key = nil, range = 1..-2, **options)
@@ -59,7 +59,11 @@ module SheepAst
       ns_t = _ns_get(pair, options[:namespace])
 
       if options[:dry_run]
-        ldump "To be redirect : #{chunk.inspect}"
+        _format_dump {
+          ldump "To be redirect : #{chunk.inspect}"
+          ldump "The namespace is #{ns_t}"
+        
+        }
         return
       end
 

@@ -29,7 +29,7 @@ module SheepAst
     }
     def show(pair, datastore, **options)
       if !options[:disable]
-        ldump "pair = #{pair.inspect}", :lightgreen
+        _format_dump { ldump "pair = #{pair.inspect}", :lightgreen }
       end
     end
 

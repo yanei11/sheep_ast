@@ -160,7 +160,7 @@ module SheepAst
       @ast_include = nil
       @ast_exclude = nil
       @raw_lines = nil
-      @new_file_validation = false
+      @new_file_validation = true
     end
 
     sig { returns String }

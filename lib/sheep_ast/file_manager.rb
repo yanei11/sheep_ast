@@ -153,7 +153,7 @@ module SheepAst
       line = feed_line
       expr = feed_expr(line)
       @analyze_data.expr = expr
-      @analyze_data.tokenized_line = line
+      @analyze_data.tokenized_line =  @file_info.tokenized[@file_info.line]
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
       @analyze_data.request_next_data = RequestNextData::Next
@@ -286,6 +286,10 @@ module SheepAst
     def ast_exclude_set(exc)
       exc = [exc] if exc.instance_of? String
       @file_info.ast_exclude = exc
+    end
+
+    def resume_data
+      @resume_info
     end
   end
 end

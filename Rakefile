@@ -64,6 +64,12 @@ task 'example2' do
   sh "#{ENV['RBENV_COM']} bundle exec ruby example/keyword_get/main.rb"
 end
 
+desc 'Execute example3 program'
+task 'example3' do
+  sh 'echo "== Example3: compile =="'
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/protobuf/main.rb"
+end
+
 desc 'Push document repository'
 task 'pushd' => 'doc' do
   sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && make push"

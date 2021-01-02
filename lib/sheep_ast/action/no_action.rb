@@ -5,6 +5,7 @@ require_relative 'action_base'
 require 'sorbet-runtime'
 
 module SheepAst
+  # Action which does not do specific things
   class NoAction < ActionBase
     include T::Sig
     extend T::Helpers

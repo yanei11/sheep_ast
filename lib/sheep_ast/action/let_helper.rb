@@ -109,5 +109,14 @@ module SheepAst
         chunk.slice_after("\n").to_a
       end
     end
+
+    sig { void }
+    def _format_dump
+      ldump ''
+      ldump '--- show ---'
+      yield
+      ldump '--- end  ---'
+      ldump ''
+    end
   end
 end
