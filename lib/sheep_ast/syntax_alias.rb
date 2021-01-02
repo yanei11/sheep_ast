@@ -106,32 +106,32 @@ module SheepAst
       Qualifier.new(expr, offset: index)
     end
 
-    sig { returns SheepAst::MatchBase }
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def crlf
       E(:e, "\r\n")
     end
 
-    sig { returns SheepAst::MatchBase }
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def lf
       E(:e, "\n")
     end
 
-    sig { returns SheepAst::MatchBase }
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def eof
       E(:e, '__sheep_eof__')
     end
 
-    sig { returns SheepAst::MatchBase }
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def space
       E(:e, ' ')
     end
 
-    sig { returns SheepAst::MatchBase }
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def cpp_comment
       E(:e, '//')
     end
 
-    sig { params(tag: T.nilable(Symbol)).returns SheepAst::MatchBase }
+    sig { params(tag: T.nilable(Symbol)).returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def any(tag = nil)
       tag.nil? ? E(:r, '.*') : E(:r, '.*', tag)
     end

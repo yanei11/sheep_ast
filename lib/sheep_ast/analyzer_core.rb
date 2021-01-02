@@ -167,8 +167,12 @@ module SheepAst
     #
     sig { params(logs: Symbol).void }
     def dump(logs = :pfatal)
+      logf = method(logs)
       @tokenizer.dump(logs)
       @stage_manager.dump_tree(logs)
+      logf.call '## Resume Info ##'
+      logf.call @file_manager.resume_data.inspect
+      logf.call ''
     end
 
     # Handle exception

@@ -45,7 +45,7 @@ module SheepAst
     sig {
       params(
         fsyms: T.any(Symbol, T::Array[Symbol]),
-        options: T.any(T::Boolean, Symbol, String)
+        options: T.untyped
       ).returns(Let)
     }
     def new(*fsyms, **options)

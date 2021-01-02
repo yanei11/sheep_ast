@@ -68,6 +68,7 @@ module SheepAst
           when :enc  then @enclosed_match.new(*para, **options)
           when :encr then @enclosed_regex_match.new(*para, **options)
           when :any  then @any_match.new('any', *para, **options)
+          when :eof  then @exact_match.new('__sheep_eof__', *para, **options)
           else
             application_error 'unknown match'
           end

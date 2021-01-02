@@ -75,3 +75,8 @@ A(:let, ..) # ;e indicates Let Action
 ```
 
 And the this `:let` Symbol and Object mapping is shown in {SheepAst::ActionFactory#gen}
+
+### Let
+
+Let object has module to include which are {SheepAst::LetRedirect}, {SheepAst::LetRecord}. Please see included module from {SheepAst::Let}
+

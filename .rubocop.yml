@@ -112,3 +112,6 @@ Metrics/ParameterLists:
 
 Style/SlicingWithRange:
   Enabled: false
+
+Style/WordArray:
+  Enabled: false
