@@ -108,8 +108,7 @@ module SheepAst
 
       @ordered_methods_array.each do |m| #rubocop: disable all
         match = m.call(data)
-
-        ldebug "Got match #{match.inspect} at #{m.name}"
+        ldebug "Got match #{match.inspect} at #{m.name}" unless match.nil?
 
         match = nil unless match&.additional_cond(data)
         # if !match.nil? && !match.validate(data)

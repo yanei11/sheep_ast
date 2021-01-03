@@ -43,7 +43,7 @@ core.config_ast('default.main') do |_ast, syn|
     register_syntax(
       'analyze',
       A(:let,
-        [:record_kv_by_id, :ns_test_H, :_2, :_3, { namespace: true }],
+        [:record, :ns_test_H, :_2, :_3, { namespace_key: true }],
         [:show, { disable: true }],
         [:debug, { disable: true }])
     ) {

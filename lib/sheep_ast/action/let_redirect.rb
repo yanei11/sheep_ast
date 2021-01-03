@@ -62,13 +62,15 @@ module SheepAst
         _format_dump {
           ldump "To be redirect : #{chunk.inspect}"
           ldump "The namespace is #{ns_t}"
-        
         }
         return
       end
 
       if options[:debug]
-        ldump "To be redirect : #{chunk.inspect}"
+        _format_dump {
+          ldump "To be redirect : #{chunk.inspect}"
+          ldump "The namespace is #{ns_t}"
+        }
       end
 
       ldebug "To be redirect : #{chunk.inspect}"

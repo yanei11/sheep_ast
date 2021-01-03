@@ -59,6 +59,5 @@ describe SheepAst::DataStore do
      ddd c d"
      }.not_to raise_error
      expect(core.data_store.value(:test_H)['d']).to eq ['f', 'd']
-     p core.data_store.dump_data
    end
 end
