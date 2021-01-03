@@ -197,9 +197,17 @@ module SheepAst
         test = elem.split(':')
         arr << "#{test[0].split('/')[-1]}:#{test[-2]}"
       end
-      method(logs).call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
+      logf = method(logs)
+      logf.call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
       dump(logs)
-      binding.pry if !ENV['SHEEP_DEBUG_PRY'].nil? # rubocop: disable all
+      logf.call 'Exception was occured at analyzer core'
+      if !ENV['SHEEP_DEBUG_PRY'].nil?
+        logf.call 'Entering pry debug session'
+        binding.pry # rubocop: disable all
+      else
+        logf.call 'Not entering pry debug session.'
+        logf.call 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
+      end
       if options[:raise]
         raise
       end

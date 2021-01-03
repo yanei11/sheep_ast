@@ -70,17 +70,17 @@ module SheepAst
         value = pair[value_id]
       end
       # value = data_shaping(value, options)
-      key = pair[key_id]
-      namespace = pair[:_namespace]
+
+      ns = w_or_wo_ns(pair, **options)
+      key = pair[key_id].to_s
+
+      key = "#{ns}::#{key}" if options[:namespace_key]
+      value = "#{ns}::#{value}" if options[:namespace_value]
+
       ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', key_id => '#{key_id}', value_id => '#{value_id}', "\
-        "key => '#{key}', value => '#{value}', namespace => '#{namespace}'"
-      if options[:namespace]
-        namespace.reverse_each do |elem|
-          key = "#{elem}::#{key}"
-        end
-        ldebug "namespace added => #{key}"
-      end
+        "key => '#{key}', value => '#{value}'"
+
       datastore.assign(store_id, value, key)
     end
 
@@ -99,6 +99,7 @@ module SheepAst
       ).void
     }
     def record_v(pair, datastore, store_id, value_id, **options)
+      ns = w_or_wo_ns(pair, **options)
       value = nil
       if value_id.is_a? Enumerable
         value = []
@@ -106,7 +107,8 @@ module SheepAst
       else
         value = pair[value_id]
       end
-      # value = data_shaping(value, options)
+
+      value = "#{ns}::#{value}" if options[:namespace_value]
       ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\
         "value => '#{value}'"

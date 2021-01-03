@@ -118,5 +118,23 @@ module SheepAst
       ldump '--- end  ---'
       ldump ''
     end
+
+    sig {
+      params(
+        pair: T::Hash[Symbol, T.untyped],
+        options: T.untyped
+      ).returns(String)
+    }
+    def w_or_wo_ns(pair, **options)
+      ns = ''
+      if options[:namespace_key] || options[:namespace_value] || options[:namespace]
+
+        namespace = pair[:_namespace]
+        namespace.reverse_each do |elem|
+          ns = "#{elem}::#{ns}"
+        end
+      end
+      return ns.chop.chop
+    end
   end
 end

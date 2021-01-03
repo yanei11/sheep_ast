@@ -4,6 +4,7 @@
 require 'logger'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
+require 'time'
 
 using Rainbow
 
@@ -49,14 +50,8 @@ module SheepAst
 
     sig { params(msg: String, color_: Symbol).void }
     def lprint(msg = '', color_ = :yellow)
-      at = caller[@stack_base]
-      if /^(.+?):(\d+)(?::in `(.*)')?/ =~ at
-        file = $1 # rubocop: disable all
-        line = $2.to_i # rubocop: disable all
-      end
       str = 'P: '
-      str += say_class_name + msg \
-             + " (at #{File.basename(file)}:#{line})"
+      str += say_class_name + msg
       puts str.color(color_)
     end
 
@@ -103,13 +98,17 @@ module SheepAst
 
     sig { params(msg: String, color_: Symbol).void }
     def ldebug(msg = '', color_ = :white)
-      at = caller[@stack_base]
-      if /^(.+?):(\d+)(?::in `(.*)')?/ =~ at
-        file = $1 # rubocop: disable all
-        line = $2.to_i # rubocop: disable all
+      if !ENV['SHEEP_LOG_BT'].nil?
+        at = caller[@stack_base]
+        if /^(.+?):(\d+)(?::in `(.*)')?/ =~ at
+          file = $1 # rubocop: disable all
+          line = $2.to_i # rubocop: disable all
+        end
+        @logger.debug "#{say_class_name} #{msg}"\
+          " (at #{File.basename(file)}:#{line})".color(color_)
+      else
+        @logger.debug "#{say_class_name} #{msg}"
       end
-      @logger.debug "#{say_class_name} #{msg}"\
-        " (at #{File.basename(file)}:#{line})".color(color_)
     end
 
     sig { params(level: Integer, device: T.any(NilClass, IO, String)).void }
@@ -167,6 +166,11 @@ module SheepAst
           sevr = T.unsafe('I')
         else
           sevr = sev
+        end
+
+        if !ENV['SHEEP_LOG_MICRO'].nil?
+          time = Time.now
+          sevr = "#{sevr}[#{time.iso8601(6)}]"
         end
         "#{sevr}: #{message}\n"
       }

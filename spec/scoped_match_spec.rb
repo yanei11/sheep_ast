@@ -263,9 +263,9 @@ describe SheepAst::ScopedMatch do
           )
         }
         register_syntax('analyze', A(:let,
-                                     [:record, :ns_test_HL, :test21, :test21, namespace: true], 
-                                     [:record, :ns_test_H, :test21, :test21, namespace: true], 
-                                     [:record, :ns_test_HA, :test21, [:test21, :test21], namespace: true], 
+                                     [:record, :ns_test_HL, :test21, :test21, namespace_key: true], 
+                                     [:record, :ns_test_H, :test21, :test21, namespace_key: true], 
+                                     [:record, :ns_test_HA, :test21, [:test21, :test21], namespace_key: true], 
                                      [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*', :test21) << E(:sc, '{', '}') << E(:e, ';')

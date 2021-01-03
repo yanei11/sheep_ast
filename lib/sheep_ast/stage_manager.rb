@@ -360,18 +360,24 @@ module SheepAst
 
     sig { params(logs: Symbol).void }
     def dump_tree(logs) # rubocop: disable all
+      if @data&.file_info&.line == nil
+        line_no = nil
+      else
+        line_no = @data&.file_info&.line + 1
+      end
+
       logf = method(logs)
       logf.call
       logf.call '## Analyze information start ##'
       logf.call 'Processing file'
-      logf.call "- #{@data&.file_info&.file}"
+      logf.call "- #{@data&.file_info&.file.inspect}"
       logf.call
       logf.call 'Tokenized Expression'
       logf.call "- expr = #{@data&.expr}"
-      logf.call "- tokenized line = #{@data&.tokenized_line}"
-      logf.call "- line no = #{@data&.file_info&.line + 1}"
-      logf.call "- index = #{@data&.file_info&.index}"
-      logf.call "- max_line = #{@data&.file_info&.max_line}"
+      logf.call "- tokenized line = #{@data&.tokenized_line.inspect}"
+      logf.call "- line no = #{line_no}"
+      logf.call "- index = #{@data&.file_info&.index.inspect}"
+      logf.call "- max_line = #{@data&.file_info&.max_line.inspect}"
       logf.call "- namespacee = #{@data&.file_info&.namespace_stack.inspect}"
       logf.call "- ast include = #{@data&.file_info&.ast_include.inspect}"
       logf.call "- ast exclude = #{@data&.file_info&.ast_exclude.inspect}"

@@ -2,6 +2,7 @@
 # frozen_string_literal:true
 
 require_relative 'exception'
+require_relative 'action/let_compile'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
 require 'set'
@@ -17,7 +18,9 @@ module SheepAst
     extend T::Sig
     include Exception
     include Log
+    include LetCompile
 
+    alias :let_cmpile :compile
     # Constructor
     sig { void }
     def initialize
@@ -95,6 +98,10 @@ module SheepAst
       @all_var = Set.new
     end
 
+    def compile(template_file, **options)
+      let_compile(nil, self, template_file, **options)
+    end
+
     # usage print out.
     # Please see inline comment in the function.
     # Depends on the given store_id suffix, it switches data struture inside the object
@@ -108,21 +115,28 @@ module SheepAst
       lfatal 'Please make sure the suffix of the store_id'.yellow
       lfatal ''
       lfatal 'Usage ========================================='.yellow
-      lfatal 'Use following store id depends on the types:'.yellow
+      lfatal '1. Use following store id depends on the types:'.yellow
       lfatal '  :xxx    - Hold single string'.yellow
       lfatal '  :xxx_A  - Hold Array of string'.yellow
       lfatal '  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1'.yellow
       lfatal '  :xxx_HA - Hold Key Value pair of string, push array so dim is 2'.yellow
       lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin. One data'.yellow
       lfatal ''
-      lfatal 'Note: let record_kv accept following kind:'.yellow
-      lfatal '      xxx_H, xxx_HL, xxx_HA'.yellow
+      lfatal '  Note: let record_kv accept following kind:'.yellow
+      lfatal '        xxx_H, xxx_HL, xxx_HA'.yellow
+      lfatal ''
+      lfatal '2. Available API'.yellow
+      lfatal '   - do_compile: To compile given file with datastore data'.yellow
       lfatal '================================================'.yellow
       lfatal ''
     end
 
     def inspect
-      "custom inspect : <#{self.class.name} object_id = #{object_id}, all_var = #{@all_var.inspect}>"
+      str = ''.dup
+      str += "custom inspect : <#{self.class.name} object_id = #{object_id}, "
+      str += dump_data.inspect
+      str += '>'
+      str
     end
 
     # Dump data as string object.
