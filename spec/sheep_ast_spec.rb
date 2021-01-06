@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-require 'sheep_ast/version'
+require 'sheep_ast'
 
 RSpec.describe SheepAst do
   it 'has a version number' do

@@ -20,7 +20,7 @@ Using sheep_ast, user can do pattern matching and extract data very easy like fo
 # typed: false
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
+require 'sheep_ast'
 
 core = SheepAst::AnalyzerCore.new
 
@@ -32,8 +32,8 @@ core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze') {
       _SS(
-        _S << E(:e, 'Hello') << E(:r, '.*') << E(:e, 'World') <<
-           A(:let, [:record_kv_by_id, :test_H, :_1, :_2])
+        _S << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
+           A(:let, [:record, :test_H, :_1, :_2])
       )
     }
   }
@@ -60,19 +60,29 @@ Extracted result is following:
 
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.
 
+# Compile
+
+Using sheep_ast and erb, user can generate file from the extracted keywords.
+Please see example3 for detail
 
 # Resources
-- Yard page   
+- Yard page\
   https://yanei11.github.io/sheep_ast_pages/
 
-- Github repository  
+- Github repository\
   https://github.com/yanei11/sheep_ast
 
-- Example1(Quick start guide1)  
+- Example1(grep like application)\
   https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
-- Example2(Quick start guide2)  
+- Example2(Keyword extraction from cpp file)\
   https://yanei11.github.io/sheep_ast_pages/file.Example2.html
 
-- API  
+- Example3(generate file (compile) from proto file)\
+  https://yanei11.github.io/sheep_ast_pages/file.Example3.html
+
+- API\
   https://yanei11.github.io/sheep_ast_pages/file.API.html
+
+- Framework Design\
+  https://yanei11.github.io/sheep_ast_pages/file.Framework.html
