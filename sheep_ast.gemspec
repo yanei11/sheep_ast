@@ -42,4 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "sorbet-runtime"
   spec.add_runtime_dependency "rainbow"
   spec.add_runtime_dependency "pry"
+  spec.add_runtime_dependency "erb"
 end

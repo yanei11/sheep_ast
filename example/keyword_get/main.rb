@@ -1,16 +1,13 @@
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
-require 'rainbow/refinement'
-
-using Rainbow
+require 'sheep_ast'
 
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 
 core.config_ast('always.ignore') do |_ast, syn|
@@ -43,7 +40,7 @@ core.config_ast('default.main') do |_ast, syn|
     register_syntax(
       'analyze',
       A(:let,
-        [:record_kv_by_id, :ns_test_H, :_2, :_3, { namespace: true }],
+        [:record, :ns_test_H, :_2, :_3, { namespace_key: true }],
         [:show, { disable: true }],
         [:debug, { disable: true }])
     ) {
