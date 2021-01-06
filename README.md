@@ -60,22 +60,26 @@ Extracted result is following:
 
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.
 
+# Compile
+
+Using sheep_ast and erb, user can generate file from the extracted keywords.
+Please see example3 for detail
 
 # Resources
-- Yard page   
+- Yard page\
   https://yanei11.github.io/sheep_ast_pages/
 
-- Github repository  
+- Github repository\
   https://github.com/yanei11/sheep_ast
 
-- Example1(Quick start guide1)  
+- Example1(Quick start guide1)\
   https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
-- Example2(Quick start guide2)  
+- Example2(Quick start guide2)\
   https://yanei11.github.io/sheep_ast_pages/file.Example2.html
 
-- API  
+- API\
   https://yanei11.github.io/sheep_ast_pages/file.API.html
 
-- Framework Design
+- Framework Design\
   https://yanei11.github.io/sheep_ast_pages/Framework.html

@@ -26,8 +26,12 @@ module SheepAst
     sig { returns(FoF) }
     attr_accessor :my_factory
 
+    sig { returns(Time) }
+    attr_accessor :ctime
+
     sig { void }
     def initialize
+      @ctime = Time.new
       @id_store = []
       @name_hash = {}
       @current_id = -1
