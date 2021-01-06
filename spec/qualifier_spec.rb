@@ -3,12 +3,11 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'analyzer_core'
-require 'action/qualifier'
+require 'sheep_ast'
 
 describe SheepAst::Qualifier do
   it 'work' do
-    qual = SheepAst::Qualifier.new(5, 'abc')
+    qual = SheepAst::Qualifier.new('abc', offset: 5)
     data = SheepAst::AnalyzeData.new
     finfo = SheepAst::FileInfo.new
     data.file_info = finfo

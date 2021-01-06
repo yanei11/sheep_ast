@@ -3,8 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'match/scoped_match'
-require 'analyzer_core'
+require 'sheep_ast'
 
 describe SheepAst::ScopedMatch do
   let(:core) { SheepAst::AnalyzerCore.new }
@@ -88,7 +87,7 @@ describe SheepAst::ScopedMatch do
       syn.register_syntax(
         'match', 
         syn.A(:let,
-               [:record_kv_by_id, :test_H, :test, :test],
+               [:record, :test_H, :test, :test],
                [:redirect, :test, 1..-2, namespace: 'test', ast_include: 'test']
               )
       ) {
@@ -264,9 +263,9 @@ describe SheepAst::ScopedMatch do
           )
         }
         register_syntax('analyze', A(:let,
-                                     [:record_kv_by_id, :ns_test_HL, :test21, :test21, namespace: true], 
-                                     [:record_kv_by_id, :ns_test_H, :test21, :test21, namespace: true], 
-                                     [:record_kv_by_id, :ns_test_HA, :test21, [:test21, :test21], namespace: true], 
+                                     [:record, :ns_test_HL, :test21, :test21, namespace_key: true], 
+                                     [:record, :ns_test_H, :test21, :test21, namespace_key: true], 
+                                     [:record, :ns_test_HA, :test21, [:test21, :test21], namespace_key: true], 
                                      [:show, disable: true], [:debug, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*', :test21) << E(:sc, '{', '}') << E(:e, ';')
@@ -343,4 +342,34 @@ describe SheepAst::ScopedMatch do
     }.to raise_error SheepAst::Exception::ApplicationError
   end
 
+  it 'can match multiple condition' do
+    core.config_tok do |tok|
+      tok.use_split_rule { tok.split_space_only }
+    end
+
+    core.config_ast('default.test2') do |ast, syn, mf, af|
+      syn.register_syntax('match', syn.A(:let, [:record, :test_A, :_1])) {
+        syn._S << syn.E(:enc, 'a', "\n", end_cond: syn.idx('i', 'j', 'k'))
+      }
+    end
+
+    core.config_ast('always.ignore') do |ast, syn, mf, af|
+      syn.within {
+        register_syntax('ignore', syn.A(:na)) {
+          syn._SS(
+            syn._S << syn.E(:any)
+         )
+       }
+      }
+    end
+
+    expect {
+      core.report(raise: true ) {
+      core << "a b c d
+               a f g h
+               i j k" << '__sheep_eof__'
+    }
+    }.not_to raise_error
+    core.data_store.dump(:test_A)
+  end
 end

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'match/regex_match'
+require 'sheep_ast'
 
 describe SheepAst::RegexMatch do
   let(:rm) { SheepAst::RegexMatch.new }

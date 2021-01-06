@@ -3,8 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'match/scoped_match'
-require 'analyzer_core'
+require 'sheep_ast'
 
 describe SheepAst::EnclosedMatch do
   let(:core) { SheepAst::AnalyzerCore.new }

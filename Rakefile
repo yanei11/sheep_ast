@@ -10,22 +10,26 @@ task 'check' do
   sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}  --fail-fast"
 end
 
+desc 'Executing all rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
+task 'allcheck' do
+  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}"
+end
+
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
 task 'doc' do
   sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
   sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
-      INSTALL.md example/grep_like/Example1.md example/keyword_get/Example2.md\
-      manual/API.md"
+      INSTALL.md manual/*"
 end
 
 desc 'sorbet init'
 task 'srbinit' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example"
+  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example/** "
 end
 
 desc 'Execute sorbet type check'
 task 'tc' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example"
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example "
 end
 
 desc 'Execute sorbet type check with auto correct'
@@ -44,7 +48,7 @@ task 'example1' do
   sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main.rb  'test' spec/scoped_match_file/test1.cc \
       spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc"
   sh 'echo "== Grep result =="'
-  sh 'grep test spec/scoped_match_file/* --color=auto'
+  sh 'grep test spec/scoped_match_file/test1.cc spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc --color=auto'
 end
 
 desc 'Execute example1 fail version program'
@@ -57,6 +61,12 @@ desc 'Execute example2 program'
 task 'example2' do
   sh 'echo "== Example2: key word extraction =="'
   sh "#{ENV['RBENV_COM']} bundle exec ruby example/keyword_get/main.rb"
+end
+
+desc 'Execute example3 program'
+task 'example3' do
+  sh 'echo "== Example3: compile =="'
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/protobuf/main.rb"
 end
 
 desc 'Push document repository'

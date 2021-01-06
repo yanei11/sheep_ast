@@ -3,9 +3,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'analyzer_core'
-require 'messages'
-require 'syntax'
+require 'sheep_ast'
 
 describe SheepAst::DataStore do
   let(:core) { SheepAst::AnalyzerCore.new }
@@ -34,8 +32,11 @@ describe SheepAst::DataStore do
          A(
            :let,
            [:fff, :a], [:fff, :b],
-           [:record_kv_by_id, :test_H, :test5, :test1_A],
-           [:record_kv_by_id, :test_H, :test6, :test1_A]
+           [:record, :test_H, :test5, :test1_A],
+           [:record, :test_H, :test6, :test1_A],
+           [:record, :test, :test1_A],
+           [:record, :test_A, :test1_A],
+           [:record, :test_A, :test1_A]
          )
        ) {
          _S << E(:e, 'f', :test1_A) << E(:e, 'd', :test1_A) << E(:e, 'aa', :test3) << E(:e, 'ddd', :test4) <<

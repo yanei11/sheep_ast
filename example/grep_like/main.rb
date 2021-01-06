@@ -1,7 +1,7 @@
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
+require 'sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow
@@ -12,8 +12,8 @@ input_files = ARGV[1..-1]
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 
 core.config_ast('default.main') do |_ast, syn|
@@ -27,9 +27,10 @@ core.config_ast('default.main') do |_ast, syn|
   }
 
   core.let.within {
-    def grep(key, datastore, **options)
-      str = "#{@data.file_info.file}:".blue
-      str += @data.raw_line.chop.to_s
+    def grep(pair, datastore, **options)
+      data = pair[:_data] # accessing kind of raw information
+      str = "#{data.file_info.file}:".blue
+      str += data.raw_line.chop.to_s
       puts str
     end
   }

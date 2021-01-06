@@ -1,16 +1,13 @@
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
-require 'rainbow/refinement'
-
-using Rainbow
+require 'sheep_ast'
 
 core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
-  tok.add_token tok.cmp('#', 'include')
-  tok.add_token tok.cmp('/', '/')
+  tok.token_rule('#', 'include')
+  tok.token_rule('/', '/')
 end
 
 core.config_ast('always.ignore') do |_ast, syn|
@@ -26,7 +23,7 @@ end
 
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
-    register_syntax('analyze', A(:let, [:show, { disable: true }], [:debug, disable: true])) {
+    register_syntax('analyze', A(:let, [:show, { disable: true }], [:debug, { disable: true }])) {
       _SS(
         _S << E(:e, '#include') << E(:enc, '<', '>'),
         _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
@@ -34,7 +31,7 @@ core.config_ast('default.main') do |_ast, syn|
     }
     register_syntax(
       'analyze',
-      A(:let, [:redirect, :test, 1..-2, { namespace: :_2 }], [:show, { disable: true }], [:debug, disable: true])
+      A(:let, [:redirect, :test, 1..-2, { namespace: :_2 }], [:show, { disable: true }], [:debug, { disable: true }])
     ) {
       _SS(
         _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
@@ -43,9 +40,9 @@ core.config_ast('default.main') do |_ast, syn|
     register_syntax(
       'analyze',
       A(:let,
-        [:record_kv_by_id, :ns_test_H, :_2, :_3, { namespace: true }],
+        [:record, :ns_test_H, :_2, :_3, { namespace_key: true }],
         [:show, { disable: true }],
-        [:debug, disable: true])
+        [:debug, { disable: true }])
     ) {
       _SS(
         _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
