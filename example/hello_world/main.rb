@@ -1,7 +1,7 @@
-# typed: false
+# typed:ignore
 # frozen_string_literal: true
 
-require './lib/analyzer_core'
+require 'sheep_ast'
 
 core = SheepAst::AnalyzerCore.new
 
@@ -13,8 +13,8 @@ core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze') {
       _SS(
-        _S << E(:e, 'Hello') << E(:r, '.*') << E(:e, 'World') <<
-           A(:let, [:record_kv_by_id, :test_H, :_1, :_2])
+        _S << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
+           A(:let, [:record, :test_H, :_1, :_2])
       )
     }
   }

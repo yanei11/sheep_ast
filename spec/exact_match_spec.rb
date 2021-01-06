@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'match/exact_match'
+require 'sheep_ast'
 
 describe SheepAst::ExactMatch do
   let(:em) { SheepAst::ExactMatch.new }
