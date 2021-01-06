@@ -36,7 +36,7 @@ module SheepAst
         key: T.nilable(Symbol),
         range: Range,
         options: T.untyped
-      ).void
+      ).returns(T.nilable(T::Boolean))
     }
     def redirect(pair, datastore, key = nil, range = 1..-2, **options)
       chunk = nil
@@ -63,7 +63,7 @@ module SheepAst
           ldump "To be redirect : #{chunk.inspect}"
           ldump "The namespace is #{ns_t}"
         }
-        return
+        return _ret(**options)
       end
 
       if options[:debug]
@@ -83,6 +83,7 @@ module SheepAst
       )
 
       @data.save_request = save_req
+      return _ret(**options)
     end
   end
 end

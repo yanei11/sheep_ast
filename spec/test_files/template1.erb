@@ -1,3 +1,6 @@
-<%# !"spec/#{construct_file_name(namespace, data[:_2])}".res!  %>
-<%= data[:_2] %>
-<%= namespace %>
+<%# Output file name => !"spec/res/#{construct_file_name(namespace, data[:_2], **options)}".res!  %>
+<%= data[:_2] + "\n" %>
+<%= namespace + "\n"%>
+<% ns2 = namespace %>
+<% ns2.chop!.chop! %>
+<%= ns2 %>

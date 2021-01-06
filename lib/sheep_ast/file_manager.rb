@@ -153,12 +153,14 @@ module SheepAst
       line = feed_line
       expr = feed_expr(line)
       @analyze_data.expr = expr
-      @analyze_data.tokenized_line =  @file_info.tokenized[@file_info.line]
+      @analyze_data.tokenized_line = @file_info.tokenized[@file_info.line]
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
       @analyze_data.request_next_data = RequestNextData::Next
       if !@analyze_data.file_info.line.nil? && !@analyze_data.file_info.raw_lines.nil?
-        @analyze_data.raw_line = @analyze_data.file_info.raw_lines[@analyze_data.file_info.line]
+        @analyze_data.raw_line = @file_info.raw_lines[@file_info.line]
+      else
+        @analyze_data.raw_line = 'Not supported. Maybe it is redirected case or it is bug.'
       end
       return @analyze_data
     end

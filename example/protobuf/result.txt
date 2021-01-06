@@ -1,0 +1,10 @@
+Person::name : type = string, property = optional
+Person::id : type = int32, property = optional
+Person::email : type = string, property = optional
+Person::PhoneType::MOBILE : type = int, property = enum
+Person::PhoneType::HOME : type = int, property = enum
+Person::PhoneType::WORK : type = int, property = enum
+Person::number : type = string, property = optional
+Person::type : type = PhoneType, property = optional
+Person::phones : type = PhoneNumber, property = repeated
+AddressBook::people : type = Person, property = repeated

@@ -23,31 +23,37 @@ module SheepAst
     # Specified data will be iput again.  Ast stage to process the data can be specified at option.
     # The Ast specifying can be done by domain or full name of Ast Stage.
     #
-    # @option options [Boolean] :debug it prints variables that can be userd in the erb
+    # @option options [Boolean] :dry_run print variables that can be userd in the erb.
+    #                            With this option, only print is printed and not generating file
+    # @option options [String]  :mode Set File mode. default value is 'a'
+    # @option options [Integer] :perm Set File permission. default value is 0600
     #
     sig {
       params(
-        data: T::Hash[Symbol, T.untyped],
+        data: T.nilable(T::Hash[Symbol, T.untyped]),
         datastore: DataStore,
-        template_file: String,
+        template_file: T.nilable(String),
         options: T.untyped
-      ).void
+      ).returns(T.nilable(T::Boolean))
     }
-    def compile(data, datastore, template_file, **options) # rubocop:disable all
-      raw = File.read(template_file)
-      head_index = raw.index("\n")
-      head = raw[0..head_index - 1]
+    def compile(data, datastore, template_file = nil, **options) # rubocop:disable all
+      if !data.nil?
+        namespace = w_or_wo_ns(data, { **options, namespace: true })
+        namespace_arr = data[:_namespace]
+      end
 
-      p head.split('!')
-      partitioned = head.split('!')[1].rpartition('.')
-      p partitioned
-      suffix = partitioned.last
-      template_contents = raw[head_index + 1..-1]
-      namespace = w_or_wo_ns(data, { namespace: true })
-      namespace_arr = data[:_namespace]
+      if !template_file.nil?
+        raw = File.read(template_file)
+        head_index = raw.index("\n")
+        head = raw[0..head_index - 1]
+        partitioned = head.split('!')[1].rpartition('.')
+        suffix = partitioned.last
+        title = binding.eval(partitioned.first) # rubocop:disable all
+      end
+
       user_def = user_def_compile(data, datastore, template_file, **options)
-      title = binding.eval(partitioned.first) # rubocop:disable all
-      if options[:debug]
+
+      if options[:dry_run]
         _format_dump {
           ldump "data : #{data.inspect}"
           ldump "namespace : #{namespace.inspect}"
@@ -57,6 +63,7 @@ module SheepAst
           ldump "title : #{title}"
           ldump "suffix : #{suffix}"
         }
+        return _ret(**options)
       end
 
       ldebug '=== compile debug ==='
@@ -69,25 +76,18 @@ module SheepAst
       ldebug "suffix : #{suffix}"
       ldebug '=== end ==='
 
-      erb = ERB.new(template_contents)
+      template_contents = raw[head_index + 1..-1]
+      erb = ERB.new(template_contents, trim_mode: 1)
       res = erb.result(binding)
 
       to_file = "#{title}.#{suffix}" if title && suffix
       if to_file.nil?
         puts res
-        return
+        return _ret(**options)
       end
 
-      perm = options[:perm]
-      if perm.nil?
-        File.open(to_file, 'w') { |f|
-          f.write(res)
-        }
-      else
-        File.open(to_file, 'w', perm) { |f|
-          f.write(res)
-        }
-      end
+      update_file(to_file, res, **options)
+      return _ret(**options)
     rescue => e # rubocop: disable all
       bt = e.backtrace
       lfatal "Exception was occured inside let_compile. bt = #{bt}"
@@ -100,13 +100,46 @@ module SheepAst
         lfatal 'Not entering pry debug session.'
         lfatal 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
       end
+      return _ret(**options)
     end
 
-    def construct_file_name(namespace, title)
-      namespace ? "#{namespace}::#{title}" : title.to_s
+    def construct_file_name(namespace, title, **options)
+      namespace_sep = _namespace_separator_file(**options)
+      namespace ? "#{namespace}#{namespace_sep}#{title}" : title.to_s
     end
 
     # Give opotunity to define user_def structure
     def user_def_compile(data, datastore, template_file, **options); end
+
+    def update_file(file, res, **options)
+      if File.exist?(file)
+        ftime = File.ctime(file)
+        test = ctime_get <=> ftime
+        case test
+        when 1
+          ldebug "#{file} is created before application launch. Delete it first!"
+          File.delete(file)
+        when -1
+          # lprint "#{file} is created after factory created. Nothing to do."
+        else
+          lfatal "Unexpected timestamp info. #{ctime_get}, "\
+            "file = #{ftime}, test = #{test.inspect}"
+          application_error
+        end
+      end
+
+      mode = options[:mode]
+      perm = options[:perm]
+      mode = 'a' if mode.nil?
+      if perm.nil?
+        File.open(file, mode) { |f|
+          f.write(res)
+        }
+      else
+        File.open(file, mode, perm) { |f|
+          f.write(res)
+        }
+      end
+    end
   end
 end

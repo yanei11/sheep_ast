@@ -63,13 +63,24 @@ module SheepAst
       key_data = keyword_data(data)
       ldebug "let handle data #{key_data.inspect} to : "
       fsyms.each do |fsym|
+        ret = nil
         m = fsym[0]
         para = fsym[1..-1] #rubocop: disable all
         ldebug "Function : #{m}, para = #{para.inspect}"
         if para.nil? || para.empty?
-          method(m).call(key_data, @data_store)
+          ret = method(m).call(key_data, @data_store)
         else
-          method(m).call(key_data, @data_store, *para)
+          ret = method(m).call(key_data, @data_store, *para)
+        end
+
+        if ret == true # rubocop:disable all
+          if @_pwarn.nil?
+            @_pwarn = true
+            lwarn "Registered method = [#{method(m).name}] returned true."\
+              'Follows methods are ignored.'.red
+            lwarn 'Exited method loop. This message is printed only once per let object.'.red
+          end
+          break
         end
       end
       ldebug "let end. returns result = #{@ret}"
@@ -91,6 +102,10 @@ module SheepAst
 
     def self.within(&blk)
       class_eval(&blk)
+    end
+
+    def ctime_get
+      @action_factory.ctime
     end
   end
 end

@@ -14,17 +14,19 @@ module SheepAst
   # This is used by Let object's :record fuction
   #
   # @api public
-  class DataStore
+  class DataStore # rubocop:disable all
     extend T::Sig
     include Exception
     include Log
     include LetCompile
+    include LetHelper
 
-    alias :let_cmpile :compile
+    alias let_compile compile
     # Constructor
     sig { void }
     def initialize
       @all_var = Set.new
+      @ctime = Time.new
       # @temp_var = {}
       super()
     end
@@ -126,7 +128,7 @@ module SheepAst
       lfatal '        xxx_H, xxx_HL, xxx_HA'.yellow
       lfatal ''
       lfatal '2. Available API'.yellow
-      lfatal '   - do_compile: To compile given file with datastore data'.yellow
+      lfatal '   - compile: To compile given file with datastore data'.yellow
       lfatal '================================================'.yellow
       lfatal ''
     end
@@ -240,6 +242,10 @@ module SheepAst
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_arr_var(sym)
       return sym.to_s.end_with?('_HA')
+    end
+
+    def ctime_get
+      @ctime
     end
   end
 end

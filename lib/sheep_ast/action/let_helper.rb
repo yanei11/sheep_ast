@@ -126,15 +126,42 @@ module SheepAst
       ).returns(String)
     }
     def w_or_wo_ns(pair, **options)
-      ns = ''
+      t_ns = ''
+      namespace_separator = ''
       if options[:namespace_key] || options[:namespace_value] || options[:namespace]
-
+        namespace_separator = _namespace_separator(**options)
         namespace = pair[:_namespace]
         namespace.reverse_each do |elem|
-          ns = "#{elem}::#{ns}"
+          t_ns = "#{elem}#{namespace_separator}#{t_ns}"
         end
       end
-      return ns.chop.chop
+      ns = t_ns.dup
+      (1..namespace_separator.length).each do
+        ns.chop!
+      end
+      return ns
+    end
+
+    def _namespace_separator(**options)
+      namespace_sep = options[:namespace_separator]
+      namespace_sep = '::' if namespace_sep.nil?
+      return namespace_sep
+    end
+
+    def _namespace_separator_file(**options)
+      namespace_sep = options[:namespace_separator_file]
+      namespace_sep = '::' if namespace_sep.nil?
+      return namespace_sep
+    end
+
+    def _ret(**options)
+      ret = options[:break]
+
+      if ret && @_ret_warn.nil?
+        @_ret_warn = true
+        lwarn 'break option is applied. follows let action is ignored.'\
+          ' This print output only once.'
+      end
     end
   end
 end

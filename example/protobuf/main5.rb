@@ -3,6 +3,7 @@
 
 require './lib/sheep_ast'
 
+debug_off = true
 dry1 = false
 dry2 = false
 
@@ -10,11 +11,6 @@ core = SheepAst::AnalyzerCore.new
 
 core.config_tok do |tok|
 end
-
-template1 = 'example/protobuf/template_message.erb'
-template2 = 'example/protobuf/template_enum.erb'
-compile1 = [:compile, template1, { dry_run: false }]
-compile2 = [:compile, template2, { dry_run: false }]
 
 core.config_ast('always.ignore') do |_ast, syn|
   syn.within {
@@ -43,27 +39,15 @@ core.config_ast('message.parser') do |_ast, syn|
     register_syntax('analyze') {
       _SS(
         _S << E(:e, 'optional') << E(:any, { repeat: 4 }) << E(:e, ';')\
-                                << A(
-                                  :let,
-                                  compile1
-                                ),
+                                << A(:let, [:show, { disable: debug_off }]),
         _S << E(:e, 'optional') << E(:any, { repeat: 4 }) << E(:e, '[')\
                                 << E(:any, { repeat: 4 }) << E(:e, ';')\
-                                << A(
-                                  :let,
-                                  compile1
-                                ),
+                                << A(:let, [:show, { disable: debug_off }]),
         _S << E(:e, 'repeated') << E(:any, { repeat: 4 }) << E(:e, ';')\
-                                << A(
-                                  :let,
-                                  compile1
-                                ),
+                                << A(:let, [:show, { disable: debug_off }]),
         _S << E(:e, 'repeated') << E(:any, { repeat: 4 }) << E(:e, '[')\
                                 << E(:any, { repeat: 4 }) << E(:e, ';')\
-                                << A(
-                                  :let,
-                                  compile1
-                                )
+                                << A(:let, [:show, { disable: debug_off }])
       )
     }
   }
@@ -74,10 +58,7 @@ core.config_ast('enum.parser') do |_ast, syn|
     register_syntax('analyze') {
       _SS(
         _S << E(:any, { at_head: true }) << E(:any, { repeat: 2 }) << E(:e, ';')\
-           << A(
-             :let,
-             compile2
-           )
+                                         << A(:let, [:show, { disable: debug_off }])
       )
     }
   }

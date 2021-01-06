@@ -215,7 +215,7 @@ module SheepAst
       return "custom inspect <#{self.class.name} object_id = #{object_id},"\
         " expr = '#{expr.inspect}', stack = #{stack.inspect}, stack_symbol = #{stack_symbol.inspect},"\
         " request_next_data = #{request_next_data.inspect}, file_info = #{file_info.inspect},"\
-        " raw_line = #{@raw_line.inspect}"
+        " tokenized_line = #{@tokenized_line.inspect}, raw_line = #{@raw_line.inspect}"
     end
   end
 end

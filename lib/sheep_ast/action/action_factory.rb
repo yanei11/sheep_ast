@@ -20,10 +20,10 @@ module SheepAst
 
     sig { void }
     def initialize
+      super()
       @no_action = NoAction.new
       @let = Let.new
       @my_name = 'action_factory'
-      super()
     end
 
     # Aggregated interface for the creation of the Action
@@ -42,7 +42,7 @@ module SheepAst
 
       create_id(action)
       action.data_store = @data_store
-      action.my_factory = self
+      action.action_factory = self
       action.match_factory = my_factory.match_factory
       return action
     end

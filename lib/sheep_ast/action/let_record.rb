@@ -38,7 +38,7 @@ module SheepAst
         k_or_v: T.any(T::Array[Symbol], Symbol),
         value: T.nilable(T.any(T::Array[Symbol], Symbol)),
         options: T.untyped
-      ).void
+      ).returns(T.nilable(T::Boolean))
     }
     def record(pair, datastore, store_id, k_or_v, value = nil, **options)
       if value.nil?
@@ -46,6 +46,7 @@ module SheepAst
       else
         record_kv(pair, datastore, store_id, k_or_v, value, **options)
       end
+      return _ret(**options)
     end
 
     # Please use record
@@ -74,8 +75,10 @@ module SheepAst
       ns = w_or_wo_ns(pair, **options)
       key = pair[key_id].to_s
 
-      key = "#{ns}::#{key}" if options[:namespace_key]
-      value = "#{ns}::#{value}" if options[:namespace_value]
+      namespace_sep = _namespace_separator(**options)
+
+      key = "#{ns}#{namespace_sep}#{key}" if options[:namespace_key]
+      value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
 
       ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', key_id => '#{key_id}', value_id => '#{value_id}', "\
@@ -108,7 +111,8 @@ module SheepAst
         value = pair[value_id]
       end
 
-      value = "#{ns}::#{value}" if options[:namespace_value]
+      namespace_sep = _namespace_separator(**options)
+      value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
       ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\
         "value => '#{value}'"
