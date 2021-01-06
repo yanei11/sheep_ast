@@ -18,7 +18,7 @@ The example overall source code is following:
 # typed: false
 # frozen_string_literal: true
 
-require './lib/sheep_ast'
+require 'sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow

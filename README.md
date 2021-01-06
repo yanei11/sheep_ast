@@ -20,7 +20,7 @@ Using sheep_ast, user can do pattern matching and extract data very easy like fo
 # typed: false
 # frozen_string_literal: true
 
-require './lib/sheep_ast'
+require 'sheep_ast'
 
 core = SheepAst::AnalyzerCore.new
 
@@ -32,7 +32,7 @@ core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze') {
       _SS(
-        _S << E(:e, 'Hello') << E(:r, '.*') << E(:e, 'World') <<
+        _S << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
            A(:let, [:record, :test_H, :_1, :_2])
       )
     }
@@ -72,14 +72,17 @@ Please see example3 for detail
 - Github repository\
   https://github.com/yanei11/sheep_ast
 
-- Example1(Quick start guide1)\
+- Example1(grep like application)\
   https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
-- Example2(Quick start guide2)\
+- Example2(Keyword extraction from cpp file)\
   https://yanei11.github.io/sheep_ast_pages/file.Example2.html
+
+- Example3(generate file (compile) from proto file)\
+  https://yanei11.github.io/sheep_ast_pages/file.Example3.html
 
 - API\
   https://yanei11.github.io/sheep_ast_pages/file.API.html
 
 - Framework Design\
-  https://yanei11.github.io/sheep_ast_pages/Framework.html
+  https://yanei11.github.io/sheep_ast_pages/file.Framework.html

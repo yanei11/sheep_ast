@@ -237,7 +237,7 @@ module SheepAst
       else
         test = [test]
       end
-      return test
+      return T.cast(test, T::Array[String])
     end
 
     # TBD

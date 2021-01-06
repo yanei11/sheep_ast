@@ -23,7 +23,7 @@ The example overall source code is following:
 # typed: false
 # frozen_string_literal: true
 
-require './lib/sheep_ast'
+require 'sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow
@@ -77,7 +77,7 @@ Firstly, you need to include sheep_ast package.
 It is done by
 
 ```
-require './lib/sheep_ast'
+require 'sheep_ast'
 ```
 
 # AnalyzerCore obect

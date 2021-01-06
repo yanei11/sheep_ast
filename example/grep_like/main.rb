@@ -1,7 +1,7 @@
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
-require './lib/sheep_ast'
+require 'sheep_ast'
 require 'rainbow/refinement'
 
 using Rainbow

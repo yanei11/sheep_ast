@@ -1,8 +1,11 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
 require 'rainbow/refinement'
+require_relative '../log'
+require_relative '../exception'
+require_relative 'let_helper'
 
 using Rainbow
 
@@ -11,6 +14,10 @@ module SheepAst
   module LetRedirect
     extend T::Sig
     extend T::Helpers
+    include LetHelper
+    include Kernel
+    include Log
+    include Exception
 
     # Redirect given expression block to specified ast
     #
@@ -31,7 +38,7 @@ module SheepAst
     # rubocop: disable all
     sig {
       params(
-        pair: T::Hash[Symbol, T::Array[String]],
+        pair: T::Hash[Symbol, T.untyped],
         datastore: DataStore,
         key: T.nilable(Symbol),
         range: Range,
@@ -63,7 +70,7 @@ module SheepAst
           ldump "To be redirect : #{chunk.inspect}"
           ldump "The namespace is #{ns_t}"
         }
-        return _ret(**options)
+        return T.unsafe(self)._ret(**options)
       end
 
       if options[:debug]
@@ -83,7 +90,7 @@ module SheepAst
       )
 
       @data.save_request = save_req
-      return _ret(**options)
+      return T.unsafe(self)._ret(**options)
     end
   end
 end

@@ -104,6 +104,7 @@ module SheepAst
       class_eval(&blk)
     end
 
+    sig { returns(Time) }
     def ctime_get
       @action_factory.ctime
     end
