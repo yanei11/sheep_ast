@@ -34,7 +34,9 @@ module SheepAst
     #
     # @note This is used inside :redirect function
     #
-    sig { params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(T::Array[T::Array[String]]) }
+    sig {
+      params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(T::Array[T::Array[String]])
+    }
     def _line_from_to(data, line_from, line_to)
       start_match = get_match(data, line_from)
       end_match = get_match(data, line_to)

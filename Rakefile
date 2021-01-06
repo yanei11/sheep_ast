@@ -24,12 +24,12 @@ end
 
 desc 'sorbet init'
 task 'srbinit' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example"
+  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example/** "
 end
 
 desc 'Execute sorbet type check'
 task 'tc' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example"
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example "
 end
 
 desc 'Execute sorbet type check with auto correct'

@@ -4,6 +4,9 @@
 require 'erb'
 require 'sorbet-runtime'
 require 'rainbow/refinement'
+require_relative '../log'
+require_relative '../exception'
+require_relative 'let_helper'
 
 using Rainbow
 
@@ -12,22 +15,35 @@ module SheepAst
   module LetCompile
     extend T::Sig
     extend T::Helpers
+    include LetHelper
+    include Kernel
+    include Log
+    include Exception
 
-    # It uses erb library for embedd variable.
+    # Generate file from the template file.
+    # It uses erb library to embed variable.
     # Please use erb syntax for the template_file.
     #
     # @example
-    #   A(:let, [:compile, from_file, [options]])
+    #   A(:let, [:compile, template_file, [options]])
     #
-    # redirect specified data to specified Ast. The data can be specified by tag and by specified range.
-    # Specified data will be iput again.  Ast stage to process the data can be specified at option.
-    # The Ast specifying can be done by domain or full name of Ast Stage.
+    # The only original thing from erb syntax, to be generate file name is specified by number 1 line like:
+    #
+    # `<%# Output file name => !"spec/res/datastore".res!  %>`
+    #
+    # This geenrate file spec/res/datastore.res.
+    # It can be used function for the filename like:
+    #
+    # `<%# Output file name => !"spec/res/#{construct_file_name(namespace, data[:_2], **options)}".res!  %>`
+    #
+    # The function must be defined in the let object.
     #
     # @option options [Boolean] :dry_run print variables that can be userd in the erb.
     #                            With this option, only print is printed and not generating file
     # @option options [String]  :mode Set File mode. default value is 'a'
     # @option options [Integer] :perm Set File permission. default value is 0600
     #
+    # rubocop:disable all
     sig {
       params(
         data: T.nilable(T::Hash[Symbol, T.untyped]),
@@ -36,22 +52,22 @@ module SheepAst
         options: T.untyped
       ).returns(T.nilable(T::Boolean))
     }
-    def compile(data, datastore, template_file = nil, **options) # rubocop:disable all
+    def compile(data, datastore, template_file = nil, **options)
       if !data.nil?
-        namespace = w_or_wo_ns(data, { **options, namespace: true })
+        namespace = T.unsafe(self).w_or_wo_ns(data, { **options, namespace: true })
         namespace_arr = data[:_namespace]
       end
 
       if !template_file.nil?
         raw = File.read(template_file)
         head_index = raw.index("\n")
-        head = raw[0..head_index - 1]
-        partitioned = head.split('!')[1].rpartition('.')
+        head = raw[0..T.must(head_index) - 1]
+        partitioned = T.must(T.must(head).split('!')[1]).rpartition('.')
         suffix = partitioned.last
         title = binding.eval(partitioned.first) # rubocop:disable all
       end
 
-      user_def = user_def_compile(data, datastore, template_file, **options)
+      user_def = T.unsafe(self).user_def_compile(data, datastore, template_file, **options)
 
       if options[:dry_run]
         _format_dump {
@@ -63,7 +79,7 @@ module SheepAst
           ldump "title : #{title}"
           ldump "suffix : #{suffix}"
         }
-        return _ret(**options)
+        return T.unsafe(self)._ret(**options)
       end
 
       ldebug '=== compile debug ==='
@@ -76,18 +92,18 @@ module SheepAst
       ldebug "suffix : #{suffix}"
       ldebug '=== end ==='
 
-      template_contents = raw[head_index + 1..-1]
+      template_contents = T.must(raw)[T.must(head_index) + 1..-1]
       erb = ERB.new(template_contents, trim_mode: 1)
       res = erb.result(binding)
 
       to_file = "#{title}.#{suffix}" if title && suffix
       if to_file.nil?
         puts res
-        return _ret(**options)
+        return T.unsafe(self)._ret(**options)
       end
 
-      update_file(to_file, res, **options)
-      return _ret(**options)
+      T.unsafe(self).update_file(to_file, res, **options)
+      return T.unsafe(self)._ret(**options)
     rescue => e # rubocop: disable all
       bt = e.backtrace
       lfatal "Exception was occured inside let_compile. bt = #{bt}"
@@ -100,17 +116,39 @@ module SheepAst
         lfatal 'Not entering pry debug session.'
         lfatal 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
       end
-      return _ret(**options)
+      return T.unsafe(self)._ret(**options)
     end
 
+    sig {
+      params(
+        namespace: String,
+        title: String,
+        options: T.untyped
+      ).returns(String)
+    }
     def construct_file_name(namespace, title, **options)
-      namespace_sep = _namespace_separator_file(**options)
-      namespace ? "#{namespace}#{namespace_sep}#{title}" : title.to_s
+      namespace_sep = T.unsafe(self)._namespace_separator_file(**options)
+      namespace.empty? ? title.to_s : "#{namespace}#{namespace_sep}#{title}"
     end
 
     # Give opotunity to define user_def structure
+    sig {
+      params(
+        data: T.nilable(T::Hash[Symbol, T.untyped]),
+        datastore: DataStore,
+        template_file: T.nilable(String),
+        options: T.untyped
+      ).returns(T.untyped)
+    }
     def user_def_compile(data, datastore, template_file, **options); end
 
+    sig {
+      params(
+        file: String,
+        res: String,
+        options: T.untyped
+      ).void
+    }
     def update_file(file, res, **options)
       if File.exist?(file)
         ftime = File.ctime(file)
@@ -141,5 +179,7 @@ module SheepAst
         }
       end
     end
+
+    def ctime_get; end
   end
 end
