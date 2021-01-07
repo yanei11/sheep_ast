@@ -1,3 +1,5 @@
+# Install from GitHub
+
 To install the sheep_ast, proceding following steps:
 
 ```
@@ -19,3 +21,8 @@ rake -> execute rspec command
 rake tc -> execute type check using sorbet
 rake exampleX -> execute example no X program
 ```
+
+# Other packages
+
+Plase check following link. It includes install procedure.
+- https://github.com/yanei11?tab=packages&repo_name=sheep_ast
