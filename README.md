@@ -16,7 +16,7 @@ sheep_ast supports following feature:
 
 Using sheep_ast, user can do pattern matching and extract data very easy like following:
 
-```
+```ruby
 # typed: false
 # frozen_string_literal: true
 
