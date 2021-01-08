@@ -19,13 +19,13 @@ module SheepAst
     sig { returns(T.nilable(FactoryBase)) }
     attr_accessor :my_factory
 
-    sig { returns(T.nilable(String)) }
+    sig { returns(String) }
     attr_accessor :name
 
-    sig { returns(T.nilable(String)) }
+    sig { returns(String) }
     attr_accessor :domain
 
-    sig { returns(T.nilable(String)) }
+    sig { returns(String) }
     attr_accessor :full_name
 
     def initialize

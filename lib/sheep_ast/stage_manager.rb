@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'exception'
@@ -125,10 +125,10 @@ module SheepAst
     sig { params(data: AnalyzeData, save_req: SaveRequest).void }
     def handle_save_request(data, save_req)
       ldebug "handle_save_request save_req = #{save_req.inspect}"
-      data.file_manager.register_next_chunk(save_req.chunk)
-      data.file_manager.ast_include_set(save_req.ast_include)
-      data.file_manager.ast_exclude_set(save_req.ast_exclude)
-      data.file_manager.put_namespace(save_req.namespace)
+      T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk))
+      T.must(data.file_manager).ast_include_set(save_req.ast_include)
+      T.must(data.file_manager).ast_exclude_set(save_req.ast_exclude)
+      T.must(data.file_manager).put_namespace(save_req.namespace)
     end
 
     sig { returns(String) }
@@ -151,16 +151,16 @@ module SheepAst
 
         str += "#{a_match.matched_expr.inspect} => "
       end
-      str&.chop!&.chop!&.chop!&.chop!
+      4.times { str.chop! }
       if str.empty? || str.nil?
         str = 'None'
       end
-      logf.call str.yellow
+      logf.call str, :yellow
     end
 
     sig { params(other: Stage).returns(Stage) }
     def copy(other)
-      T.must(@info).copy(other.info)
+      T.must(@info).copy(T.must(other.info))
       @match_id_array = other.match_id_array.dup
       @match_symbol_array = other.match_symbol_array.dup
       return self
@@ -168,7 +168,7 @@ module SheepAst
 
     sig { params(other: Stage).returns(Stage) }
     def save(other)
-      T.must(@info).copy(other.info)
+      T.must(@info).copy(T.must(other.info))
       @match_id_array = []
       @match_symbol_array = []
       return self
@@ -230,7 +230,7 @@ module SheepAst
     def filter?(incl, excl, domain, full_name) # rubocop: disable all
       return true if domain == 'always'
 
-      ret = false
+      ret = T.let(false, T::Boolean)
       incl.each do |comp|
         res = comp == domain if comp.instance_of? String
 
@@ -240,12 +240,17 @@ module SheepAst
         end
 
         if res
-          ldebug "#{comp} is included".yellow
-          ret = true and break
+          ldebug "#{comp} is included", :yellow
+          ret = true
+          break
         end
       end
 
-      excl&.each do |comp|
+      if excl&.empty?
+        return ret
+      end
+
+      T.must(excl).each do |comp|
         res = comp == domain if comp.instance_of? String
 
         if !res
@@ -253,8 +258,9 @@ module SheepAst
           res = comp =~ full_name if comp.instance_of? Regexp
         end
         if res
-          ldebug "#{comp} is excluded".yellow
-          ret = false and break
+          ldebug "#{comp} is excluded", :yellow
+          ret = false
+          break
         end
       end
 
@@ -263,15 +269,19 @@ module SheepAst
 
     sig { params(data: AnalyzeData).void }
     def analyze_stages(data) # rubocop: disable all
-      ldebug 'Analyze Stages start!'.red
+      ldebug 'Analyze Stages start!', :red
 
       @data = data
-      incl = data.file_info.ast_include
-      excl = data.file_info.ast_exclude
+      incl = T.must(data.file_info).ast_include
+      excl = T.must(data.file_info).ast_exclude
 
       if incl.nil?
         ldebug 'AST with default domain is procssed'
         incl = 'default'
+      end
+
+      if excl.nil?
+        excl = ''
       end
 
       if incl.instance_of?(String)
@@ -282,19 +292,22 @@ module SheepAst
         excl = [excl]
       end
 
-      processed = false
-      found = false
-      ret = nil
+      processed = T.let(false, T::Boolean)
+      found = T.let(false, T::Boolean)
+      ret = T.let(nil, T.untyped)
       @stages.each do |stage|
-        if filter?(incl, excl, stage.ast.domain, stage.ast.full_name)
+        if filter?(
+            T.cast(incl, T::Array[T.any(String, Regexp)]),
+            T.cast(excl, T::Array[T.any(String, Regexp)]),
+            stage.ast.domain, stage.ast.full_name)
           processed = true
-          ldebug "#{stage.name} start analyzing data!".color(:violet)
+          ldebug "#{stage.name} start analyzing data!", :violet
           ret = stage.analyze(data)
 
           found = true if !ret.nil?
           break if ret
         else
-          ldebug "#{stage.name} is filtered".yellow
+          ldebug "#{stage.name} is filtered", :yellow
         end
       end
 
@@ -314,7 +327,7 @@ module SheepAst
         eof_validation
       end
 
-      ldebug 'Analyze Stages Finished!'.red
+      ldebug 'Analyze Stages Finished!', :red
     end
 
     sig { void }
@@ -390,10 +403,10 @@ module SheepAst
         logf.call '================================='
         logf.call "#{stage.name}> tree & Stack"
         logf.call '================================='
-        logf.call '[AST]'.cyan
+        logf.call '[AST]', :cyan
         stage.dump_tree(logs)
         logf.call '---------------------------------'
-        logf.call '[Match Stack]'.yellow
+        logf.call '[Match Stack]', :yellow
         stage.dump_stack(logs)
         logf.call '================================='
       end

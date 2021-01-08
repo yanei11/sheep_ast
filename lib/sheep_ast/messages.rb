@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'exception'
@@ -12,6 +12,7 @@ module SheepAst
   #
   class MatchKind < T::Enum
     include Exception
+    extend T::Sig
 
     enums do
       Any = new
@@ -178,7 +179,7 @@ module SheepAst
     prop :chunk, T.nilable(T::Array[T::Array[String]]), default: nil
     prop :ast_include, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
     prop :ast_exclude, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
-    prop :namespace, T.nilable(T.any(String, Symbol)), default: nil
+    prop :namespace, T.nilable(String), default: nil
   end
 
   # This structure is passed fro file_manager to Match and Action.

@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'log'
@@ -23,7 +23,7 @@ module SheepAst
     sig { returns(String) }
     attr_accessor :my_name
 
-    sig { returns(FoF) }
+    sig { returns(FactoryBase) }
     attr_accessor :my_factory
 
     sig { returns(Time) }
@@ -101,7 +101,7 @@ module SheepAst
           return fac
         end
       end
-      apprecation_error 'factory not found'
+      application_error 'factory not found'
     end
   end
 end

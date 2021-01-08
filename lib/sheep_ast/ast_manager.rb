@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'exception'
@@ -65,7 +65,7 @@ module SheepAst
     end
 
     # find the node from the dataession
-    sig { params(data: AnalyzeData, node: Node).returns(NodeInfo) }
+    sig { params(data: AnalyzeData, node: T.nilable(Node)).returns(NodeInfo) }
     def find_next_node(data, node = nil)
       if node.nil?
         info = @node_factory.find_from_root_node(data)
@@ -177,7 +177,7 @@ module SheepAst
     def at_end(data, node)
       ldebug "matched '#{data.expr.inspect}' at end"
       ldebug "invoking '#{node.my_action.inspect}' at end"
-      res = node.my_action.action(data, node)
+      res = T.must(T.must(node).my_action).action(data, node)
       return res
     end
   end

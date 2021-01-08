@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require_relative '../log'
@@ -80,7 +80,7 @@ module SheepAst
       }
 
       if match_arr.length == 1
-        return match_arr[0]
+        return T.cast(match_arr[0], MatchBase)
       else
         return match_arr
       end
@@ -98,7 +98,7 @@ module SheepAst
     sig { void }
     def initialize
       @match_factory = MatchFactory.new
-      @match_factory.my_factory = self
+      @match_factory.my_factory = T.cast(self, FactoryBase)
       super()
     end
   end

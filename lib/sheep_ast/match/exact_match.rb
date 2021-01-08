@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'match_base'
@@ -34,7 +34,7 @@ module SheepAst
       ).returns(ExactMatch)
     }
     def new(key, sym = nil, **options)
-      em = ExactMatch.new(key, sym, **options)
+      em = T.unsafe(ExactMatch).new(key, sym, **options)
       em.init
       return em
     end

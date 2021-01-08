@@ -33,19 +33,19 @@ module SheepAst
       super()
     end
 
-    sig { params(msg: String).void }
-    def pinfo(msg = '')
-      @logger.info msg
+    sig { params(msg: String, color_: Symbol).void }
+    def pinfo(msg = '', color_ = :white)
+      @logger.info msg.color(color_)
     end
 
-    sig { params(msg: String).void }
-    def pfatal(msg = '')
-      @logger.fatal msg
+    sig { params(msg: String, color_: Symbol).void }
+    def pfatal(msg = '', color_ = :white)
+      @logger.fatal msg.color(color_)
     end
 
-    sig { params(msg: String).void }
-    def pdebug(msg = '')
-      @logger.debug msg
+    sig { params(msg: String, color_: Symbol).void }
+    def pdebug(msg = '', color_ = :white)
+      @logger.debug msg.color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
@@ -57,42 +57,42 @@ module SheepAst
 
     sig { params(msg: String, color_: Symbol).void }
     def ldump(msg = '', color_ = :pink)
-      str = msg
+      str = msg.color(color_)
       puts str.color(color_)
     end
 
-    sig { params(msg: String).void }
-    def linfo(msg = '')
-      @logger.info say_class_name + msg
+    sig { params(msg: String, color_: Symbol).void }
+    def linfo(msg = '', color_ = :white)
+      @logger.info (say_class_name + msg).color(color_)
     end
 
-    sig { params(msg: String).void }
-    def pwarn(msg = '')
-      @logger.warn msg
+    sig { params(msg: String, color_: Symbol).void }
+    def pwarn(msg = '', color_ = :white)
+      @logger.warn msg.color(color_)
     end
 
-    sig { params(msg: String).void }
-    def lwarn(msg = '')
-      @logger.warn say_class_name + msg
+    sig { params(msg: String, color_: Symbol).void }
+    def lwarn(msg = '', color_ = :white)
+      @logger.warn (say_class_name + msg).color(color_)
     end
 
-    sig { params(msg: String).void }
-    def lfatal(msg = '')
-      @logger.fatal say_class_name + msg
+    sig { params(msg: String, color_: Symbol).void }
+    def lfatal(msg = '', color_ = :white)
+      @logger.fatal (say_class_name + msg).color(color_)
     end
 
-    sig { params(msg: String).void }
-    def lerror(msg = '')
-      @logger.error say_class_name + msg
+    sig { params(msg: String, color_: Symbol).void }
+    def lerror(msg = '', color_ = :white)
+      @logger.error (say_class_name + msg).color(color_)
     end
 
-    sig { params(msg: String).void }
-    def ldebug2(msg = '')
+    sig { params(msg: String, color_: Symbol).void }
+    def ldebug2(msg = '', color_ = :white)
       env = ENV['SHEEP_LOG_LEVEL']
       return if env.nil?
 
       if env >= 2
-        ldebug msg
+        ldebug msg.color(color_)
       end
     end
 

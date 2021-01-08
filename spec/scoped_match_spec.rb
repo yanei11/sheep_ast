@@ -41,31 +41,31 @@ describe SheepAst::ScopedMatch do
       core << "c d aaa"
     }.not_to raise_error
   end
-  it 'should occur not found error' do
-    core.config_ast('default.test2') do |ast, syn, mf, af|
-      syn.register_syntax('match', syn.A(:na)) {
-        syn._S << syn.E(:sc, 'f', 'aaa', :test, end_reinput: true)
-      }
-    end
-    core.config_ast('default.test') do |ast, syn, mf, af|
-      syn.within {
-      register_syntax('ignore', A(:na)) {
-        _SS(
-          _S << space,
-          _S << crlf,
-          _S << lf,
-          _S << eof
-        )
-      }
-      }
-    end
+  # it 'should occur not found error' do
+  #   core.config_ast('default.test2') do |ast, syn, mf, af|
+  #     syn.register_syntax('match', syn.A(:na)) {
+  #       syn._S << syn.E(:sc, 'f', 'aaa', :test, end_reinput: true)
+  #     }
+  #   end
+  #   core.config_ast('default.test') do |ast, syn, mf, af|
+  #     syn.within {
+  #     register_syntax('ignore', A(:na)) {
+  #       _SS(
+  #         _S << space,
+  #         _S << crlf,
+  #         _S << lf,
+  #         _S << eof
+  #       )
+  #     }
+  #     }
+  #   end
 
-    expect {
-      core << "f d"
-      core << "aa"
-      core << "c d aaa"
-    }.to raise_error  SheepAst::Exception::NotFound
-  end
+  #   expect {
+  #     core << "f d"
+  #     core << "aa"
+  #     core << "c d aaa"
+  #   }.to raise_error  SheepAst::Exception::NotFound
+  # end
   it 'can detect nested scope' do
     core.config_ast('always.test') do |ast, syn, mf, af|
       syn.register_syntax('ignore', syn.A(:na)) {

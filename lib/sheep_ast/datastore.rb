@@ -1,13 +1,10 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'exception'
 require_relative 'action/let_compile'
-require 'rainbow/refinement'
 require 'sorbet-runtime'
 require 'set'
-
-using Rainbow
 
 module SheepAst
   # User can store data or fetch data from the object.
@@ -101,7 +98,7 @@ module SheepAst
     end
 
     def compile(template_file, **options)
-      let_compile(nil, self, template_file, **options)
+      T.unsafe(self).let_compile(nil, self, template_file, **options)
     end
 
     # usage print out.
@@ -111,25 +108,25 @@ module SheepAst
     # e.g. If user specify store_id as xxx_H then datastore object creates Hash object
     #      to allow user to prvide key/value pair to store the data
     #
-    sig { returns(String) }
+    sig { void }
     def usage
       lfatal ''
-      lfatal 'Please make sure the suffix of the store_id'.yellow
+      lfatal 'Please make sure the suffix of the store_id', :yellow
       lfatal ''
-      lfatal 'Usage ========================================='.yellow
-      lfatal '1. Use following store id depends on the types:'.yellow
-      lfatal '  :xxx    - Hold single string'.yellow
-      lfatal '  :xxx_A  - Hold Array of string'.yellow
-      lfatal '  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1'.yellow
-      lfatal '  :xxx_HA - Hold Key Value pair of string, push array so dim is 2'.yellow
-      lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin. One data'.yellow
+      lfatal 'Usage =========================================', :yellow
+      lfatal '1. Use following store id depends on the types:', :yellow
+      lfatal '  :xxx    - Hold single string', :yellow
+      lfatal '  :xxx_A  - Hold Array of string', :yellow
+      lfatal '  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1', :yellow
+      lfatal '  :xxx_HA - Hold Key Value pair of string, push array so dim is 2', :yellow
+      lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin. One data', :yellow
       lfatal ''
-      lfatal '  Note: let record_kv accept following kind:'.yellow
-      lfatal '        xxx_H, xxx_HL, xxx_HA'.yellow
+      lfatal '  Note: let record_kv accept following kind:', :yellow
+      lfatal '        xxx_H, xxx_HL, xxx_HA', :yellow
       lfatal ''
-      lfatal '2. Available API'.yellow
-      lfatal '   - compile: To compile given file with datastore data'.yellow
-      lfatal '================================================'.yellow
+      lfatal '2. Available API', :yellow
+      lfatal '   - compile: To compile given file with datastore data', :yellow
+      lfatal '================================================', :yellow
       lfatal ''
     end
 

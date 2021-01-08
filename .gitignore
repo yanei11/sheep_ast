@@ -3,3 +3,4 @@ sorbet/rbi
 .yardoc
 docs
 coverage/
+spec/res

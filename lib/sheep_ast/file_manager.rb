@@ -1,12 +1,9 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require 'set'
 require_relative 'log'
-require 'rainbow/refinement'
 require 'sorbet-runtime'
-
-using Rainbow
 
 module SheepAst
   # This object handles input of syntax element after parsing by tokenizer.
@@ -39,7 +36,7 @@ module SheepAst
 
     sig { params(file: String).returns(T.nilable(T::Set[String])) }
     def processed?(file)
-      ldebug "Mark processed => #{File.expand_path(file)}".blue
+      ldebug "Mark processed => #{File.expand_path(file)}", :blue
       return @processed_file_list.add?(File.expand_path(file))
     end
 
@@ -50,30 +47,15 @@ module SheepAst
 
     sig { params(blk: T.proc.params(arg0: AnalyzeData).void).void }
     def analyze(&blk)
-      reinput_req = false
       loop do
-        data = nil
-        if reinput_req
-          reinput_req = false
-          data = @prev_data
-          data.request_next_data = RequestNextData::Next
-          ldebug "received RequestData::Again. reinput data = #{data.inspect}"
-        else
-          data = next_data
-          @prev_data = data.dup
-        end
+        data = next_data
 
-        if data&.expr.nil?
+        if data.expr.nil?
           linfo 'Finish analyzing.'
           break
         end
 
         blk.call(data)
-
-        if data&.request_next_data == RequestNextData::Again
-          reinput_req = true
-          ldebug 'reinput_req'
-        end
       end
     end
 
@@ -104,7 +86,7 @@ module SheepAst
         end
       end
 
-      ldebug "feed line returned #{line.inspect}, line_no = #{@file_info.line}".red
+      ldebug "feed line returned #{line.inspect}, line_no = #{@file_info.line}", :red
       return line
     end
 
@@ -127,10 +109,10 @@ module SheepAst
           expr = feed_expr(feed_line, true)
         elsif @file_info.line == @file_info.max_line
           if !@file_info.file.nil?
-            ldebug 'EOF'.red
+            ldebug 'EOF', :red
             expr = '__sheep_eof__'
             # else
-            # ldebug 'EOC'.red
+            # ldebug 'EOC', :red
             # expr = '__sheep_eoc__'
           end
         else
@@ -142,7 +124,7 @@ module SheepAst
 
       if !rec
         ldebug "index = #{@file_info.index} is input"
-        ldebug "feed expr returned #{expr.inspect} at #{@file_info.line}:#{@file_info.index}".red
+        ldebug "feed expr returned #{expr.inspect} at #{@file_info.line}:#{@file_info.index}", :red
       end
 
       return expr
@@ -172,8 +154,8 @@ module SheepAst
 
     sig { returns(T::Boolean) }
     def consume_file
-      ldebug 'consume file called'.red
-      first_time = true
+      ldebug 'consume file called', :red
+      first_time = T.let(true, T::Boolean)
       loop do
         file = @reg_files.shift
         return false if file.nil?
@@ -199,7 +181,7 @@ module SheepAst
       end
     end
 
-    sig { params(file: T::Array[String]).void }
+    sig { params(file: String).void }
     def register_next_file(file)
       save_info
       @file_info.file = file
@@ -230,7 +212,7 @@ module SheepAst
       @resume_info << info
 
       ldebug "Suspended info process!! resume_stack = #{@resume_info.length}"\
-        " for info = #{info.inspect}, copied from #{@file_info.inspect}".color(:indianred)
+        " for info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
 
       @file_info.init
       threshold = ENV['SHEEP_SAVE_STACK'].nil? ? 10 : ENV['SHEEP_SAVE_STACK']
@@ -255,7 +237,7 @@ module SheepAst
       @analyze_data.init
 
       ldebug "Resumed info process!! resume_stack = #{@resume_info.length}"\
-        " for info = #{info.inspect}, for analyze_data = #{@analyze_data.inspect}".color(:indianred)
+        " for info = #{info.inspect}, for analyze_data = #{@analyze_data.inspect}", :indianred
       return info
     end
 
