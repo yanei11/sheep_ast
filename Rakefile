@@ -48,7 +48,8 @@ task 'example1' do
   sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main.rb  'test' spec/scoped_match_file/test1.cc \
       spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc"
   sh 'echo "== Grep result =="'
-  sh 'grep test spec/scoped_match_file/test1.cc spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc --color=auto'
+  sh 'grep test spec/scoped_match_file/test1.cc spec/scoped_match_file/test2.cc\
+      spec/scoped_match_file/test3.cc --color=auto'
 end
 
 desc 'Execute example1 fail version program'

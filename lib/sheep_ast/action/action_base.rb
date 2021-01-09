@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require_relative '../messages'
@@ -48,7 +48,7 @@ module SheepAst
         key = data.stack_symbol[index]
         value = hash[key] unless key.nil?
 
-        expr = match_factory.from_id(elem).matched_expr
+        expr = T.cast(match_factory.from_id(elem), MatchBase).matched_expr
         if value.nil?
           hash[key] = expr
         elsif value.instance_of?(Array)
@@ -59,7 +59,7 @@ module SheepAst
       end
 
       stack = []
-      data.file_info.namespace_stack.each do |elem|
+      T.must(data.file_info).namespace_stack.each do |elem|
         stack << elem unless elem.nil?
       end
 
@@ -67,36 +67,6 @@ module SheepAst
       hash[:_raw_line] = data.raw_line
       hash[:_data] = data
       return hash
-    end
-
-    sig { params(data: AnalyzeData, key: Symbol).returns(MatchBase) }
-    def get_match(data, key)
-      test = data.stack_symbol.find_index { |i| i == key }
-      application_error 'specified key does not found in stack_symbol' if test.nil?
-
-      id_ = data.stack[test]
-      match = match_factory.from_id(id_)
-      application_error 'match did not found' if match.nil?
-
-      return match
-    end
-
-    sig { params(data: AnalyzeData).returns(MatchBase) }
-    def get_first_match(data)
-      id_ = data.stack.first
-      match = match_factory.from_id(id_)
-      application_error 'match did not found' if match.nil?
-
-      return match
-    end
-
-    sig { params(data: AnalyzeData).returns(MatchBase) }
-    def get_last_match(data)
-      id_ = data.stack.last
-      match = match_factory.from_id(id_)
-      application_error 'match did not found' if match.nil?
-
-      return match
     end
 
     sig { params(data: AnalyzeData).returns(T::Boolean) }

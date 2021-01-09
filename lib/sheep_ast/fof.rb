@@ -20,9 +20,6 @@ module SheepAst
     include UseMatchAlias
     include UseActionAlias
 
-    sig { returns(DataStore) }
-    attr_accessor :data_store
-
     sig { params(data_store: DataStore).void }
     def initialize(data_store)
       @data_store = data_store

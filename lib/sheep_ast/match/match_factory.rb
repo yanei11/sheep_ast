@@ -91,9 +91,7 @@ module SheepAst
   module UseMatchAlias
     extend T::Sig
     include Exception
-
-    sig { returns(MatchFactory) }
-    attr_accessor :match_factory
+    include FactoryBase
 
     sig { void }
     def initialize

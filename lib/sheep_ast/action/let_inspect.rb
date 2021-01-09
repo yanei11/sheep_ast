@@ -1,9 +1,11 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
 require 'rainbow/refinement'
 require 'pry'
+require_relative '../log'
+require_relative 'let_helper'
 
 using Rainbow
 
@@ -12,6 +14,8 @@ module SheepAst
   module LetInspect
     extend T::Sig
     extend T::Helpers
+    include Log
+    include LetHelper
 
     # show variable data passed from the Let action
     #
@@ -31,7 +35,7 @@ module SheepAst
       if !options[:disable]
         _format_dump { ldump "pair = #{pair.inspect}", :lightgreen }
       end
-      return _ret(**options)
+      return T.unsafe(self)._ret(**options)
     end
 
     # show variable data passed from the Let action
@@ -75,9 +79,9 @@ module SheepAst
     }
     def debug(pair, datastore, **options)
       if !options[:disable] && ENV['SHEEP_LET_DISABLE_DEBUG'].nil?
-        binding.pry if _do_pry(**options) # rubocop:disable all
+        binding.pry if T.unsafe(self)._do_pry(**options) # rubocop:disable all
       end
-      return _ret(**options)
+      return T.unsafe(self)._ret(**options)
     end
 
     private

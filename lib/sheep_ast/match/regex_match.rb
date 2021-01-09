@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'match_base'
@@ -37,7 +37,7 @@ module SheepAst
       ).returns(RegexMatch)
     }
     def new(key, sym = nil, **options)
-      return RegexMatch.new(key, sym, **options)
+      return T.unsafe(RegexMatch).new(key, sym, **options)
     end
 
     sig { override.returns(MatchKind) }

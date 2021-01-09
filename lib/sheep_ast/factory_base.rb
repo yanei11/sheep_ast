@@ -29,6 +29,15 @@ module SheepAst
     sig { returns(Time) }
     attr_accessor :ctime
 
+    sig { returns(FactoryBase) }
+    attr_accessor :match_factory
+
+    sig { returns(ActionFactory) }
+    attr_accessor :action_factory
+
+    sig { returns(DataStore) }
+    attr_accessor :data_store
+
     sig { void }
     def initialize
       @ctime = Time.new

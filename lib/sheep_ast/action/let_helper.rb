@@ -1,8 +1,10 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
 require 'rainbow/refinement'
+require_relative '../log'
+require_relative '../exception'
 
 using Rainbow
 
@@ -14,12 +16,26 @@ module SheepAst
   module LetHelper
     extend T::Sig
     extend T::Helpers
+    include Log
+    include Exception
+
+    def get_first_match(data)
+      missing_impl
+    end
+
+    def get_last_match(data)
+      missing_impl
+    end
+
+    def get_match(data, num)
+      missing_impl
+    end
 
     # Extract line from first matched line to last matched line
     #
     # @note This is used inside :redirect function
     #
-    sig { params(data: AnalyzeData).returns(T::Array[T::Array[String]]) }
+    sig { params(data: AnalyzeData).returns(T.nilable(T::Array[T::Array[String]])) }
     def _line_matched(data)
       start_match = get_first_match(data)
       end_match = get_last_match(data)
@@ -35,7 +51,9 @@ module SheepAst
     # @note This is used inside :redirect function
     #
     sig {
-      params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(T::Array[T::Array[String]])
+      params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(
+        T.nilable(T::Array[T::Array[String]])
+      )
     }
     def _line_from_to(data, line_from, line_to)
       start_match = get_match(data, line_from)
@@ -64,17 +82,17 @@ module SheepAst
       chunk = pair[key]
       application_error 'specified key did not hit' if chunk.nil?
 
-      chunk = chunk[range]
+      chunk = T.must(chunk)[range]
       application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)
 
-      chunk = _data_shaping(chunk, options)
+      chunk = T.unsafe(self)._data_shaping(chunk, options)
       return chunk
     end
 
     # Getting namespace
     sig {
       params(
-        pair: T::Hash[Symbol, T::Array[String]],
+        pair: T::Hash[Symbol, String],
         name: T.nilable(T.any(Symbol, String))
       ).returns(T.nilable(String))
     }
@@ -82,10 +100,10 @@ module SheepAst
       return nil if name.nil?
 
       if name.instance_of? Symbol
-        ns_t = pair[name]
+        ns_t = pair[T.cast(name, Symbol)]
         if ns_t.nil?
           lfatal "namespace symbol cannot be found in the given data => #{pair.inspect}"
-          apprecation_error
+          application_error
         end
       end
 
@@ -103,9 +121,7 @@ module SheepAst
       )
     }
     def _data_shaping(chunk, **options)
-      if !chunk.is_a? Enumerable
-        return chunk
-      elsif options[:raw]
+      if options[:raw]
         [chunk]
       else
         chunk.slice_after("\n").to_a
@@ -131,7 +147,7 @@ module SheepAst
       t_ns = ''
       namespace_separator = ''
       if options[:namespace_key] || options[:namespace_value] || options[:namespace]
-        namespace_separator = _namespace_separator(**options)
+        namespace_separator = T.unsafe(self)._namespace_separator(**options)
         namespace = pair[:_namespace]
         namespace.reverse_each do |elem|
           t_ns = "#{elem}#{namespace_separator}#{t_ns}"

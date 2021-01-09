@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'condition_match'
@@ -52,13 +52,17 @@ module SheepAst
       ).returns(ScopedMatch)
     }
     def new(start_expr, end_expr, sym = nil, **options)
-      ins = self.class.new(start_expr, sym, **options)
+      ins = T.unsafe(self).class.new(start_expr, sym, **options)
       ins.start_expr = start_expr
       ins.end_expr = end_expr
       ins.sem = 0
       ins.matched_expr = []
       return ins
     end
+
+    def match_end(expr, key); end
+
+    def match_start(expr, key); end
 
     sig { override.params(data: AnalyzeData).returns(T::Boolean) }
     def test_finish?(data)

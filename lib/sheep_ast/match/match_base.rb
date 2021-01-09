@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative '../exception'
@@ -81,7 +81,7 @@ module SheepAst
     def matched(data)
       expr_ = data.expr
       if @extract
-        expr_ = expr_[@extract]
+        expr_ = T.must(expr_)[@extract]
       end
 
       if @store_sym.nil?
@@ -109,7 +109,7 @@ module SheepAst
 
     sig { params(data: AnalyzeData).returns(T.nilable(T::Boolean)) }
     def match(data)
-      reg_match(@key, data.expr)
+      reg_match(@key, T.must(data.expr))
     end
 
     sig { params(expr_: String, target_: String).returns(T.nilable(T::Boolean)) }
