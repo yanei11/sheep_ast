@@ -52,9 +52,7 @@ module SheepAst
   module UseActionAlias
     extend T::Sig
     include Exception
-
-    sig { returns(ActionFactory) }
-    attr_accessor :action_factory
+    include FactoryBase
 
     def initialize
       @action_factory = ActionFactory.new

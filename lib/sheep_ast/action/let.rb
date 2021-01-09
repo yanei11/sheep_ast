@@ -108,5 +108,31 @@ module SheepAst
     def ctime_get
       @action_factory.ctime
     end
+
+    sig { params(data: AnalyzeData).returns(MatchBase) }
+    def get_first_match(data)
+      id_ = data.stack.first
+      match = T.cast(match_factory.from_id(id_), MatchBase)
+
+      return match
+    end
+
+    sig { params(data: AnalyzeData).returns(MatchBase) }
+    def get_last_match(data)
+      id_ = data.stack.last
+      match = T.cast(match_factory.from_id(id_), MatchBase)
+
+      return match
+    end
+
+    sig { params(data: AnalyzeData, key: Symbol).returns(MatchBase) }
+    def get_match(data, key)
+      test = data.stack_symbol.find_index { |i| i == key }
+
+      id_ = data.stack[T.must(test)]
+      match = T.cast(match_factory.from_id(id_), MatchBase)
+
+      return match
+    end
   end
 end

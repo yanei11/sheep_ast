@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'match_base'
@@ -23,7 +23,7 @@ module SheepAst
       ).returns(ExactGroupMatch)
     }
     def new(keys, sym = nil, **options)
-      ins = ExactGroupMatch.new(keys.inspect.to_s, sym, **options)
+      ins = T.unsafe(ExactGroupMatch).new(keys.inspect.to_s, sym, **options)
       ins.keys = keys
       return ins
     end

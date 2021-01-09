@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'match_base'
@@ -21,7 +21,7 @@ module SheepAst
     }
     def initialize(*exprs, **options)
       super()
-      data_handle_init(exprs, **options)
+      T.unsafe(self).data_handle_init(exprs, **options)
     end
   end
 end

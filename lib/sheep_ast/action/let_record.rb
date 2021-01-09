@@ -1,8 +1,10 @@
-# typed: false
+# typed: strict
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
 require 'rainbow/refinement'
+require_relative '../log'
+require_relative 'let_helper'
 
 using Rainbow
 
@@ -11,6 +13,8 @@ module SheepAst
   module LetRecord
     extend T::Sig
     extend T::Helpers
+    include LetHelper
+    include Log
 
     # Record given key and value expression block to data store
     #
@@ -42,11 +46,11 @@ module SheepAst
     }
     def record(pair, datastore, store_id, k_or_v, value = nil, **options)
       if value.nil?
-        record_v(pair, datastore, store_id, k_or_v, **options)
+        T.unsafe(self).record_v(pair, datastore, store_id, k_or_v, **options)
       else
-        record_kv(pair, datastore, store_id, k_or_v, value, **options)
+        T.unsafe(self).record_kv(pair, datastore, store_id, T.cast(k_or_v, Symbol), value, **options)
       end
-      return _ret(**options)
+      return T.unsafe(self)._ret(**options)
     end
 
     # Please use record
@@ -72,10 +76,10 @@ module SheepAst
       end
       # value = data_shaping(value, options)
 
-      ns = w_or_wo_ns(pair, **options)
+      ns = T.unsafe(self).w_or_wo_ns(pair, **options)
       key = pair[key_id].to_s
 
-      namespace_sep = _namespace_separator(**options)
+      namespace_sep = T.unsafe(self)._namespace_separator(**options)
 
       key = "#{ns}#{namespace_sep}#{key}" if options[:namespace_key]
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
@@ -102,7 +106,7 @@ module SheepAst
       ).void
     }
     def record_v(pair, datastore, store_id, value_id, **options)
-      ns = w_or_wo_ns(pair, **options)
+      ns = T.unsafe(self).w_or_wo_ns(pair, **options)
       value = nil
       if value_id.is_a? Enumerable
         value = []
@@ -111,7 +115,7 @@ module SheepAst
         value = pair[value_id]
       end
 
-      namespace_sep = _namespace_separator(**options)
+      namespace_sep = T.unsafe(self)._namespace_separator(**options)
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
       ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\

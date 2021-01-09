@@ -7,7 +7,6 @@ require_relative 'ast_manager'
 require_relative 'tokenizer'
 require_relative 'datastore'
 require_relative 'sheep_obj'
-require_relative 'action/include_handler'
 require_relative 'stage_manager'
 require_relative 'fof'
 require 'rainbow/refinement'
@@ -35,10 +34,6 @@ module SheepAst
     sig { returns(Tokenizer) }
     attr_accessor :tokenizer
 
-    # @api private
-    sig { returns(IncludeHander) }
-    attr_accessor :include_handler
-
     # Returns DataStore object
     # It holds user store data at the :record function in the Let action
     #
@@ -54,7 +49,6 @@ module SheepAst
     sig { void }
     def initialize
       @tokenizer = Tokenizer.new
-      @include_handler = IncludeHandler.new
       @stage_manager = StageManager.new
       @file_manager = FileManager.new(@stage_manager, @tokenizer)
       @data_store = DataStore.new
@@ -285,13 +279,8 @@ module SheepAst
         end
       end
 
-      @option[:I]&.each do |item|
-        @include_handler.register_dir_path(item)
-      end
-
-      @option[:E]&.each do |item|
-        @include_handler.register_exclude_dir_path(item)
-      end
+      @data_tore.assign(:_sheep_dir_path, @option[:I])
+      @data_tore.assign(:_sheep_exclude_dir_path, @option[:E])
     end
   end
 end
