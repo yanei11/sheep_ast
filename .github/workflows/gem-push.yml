@@ -3,7 +3,7 @@ name: Ruby Gem
 on:
   pull_request:
     types: [closed]
-    branches: [ release ]
+    branches: [ release_package ]
 
 jobs:
   build:
