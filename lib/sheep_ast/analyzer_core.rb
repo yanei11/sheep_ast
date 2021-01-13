@@ -9,11 +9,8 @@ require_relative 'datastore'
 require_relative 'sheep_obj'
 require_relative 'stage_manager'
 require_relative 'fof'
-require 'rainbow/refinement'
 require 'optparse'
 require 'pry'
-
-using Rainbow
 
 # api public
 module SheepAst
@@ -48,10 +45,10 @@ module SheepAst
     #
     sig { void }
     def initialize
+      @data_store = DataStore.new
       @tokenizer = Tokenizer.new
       @stage_manager = StageManager.new
-      @file_manager = FileManager.new(@stage_manager, @tokenizer)
-      @data_store = DataStore.new
+      @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(@data_store)
       @option = {}
       super()
@@ -181,10 +178,12 @@ module SheepAst
     #
     # @note If SHEEP_DEBUG_PRY is defined, pry debug session is started at the exception
     #
-    sig { params(logs: Symbol, options: T.nilable(T::Boolean)).void }
-    def report(logs = :pfatal, **options)
+    # rubocop:disable all
+    sig { params(logs: Symbol, options: T.nilable(T::Boolean)).returns(T::Boolean) }
+    def report(logs = :pfatal, **options) 
       yield
-    rescue => e # rubocop: disable all
+      return true
+    rescue => e
       bt = e.backtrace
       arr = []
       bt.each do |elem|
@@ -192,7 +191,17 @@ module SheepAst
         arr << "#{test[0].split('/')[-1]}:#{test[-2]}"
       end
       logf = method(logs)
-      logf.call "exception is observe. detail => #{e.inspect}, bt => #{arr.inspect}".red
+      logf.call ''
+      logf.call '---------------------------'
+      logf.call '## report Got exception ##'
+      logf.call '--------------------------'
+      logf.call ''
+      logf.call '## Exception Info'
+      logf.call 'Message'
+      logf.call "#{e.inspect}", :red
+      logf.call 'BackTrace:'
+      logf.call "#{arr.inspect}", :blue
+      logf.call ''
       dump(logs)
       logf.call 'Exception was occured at analyzer core'
       if !ENV['SHEEP_DEBUG_PRY'].nil?
@@ -202,9 +211,26 @@ module SheepAst
         logf.call 'Not entering pry debug session.'
         logf.call 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
       end
+      logf.call ''
+      logf.call 'End of Report'
+      logf.call '--------------------------'
+      logf.call ''
+
       if options[:raise]
         raise
       end
+
+      return false
+    end
+
+    # API to set search path to include files by {SheepAst::LetInclude} module
+    def sheep_dir_path_set(arr)
+      @data_store.assign(:_sheep_dir_path, arr)
+    end
+
+    # API to set exclude path to skip analysis by {SheepAst::LetInclude} module
+    def sheep_exclude_dir_path_set(arr)
+      @data_store.assign(:_sheep_exclude_dir_path, arr)
     end
 
     private
@@ -226,7 +252,7 @@ module SheepAst
     sig { params(file: String).returns(String) }
     def tokenize(file)
       tokenized = @tokenizer.feed_file(file)
-      ldebug "start #{File.expand_path(file).red}"
+      ldebug "start #{File.expand_path(file)}", :red
       return tokenized
     end
 
@@ -261,7 +287,7 @@ module SheepAst
         ) { @option[:d] = true }
 
         opt.parse!(argv)
-        linfo "Application starts with option => #{@option.inspect.cyan}"
+        linfo "Application starts with option => #{@option.inspect}", :cyan
       end
     end
 
@@ -279,8 +305,8 @@ module SheepAst
         end
       end
 
-      @data_tore.assign(:_sheep_dir_path, @option[:I])
-      @data_tore.assign(:_sheep_exclude_dir_path, @option[:E])
+      sheep_dir_path_set(@option[:I])
+      sheep_exclude_dir_path_set(@option[:E])
     end
   end
 end

@@ -130,8 +130,10 @@ module SheepAst
           # The condition match is not done.
           # This is clearly not End of AST lookup
           if condition_change?
+            ldebug 'MatchStatus::ConditionMatchingStart'
             node_info.status = MatchStatus::ConditionMatchingStart
           else
+            ldebug 'MatchStatus::ConditionMatchingProgress'
             node_info.status = MatchStatus::ConditionMatchingProgress
           end
         elsif node.my_action.nil?
@@ -157,8 +159,16 @@ module SheepAst
           node_info.status = MatchStatus::MatchingProgress
         end
 
+        ldebug "node_info.status = #{node_info.status}"
+        ldebug "condition flag = #{@condition_flag.inspect}"
         if node_info.status == MatchStatus::AtEnd && condition_change?
+          ldebug 'MatchStatus::ConditionMatchingAtEnd'
           node_info.status = MatchStatus::ConditionMatchingAtEnd
+        end
+
+        if node_info.status == MatchStatus::MatchingProgress && condition_change?
+          ldebug 'MatchStatus::ConditionEndButMatchingProgress'
+          node_info.status = MatchStatus::ConditionEndButMatchingProgress
         end
 
         return node_info

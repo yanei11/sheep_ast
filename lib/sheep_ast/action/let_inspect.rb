@@ -84,8 +84,6 @@ module SheepAst
       return T.unsafe(self)._ret(**options)
     end
 
-    private
-
     sig {
       params(
         options: T.untyped

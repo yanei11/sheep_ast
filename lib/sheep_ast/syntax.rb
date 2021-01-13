@@ -51,10 +51,14 @@ module SheepAst
     # @note please see Example page for further example
     # rubocop:disable all
     def register_syntax(name, action = nil, &blk)
+      return unless block_given?
+
       arrs = blk.call
       if depth(arrs) == 1
         arrs = [arrs]
       end
+
+      return if arrs.nil?
 
       if action.nil?
         arrs.each_with_index do |arr, i|

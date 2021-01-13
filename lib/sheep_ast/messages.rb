@@ -66,6 +66,7 @@ module SheepAst
       ConditionMatchingStart = new
       ConditionMatchingProgress = new
       ConditionMatchingAtEnd = new
+      ConditionEndButMatchingProgress = new
       MatchingProgress = new
       AtEnd = new
       Default = new

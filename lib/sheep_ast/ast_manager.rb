@@ -167,6 +167,18 @@ module SheepAst
       return MatchAction::Next
     end
 
+    # Hook function during Ast is hit but not at the end
+    #
+    # @api public
+    #
+    # @note please see not_found section for the example
+    #
+    sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
+    def condition_end_but_in_progress(data, _node)
+      ldebug "matched '#{data.expr.inspect}' next data"
+      return MatchAction::Next
+    end
+
     # Hook function when Ast reached to its action (end of Ast process)
     #
     # @api public

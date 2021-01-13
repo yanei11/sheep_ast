@@ -74,6 +74,7 @@ module SheepAst
       key = data.expr
 
       match = @exact_matches[key]
+
       return nil if match.nil?
 
       match.init

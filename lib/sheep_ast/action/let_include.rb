@@ -13,18 +13,6 @@ module SheepAst
     include Log
     include Exception
 
-    sig { returns(AnalyzeData) }
-    attr_accessor :data
-
-    sig { returns(T::Array[String]) }
-    attr_accessor :exclude_dir_path_array
-
-    sig { returns(T::Array[String]) }
-    attr_accessor :dir_path_array
-
-    sig { returns(String) }
-    attr_accessor :next_file
-
     sig { returns(T::Array[String]) }
     def dir_path
       val = @data_store.value(:_sheep_dir_path)
@@ -37,9 +25,20 @@ module SheepAst
       return val.nil? ? [] : val
     end
 
+    # Handle analysis target including another file
+    #
+    # @example
+    #   A(:let, [:include, key_id, [Range], [options]])
+    #
+    # redirect specified data to specified Ast. The data can be specified by tag and by specified range.
+    # Specified data will be iput again.  Ast stage to process the data can be specified at option.
+    # The Ast specifying can be done by domain or full name of Ast Stage.
+    #
+    # @option options [String] :ast_include Only speficied Ast name will be applied at redirected expression.
+    # @option options [String] :ast_exclude after included Ast at ast_include, this specify to exclude the Ast
     sig {
       params(
-        pair: T::Hash[Symbol, T::Array[String]],
+        pair: T::Hash[Symbol, T.untyped],
         datastore: DataStore,
         key_id: Symbol,
         range: Range,
@@ -48,11 +47,21 @@ module SheepAst
     }
     def include(pair, datastore, key_id, range = 1..-2, **options)
       str = pair[key_id]
-      ldebug str.inspect
-      relative_path = T.must(T.must(str)[range])
+      relative_path = T.must(T.must(str)[range]).join
+      ldebug "let include is called with #{relative_path.inspect}"
 
-      file = find_next_file(relative_path.join)
-      T.must(data.file_manager).register_next_file(file) unless file.nil?
+      file = find_next_file(relative_path)
+
+      if !file.nil?
+        save_req = SaveRequest.new(
+          file: file,
+          ast_include: options[:ast_include],
+          ast_exclude: options[:ast_exclude],
+          namespace: nil
+        )
+        @data.save_request = save_req
+      end
+
       return T.unsafe(self)._ret(**options)
     end
 
@@ -66,7 +75,7 @@ module SheepAst
         rp = Regexp.new("#{File.expand_path(epath)}/*")
 
         if !rp.match(file).nil?
-          linfo "[SKIPPED]:#{file}(ex)", :yellow
+          ldump "[EXCLUDE] #{file}", :yellow
           return true
         end
       end
@@ -84,12 +93,16 @@ module SheepAst
         end
       end
 
-      if found_paths.count != 1
+      if found_paths.count > 1
         lfatal "Duplicated include file has been found. #{found_paths.inspect}"
         application_error
       end
 
       file = found_paths.first
+      if file.nil?
+        ldump "[NOT FOUND] #{relative_path.inspect}", :red
+      end
+
       res = exclude_file?(file) ? nil : file
       return res
     end

@@ -1,12 +1,9 @@
-# typed:true
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'log'
 require_relative 'exception'
 require 'sorbet-runtime'
-require 'rainbow/refinement'
-
-using Rainbow
 
 module SheepAst
   # Handle tokenie process.
@@ -172,15 +169,15 @@ module SheepAst
         args, _, options, token = blk.call(nil, 0)
         token = args.join if !token
         dump_part(idx, args, token, options, logf)
-        logf.call('        |_______|') if options[:recursive]
+        logf.call('        |_______|', :cyan) if options[:recursive]
       end
       logf.call('')
     end
 
     # @api private
     def dump_part(idx, args, token, options, logf)
-      logf.call("stage#{idx + 1} :___\\ #{args.inspect.yellow} is combined to "\
-                "#{token.inspect.red} with options = #{options.inspect}")
+      logf.call "stage#{idx + 1} :___\\ #{args.inspect} is combined to "\
+                "#{token.inspect} with options = #{options.inspect}", :cyan
     end
 
     # To specify split rule as space only.

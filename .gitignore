@@ -1,6 +1,8 @@
 Gemfile.lock
 sorbet/rbi
-.yardoc
+*.yardoc
+*.txt
+*.log
 docs
 coverage/
 spec/res

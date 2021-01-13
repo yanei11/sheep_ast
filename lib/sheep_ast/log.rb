@@ -34,17 +34,17 @@ module SheepAst
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def pinfo(msg = '', color_ = :white)
+    def pinfo(msg = '', color_ = :antiquewhite)
       @logger.info msg.color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def pfatal(msg = '', color_ = :white)
+    def pfatal(msg = '', color_ = :antiquewhite)
       @logger.fatal msg.color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def pdebug(msg = '', color_ = :white)
+    def pdebug(msg = '', color_ = :antiquewhite)
       @logger.debug msg.color(color_)
     end
 
@@ -62,32 +62,32 @@ module SheepAst
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def linfo(msg = '', color_ = :white)
+    def linfo(msg = '', color_ = :antiquewhite)
       @logger.info (say_class_name + msg).color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def pwarn(msg = '', color_ = :white)
+    def pwarn(msg = '', color_ = :antiquewhite)
       @logger.warn msg.color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def lwarn(msg = '', color_ = :white)
+    def lwarn(msg = '', color_ = :antiquewhite)
       @logger.warn (say_class_name + msg).color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def lfatal(msg = '', color_ = :white)
+    def lfatal(msg = '', color_ = :antiquewhite)
       @logger.fatal (say_class_name + msg).color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def lerror(msg = '', color_ = :white)
+    def lerror(msg = '', color_ = :antiquewhite)
       @logger.error (say_class_name + msg).color(color_)
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def ldebug2(msg = '', color_ = :white)
+    def ldebug2(msg = '', color_ = :antiquewhite)
       env = ENV['SHEEP_LOG_LEVEL']
       return if env.nil?
 
@@ -97,7 +97,7 @@ module SheepAst
     end
 
     sig { params(msg: String, color_: Symbol).void }
-    def ldebug(msg = '', color_ = :white)
+    def ldebug(msg = '', color_ = :antiquewhite)
       if !ENV['SHEEP_LOG_BT'].nil?
         at = caller[@stack_base]
         if /^(.+?):(\d+)(?::in `(.*)')?/ =~ at
@@ -107,7 +107,7 @@ module SheepAst
         @logger.debug "#{say_class_name} #{msg}"\
           " (at #{File.basename(file)}:#{line})".color(color_)
       else
-        @logger.debug "#{say_class_name} #{msg}"
+        @logger.debug "#{say_class_name} #{msg}".color(color_)
       end
     end
 

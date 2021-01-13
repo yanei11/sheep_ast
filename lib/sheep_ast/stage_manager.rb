@@ -43,7 +43,8 @@ module SheepAst
     def put_stack(info)
       if info.status != MatchStatus::NotFound &&
          info.status != MatchStatus::ConditionMatchingProgress &&
-         info.status != MatchStatus::ConditionMatchingAtEnd
+         info.status != MatchStatus::ConditionMatchingAtEnd &&
+         info.status != MatchStatus::ConditionEndButMatchingProgress
         @match_id_array << info.match_id
         @match_symbol_array << info.store_symbol
         ldebug "match_id_array = #{@match_id_array.inspect}"
@@ -77,6 +78,8 @@ module SheepAst
         after_action = @ast.condition_in_progress(data, node)
       when MatchStatus::MatchingProgress
         after_action = @ast.in_progress(data, node)
+      when MatchStatus::ConditionEndButMatchingProgress
+        after_action = @ast.condition_end_but_in_progress(data, node)
       when MatchStatus::AtEnd, MatchStatus::ConditionMatchingAtEnd
         node = @ast.node_factory.from_id(T.must(ret_node_info).node_id)
         application_error 'node is not got' if node.nil?
@@ -125,7 +128,8 @@ module SheepAst
     sig { params(data: AnalyzeData, save_req: SaveRequest).void }
     def handle_save_request(data, save_req)
       ldebug "handle_save_request save_req = #{save_req.inspect}"
-      T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk))
+      T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk)) unless save_req.chunk.nil?
+      T.must(data.file_manager).register_next_file(T.must(save_req.file)) unless save_req.file.nil?
       T.must(data.file_manager).ast_include_set(save_req.ast_include)
       T.must(data.file_manager).ast_exclude_set(save_req.ast_exclude)
       T.must(data.file_manager).put_namespace(save_req.namespace)
