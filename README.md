@@ -88,18 +88,6 @@ Please clone this repository or install via gem. Following commands from top dir
 - rake example1, rake exampe2, ...  
   This command runs examples introduced below.
 
-# Framework design
-
-For about Framework design of sheep_ast, please see the link:
-https://yanei11.github.io/sheep_ast_pages/file.Framework.html
-
-
-# API document
-
-For about external interface of sheep_ast, please refer to the link:
-https://yanei11.github.io/sheep_ast_pages/file.API.html
-
-
 # Resources
 - Yard page  
   https://yanei11.github.io/sheep_ast_pages/
