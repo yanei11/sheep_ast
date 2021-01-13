@@ -6,6 +6,7 @@ require_relative 'let_redirect'
 require_relative 'let_inspect'
 require_relative 'let_compile'
 require_relative 'let_record'
+require_relative 'let_include'
 require_relative 'let_helper'
 require 'sorbet-runtime'
 require 'rainbow/refinement'
@@ -29,6 +30,7 @@ module SheepAst
     include LetInspect
     include LetCompile
     include LetRecord
+    include LetInclude
 
     sig { returns(T.any(T::Array[Symbol], T::Array[T::Array[Symbol]])) }
     attr_accessor :fsyms
@@ -37,7 +39,7 @@ module SheepAst
     #
     # Let object uses the function given by the symbol with processed data.
     # Pease refer to included module for the supported function such as
-    # LetRedirect, LetRecord modules.
+    # LetRedirect, LetRecord modules. Please refer to Let*** modules in this object
     #
     # @example
     #   A(:let, [:redirect, ...], [:record, ...], ...)
@@ -68,17 +70,17 @@ module SheepAst
         para = fsym[1..-1] #rubocop: disable all
         ldebug "Function : #{m}, para = #{para.inspect}"
         if para.nil? || para.empty?
-          ret = method(m).call(key_data, @data_store)
+          ret = T.unsafe(self).method(m).call(key_data, @data_store)
         else
-          ret = method(m).call(key_data, @data_store, *para)
+          ret = T.unsafe(self).method(m).call(key_data, @data_store, *para)
         end
 
         if ret == true # rubocop:disable all
           if @_pwarn.nil?
             @_pwarn = true
             lwarn "Registered method = [#{method(m).name}] returned true."\
-              'Follows methods are ignored.'.red
-            lwarn 'Exited method loop. This message is printed only once per let object.'.red
+              'Follows methods are ignored.', :red
+            lwarn 'Exited method loop. This message is printed only once per let object.', :red
           end
           break
         end

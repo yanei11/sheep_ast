@@ -75,7 +75,7 @@ describe SheepAst::Let do
         core.analyze_file(['spec/scoped_match_file/test4.cc'])
       }
     }.not_to raise_error
-    p core.data_store
+    #p core.data_store
     core.data_store.compile('spec/test_files/template2.erb')
   end
 end

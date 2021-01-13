@@ -1,8 +1,8 @@
 # sheep_ast
 
-sheep_ast is a toolkit made by ruby for those who wants to use Ast(abstract syntax tree) to some analysis. It can be used for parsing, code generating, analysing etc. sheep_ast aims to provide easily customizable user interface for using Ast.
+sheep_ast is a toolkit made by ruby for those who wants to use Ast(abstract syntax tree) to some analysis. It can be used for parsing, code generating, analysis etc. sheep_ast aims to provide easily customizable user interface for using Ast.
   
-# Features
+# Feature
 sheep_ast supports following feature:
 
 - Tokenize  
@@ -59,30 +59,65 @@ Extracted result is following:
 ```
 
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.
+As well as above basic Match - Action function, sheep_ast has following functions for further parsing, code genarating, analysis.
 
-# Compile
 
-Using sheep_ast and erb, user can generate file from the extracted keywords.
-Please see example3 for detail
+- Compile  
+  Using sheep_ast and erb, user can generate file from the extracted keywords.
+  Please see example3 for detail
+
+- Recursive estimate  
+  sheep_ast supports recursive estimation of matched strings by let_redirect module.  
+  So, user can have more well readable, easy to use the Ast.
+
+- Including another file  
+  Using let_include module, sheep_ast can analyze another file.  
+  The example is `#include "xxx.hh"` for cpp language, sheep_ast searh xxx.hh from given paths when it is included.
+
+# Getting Started
+
+## Examples
+Please see following example document for further usage.
+
+## Running examples
+Please clone this repository or install via gem. Following commands from top directory runs testcode and examples.
+
+- rake  
+  This command runs rspec. The rspec code has more examples
+
+- rake example1, rake exampe2, ...  
+  This command runs examples introduced below.
+
+# Framework design
+
+For about Framework design of sheep_ast, please see the link:
+https://yanei11.github.io/sheep_ast_pages/file.Framework.html
+
+
+# API document
+
+For about external interface of sheep_ast, please refer to the link:
+https://yanei11.github.io/sheep_ast_pages/file.API.html
+
 
 # Resources
-- Yard page\
+- Yard page  
   https://yanei11.github.io/sheep_ast_pages/
 
-- Github repository\
+- Github repository  
   https://github.com/yanei11/sheep_ast
 
-- Example1(grep like application)\
+- Example1 (grep like application)  
   https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
-- Example2(Keyword extraction from cpp file)\
+- Example2 (Keyword extraction from cpp file)  
   https://yanei11.github.io/sheep_ast_pages/file.Example2.html
 
-- Example3(generate file (compile) from proto file)\
+- Example3 (generate file (compile) from proto file)  
   https://yanei11.github.io/sheep_ast_pages/file.Example3.html
 
-- API\
+- API document  
   https://yanei11.github.io/sheep_ast_pages/file.API.html
 
-- Framework Design\
+- Framework Design  
   https://yanei11.github.io/sheep_ast_pages/file.Framework.html

@@ -3,6 +3,16 @@
 In this file, external interface for sheep_ast user is written.
 Listed APIs are currenly supported.
 
+# Command line option
+
+sheep_ast has following command line option:
+
+```
+-E [Array] Specify directories for the files that should not be included
+-I [Array] Specify directories for the include files
+-d Dump Debug information'
+```
+
 # Environment Variable
 
 sheep_ast has following environment parameter.
@@ -25,7 +35,7 @@ Please refer to the comments of public method for external APIs.
 
 Note taht the `public` and `private` tags are added by Yard framework.
 
-Please also refer to the TBD for the Framework design.
+Please also refer to the {file.Framework.html} for the Framework design.
 It helps why followings are the exposed objects.
 
 ## AnalyzerCore
@@ -48,7 +58,7 @@ see {SheepAst::SyntaxAlias}
 
 The supported Match like ExactMatch is created from MatchFactory object.
 The creation of the Match is aggregated to the following MatchFactory Methods.
-Please refer to the new methods of Match Objects from `View source` tab for the usage.
+Please refer to the `new` methods of Match Objects from `View source` tab for the kind and usage of Matches.
 
 see {SheepAst::MatchFactory#initialize}
 
@@ -64,7 +74,7 @@ And the this `:e` Symbol and Object mapping is shown in {SheepAst::MatchFactory#
 
 The supported Action like Let is created from ActionFactory object.
 The creation of the Action is aggregated to the following ActionFactory Methods.
-Please refer to the new methods of Action Objects from `View source` tab for the usage.
+Please refer to the `new` methods of Action Objects from `View source` tab for the kind and usage of Aitions.
 
 see {SheepAst::ActionFactory#initialize}
 
@@ -78,5 +88,7 @@ And the this `:let` Symbol and Object mapping is shown in {SheepAst::ActionFacto
 
 ### Let
 
-Let object has module to include which are {SheepAst::LetRedirect}, {SheepAst::LetRecord}. Please see included module from {SheepAst::Let}
+Let object has some included module, to extend features in the Let object.
+To include modules, Let object can get features like, to record matched strings, to recursive evaluation of matched strings, to include another files, etc.
+Please see included module from {SheepAst::Let}
 

@@ -3,8 +3,11 @@
 
 require 'set'
 require_relative 'log'
+require_relative 'datastore'
+require_relative 'tokenizer'
 require 'sorbet-runtime'
 
+# TBD
 module SheepAst
   # This object handles input of syntax element after parsing by tokenizer.
   # It holds stack of processing info and provide functionality of saving data and resume data
@@ -19,8 +22,8 @@ module SheepAst
     sig { returns(T::Set[String]) }
     attr_accessor :processed_file_list
 
-    sig { params(stage_manager: StageManager, tokenizer: Tokenizer).void }
-    def initialize(stage_manager, tokenizer)
+    sig { params(stage_manager: StageManager, tokenizer: Tokenizer, datastore: DataStore).void }
+    def initialize(stage_manager, tokenizer, datastore)
       super()
       @processed_file_list = Set.new
       @current_file = nil
@@ -32,6 +35,7 @@ module SheepAst
       @analyze_data = AnalyzeData.new
       @stage_manager = stage_manager
       @tokenizer = tokenizer
+      @datastore = datastore
     end
 
     sig { params(file: String).returns(T.nilable(T::Set[String])) }
@@ -160,6 +164,7 @@ module SheepAst
         file = @reg_files.shift
         return false if file.nil?
 
+        marc_process_main(file)
         tokenized, line_count, raw_lines = @tokenizer.tokenize(file)
 
         # strategy: when file is empty or something,
@@ -183,9 +188,15 @@ module SheepAst
 
     sig { params(file: String).void }
     def register_next_file(file)
-      save_info
-      @file_info.file = file
-      @file_info.tokenized = @tokenizer.tokenize(file)
+      reinput = marc_process_indirect(file)
+      if reinput
+        save_info
+        @file_info.file = file
+        tokenized, line_count, raw_lines = @tokenizer.tokenize(file)
+        @file_info.tokenized = tokenized
+        @file_info.raw_lines = raw_lines
+        @file_info.max_line = line_count
+      end
     end
 
     sig { params(chunk: T::Array[T::Array[String]]).void }
@@ -274,6 +285,44 @@ module SheepAst
 
     def resume_data
       @resume_info
+    end
+
+    sig { params(file: String).void }
+    def marc_process_main(file)
+      if File.exist?(file)
+        fpath = File.expand_path(file)
+        res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
+        if res.nil?
+          @datastore.assign(:_sheep_proessed_file_A, fpath)
+          ldump "[PROCESS] #{fpath}", :cyan
+        else
+          lfatal "Same file is entried -> #{file}"
+          application_error
+        end
+      end
+    end
+
+    sig { params(file: String).returns(T.nilable(T::Boolean)) }
+    def marc_process_indirect(file)
+      if File.exist?(file)
+        fpath = File.expand_path(file)
+        res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
+        if res.nil?
+          @datastore.assign(:_sheep_proessed_file_A, fpath)
+          ldump "[INCLUDE] #{fpath.inspect}", :green
+          return true
+        elsif process_indirect_again?
+          ldump "[AGAIN] #{fpath.inspect}"
+          return true
+        else
+          ldump "[SKIPPED] #{fpath.inspect} is already processed", :yellow
+          return false
+        end
+      end
+    end
+
+    def process_indirect_again?
+      false
     end
   end
 end

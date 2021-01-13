@@ -134,9 +134,11 @@ module SheepAst
 
     sig { returns(T::Boolean) }
     def condition_change?
+      ldebug "condition_flag = #{@condition_flag}, pre_condition_flag = #{@pre_condition_flag}"
       if @condition_flag == @pre_condition_flag
         return false
       else
+        ldebug 'condition change'
         @pre_condition_flag = @condition_flag
         return true
       end

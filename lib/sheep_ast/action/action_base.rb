@@ -41,7 +41,7 @@ module SheepAst
     sig { abstract.params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def action(data, node); end
 
-    sig { params(data: AnalyzeData).returns(T::Hash[Symbol, T.any(T::Array[String], String)]) }
+    sig { params(data: AnalyzeData).returns(T::Hash[Symbol, T.untyped]) }
     def keyword_data(data)
       hash = {}
       data.stack.each_with_index do |elem, index|
