@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2020-01-14
+### Added
+- Include API to Let object to handle include another files
+### Changed
+- Bugfix [Not open Issue] : Condition Match unexpectedly push matched strings to matched stack at the condition match ended
 
 ## [0.3.0] - 2020-01-07
 ### Added
