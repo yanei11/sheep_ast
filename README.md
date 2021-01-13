@@ -58,7 +58,8 @@ Extracted result is following:
 {"Hello"=>"sheep_ast"}
 ```
 
-So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.
+So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.  
+
 As well as above basic Match - Action function, sheep_ast has following functions for further parsing, code genarating, analysis.
 
 
