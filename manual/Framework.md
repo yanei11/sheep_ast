@@ -30,25 +30,25 @@ AnalyzerCore
   |->Syntax - SyntaxAlias
   | -------   ------------
   |
-  |-------------------------------------------------------------------
-  |                                                                  |
-  |-> FileManager                                                    |
-  |-> StageManager -> AstManager - Node <- NodeFactory               |
-                      ----------   |                                 |/
-                                   |- Match  <-  MatchFactory  <-|- FoF 
-                                   |  -----                      |
-                                   |    |-> ExactMatch           |
-                                   |    |-> RegexMatch           |
-                                   |    |-> ...                  |
-                                   |                             |
-                                   |- Action <-  ActionFactory <-|
-                                      ------
-                                        |-> NoAction
-                                        |-> Let
-                                             |- LetRedirect
-                                             |- LetReord
-                                             |- LetCompile
-                                             |- ...
+  |--------------------------------------------------------------------------------------
+  |                                                                                     |
+  |-> FileManager                                                                       |
+  |-> StageManager -> AstManager -> NodeFactory -> Node                                 |
+                      ----------                    |                                   |/
+                                                    |- XXXMatch  <- MatchFactory  <-|- FoF
+                                                    |  --------                     |
+                                                    |    |- ExactMatch              |
+                                                    |    |- RegexMatch              |
+                                                    |    |- ...                     |
+                                                    |                               |
+                                                    |- XXXAction <- ActionFactory <-|
+                                                       ---------
+                                                         |- NoAction
+                                                         |- Let
+                                                              |- LetRedirect
+                                                              |- LetReord
+                                                              |- LetCompile
+                                                              |- ...
 ```
 
 Followings are the information flow.
@@ -91,6 +91,9 @@ Action <- data
 
 You can trace flow by enabling log level of SHEEP_LOG environment variable like SHEEP_LOG=DEBUG.
 
+Sheep_ast has more function than just Match - Action.  
+Followings are highlight features provided by Framework.
+
 # Redirect and Namespace
 
 In {SheepAst::Let Let} object, there is redirect function.
@@ -110,3 +113,9 @@ With the function, it is possible to generate new file from matched data and tem
 In {SheepAst::Let Let} object, there is record function.
 
 This function allow user to record specified string. This function uses {SheepAst::DataStore DataStore} object. Please see the yard page for the usage.
+
+# Include Handler
+
+In {SheepAst::Let Let} object, there is include function.
+
+This function allows user to switch to analyze another file. For example, if there is `#include "xxx.hh"` strings while parsing, framework provides way to switch to analyze xxx.hh from the given paths.
