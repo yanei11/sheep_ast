@@ -241,7 +241,11 @@ module SheepAst
     #
     sig { void }
     def do_analyze
-      process_option unless ENV['SHEEP_RSPEC']
+      if !ENV['SHEEP_RSPEC']
+        process_option
+      else
+        @@option = {}
+      end
       dump(:pwarn) and return if @@option[:d]
 
       @file_manager.analyze do |data|
