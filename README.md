@@ -110,3 +110,6 @@ Please clone this repository or install via gem. Following commands from top dir
 
 - Framework Design  
   https://yanei11.github.io/sheep_ast_pages/file.Framework.html
+
+- Change Log  
+  https://yanei11.github.io/sheep_ast_pages/file.CHANGELOG.html

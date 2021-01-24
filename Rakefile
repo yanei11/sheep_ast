@@ -18,7 +18,7 @@ end
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
 task 'doc' do
   sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
-  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
+  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md CHANGELOG.md \
       INSTALL.md manual/*"
 end
 

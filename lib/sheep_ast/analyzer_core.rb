@@ -23,6 +23,9 @@ module SheepAst
     extend T::Sig
     include FactoryBase
 
+    @@option = nil
+    @@optparse = nil
+
     # @api private
     sig { returns(StageManager) }
     attr_accessor :stage_manager
@@ -50,7 +53,6 @@ module SheepAst
       @stage_manager = StageManager.new
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(@data_store)
-      @option = {}
       super()
     end
 
@@ -239,8 +241,8 @@ module SheepAst
     #
     sig { void }
     def do_analyze
-      option(ARGV) unless ENV['SHEEP_RSPEC']
-      dump(:pwarn) and return if @option[:d]
+      process_option unless ENV['SHEEP_RSPEC']
+      dump(:pwarn) and return if @@option[:d]
 
       @file_manager.analyze do |data|
         @stage_manager.analyze_stages(data)
@@ -272,30 +274,70 @@ module SheepAst
     # @example
     #   ruby your_app.rb -h # shows usage
     #
-    sig { params(argv: T::Array[String]).void }
-    def option(argv)
-      OptionParser.new do |opt|
-        opt.on(
-          '-E [VALUE]', Array,
-          'Specify directories for the files that should not be included'
-        ) { |v| @option[:E] = v }
-        opt.on(
-          '-I [VALUE]', Array, 'Specify directories for the include files'
-        ) { |v| @option[:I] = v }
-        opt.on(
-          '-d', 'Dump Debug information'
-        ) { @option[:d] = true }
+    sig { params(argv: T::Array[String]).returns(T.nilable T::Hash[Symbol, T.untyped]) }
+    def self.option_parse(argv)
+      if @@option.nil?
+        @@option = {}
+        @@optparse = OptionParser.new do |opt|
+          opt.on(
+            '-E array', Array,
+            'Specify directories for the files that should not be included'
+          ) { |v| @@option[:E] = v }
+          opt.on(
+            '-I array', Array, 'Specify directories for the include files'
+          ) { |v| @@option[:I] = v }
+          opt.on(
+            '-d', 'Dump Debug information'
+          ) { @@option[:d] = true }
+          opt.on(
+            '-r file', 'Specify configuration ruby file'
+          ) { |v| @@option[:r] = v }
+          opt.on_tail(
+            '-h', '--help', 'show usage'
+          ) { |v| @@option[:h] = true }
+          opt.on_tail(
+            '-v', '--version', 'show version'
+          ) { |v| @@option[:v] = true }
 
-        opt.parse!(argv)
-        linfo "Application starts with option => #{@option.inspect}", :cyan
+          opt.parse!(argv)
+        end
       end
+
+      if @@option[:h]
+        AnalyzerCore.usage
+        exit
+      end
+
+      if @@option[:v]
+        puts SheepAst::VERSION
+        exit
+      end
+
+      return @@option
+    end
+
+    def self.usage
+      if @@optparse
+        puts ''
+        puts "Usage: #{@@optparse.program_name} [options] arg1, arg2, ..."
+        puts '    arg1, arg2, ... : specify files to parse.'
+        puts ''
+        @@optparse.banner = 'Available options :'
+        puts @@optparse.help
+        puts ''
+      end
+    end
+
+    def self.option
+      @@option
     end
 
     # api private
     #
     sig { void }
-    def parse_option
-      @option[:D]&.each do |item|
+    def process_option
+      AnalyzerCore.option_parse(ARGV)
+      @@option[:D]&.each do |item|
         if item.include?('=')
           key = item.split('=').first
           data = item.split('=').last
@@ -305,8 +347,8 @@ module SheepAst
         end
       end
 
-      sheep_dir_path_set(@option[:I])
-      sheep_exclude_dir_path_set(@option[:E])
+      sheep_dir_path_set(@@option[:I]) unless @@option[:I].nil?
+      sheep_exclude_dir_path_set(@@option[:E]) unless @@option[:E].nil?
     end
   end
 end
