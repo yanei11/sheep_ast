@@ -13,6 +13,7 @@ module SheepAst
   #
   # @api private
   #
+  # rubocop:disable all
   module LetHelper
     extend T::Sig
     extend T::Helpers
@@ -29,6 +30,31 @@ module SheepAst
 
     def get_match(data, num)
       missing_impl
+    end
+
+    sig {
+      params(dirs: T.nilable(T::Array[String]), relative_path: T.nilable(String)).returns(
+        T.nilable(String))
+    }
+    def find_file(dirs, relative_path)
+      return nil if relative_path.nil?
+      return relative_path if dirs.nil?
+
+      found_paths = []
+      dirs.each do |base|
+        test_path = "#{base}/#{relative_path}"
+        if File.exist?(test_path)
+          ldebug "file exist: #{test_path}"
+          found_paths << File.expand_path(test_path)
+        end
+      end
+
+      if found_paths.count > 1
+        lfatal "Duplicated include file has been found. #{found_paths.inspect}"
+        application_error
+      end
+
+      return found_paths.first
     end
 
     # Extract line from first matched line to last matched line

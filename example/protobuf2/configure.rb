@@ -3,8 +3,8 @@
 
 #rubocop: disable all
 def configure(core)
-  template1 = 'example/protobuf/template_message.erb'
-  template2 = 'example/protobuf/template_enum.erb'
+  template1 = 'template_message.erb'
+  template2 = 'template_enum.erb'
   action1 = [:compile, template1, { dry_run: false }]
   action2 = [:compile, template2, { dry_run: false }]
   dry1 = false

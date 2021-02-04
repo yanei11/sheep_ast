@@ -235,6 +235,17 @@ module SheepAst
       @data_store.assign(:_sheep_exclude_dir_path, arr)
     end
 
+
+    # API to set output directory for {SheepAst::LetCompile} module
+    def sheep_outdir_set(path)
+      @data_store.assign(:_sheep_outdir, path)
+    end
+
+    # API to set output directory for {SheepAst::LetCompile} module
+    def sheep_template_dir_path_set(arr)
+      @data_store.assign(:_sheep_template_dir, arr)
+    end
+
     private
 
     # @api private
@@ -285,10 +296,10 @@ module SheepAst
         @@optparse = OptionParser.new do |opt|
           opt.on(
             '-E array', Array,
-            'Specify directories for the files that should not be included'
+            'Specify directories to exclude files'
           ) { |v| @@option[:E] = v }
           opt.on(
-            '-I array', Array, 'Specify directories for the include files'
+            '-I array', Array, 'Specify search directories for the include files'
           ) { |v| @@option[:I] = v }
           opt.on(
             '-d', 'Dump Debug information'
@@ -296,6 +307,13 @@ module SheepAst
           opt.on(
             '-r file', 'Specify configuration ruby file'
           ) { |v| @@option[:r] = v }
+          opt.on(
+            '-o path', 'outdir variable is set in the let_compile module'
+          ) { |v| @@option[:o] = v }
+          opt.on(
+            '-t array', Array,
+            'Specify search directories for the template files for let_compile module'
+          ) { |v| @@option[:t] = v }
           opt.on_tail(
             '-h', '--help', 'show usage'
           ) { |v| @@option[:h] = true }
@@ -351,8 +369,10 @@ module SheepAst
         end
       end
 
-      sheep_dir_path_set(@@option[:I]) unless @@option[:I].nil?
-      sheep_exclude_dir_path_set(@@option[:E]) unless @@option[:E].nil?
+      sheep_dir_path_set(@@option[:I]) if @@option[:I]
+      sheep_exclude_dir_path_set(@@option[:E]) if @@option[:E]
+      sheep_outdir_set(@@option[:o]) if @@option[:o]
+      sheep_template_dir_path_set(@@option[:t]) if @@option[:t]
     end
   end
 end

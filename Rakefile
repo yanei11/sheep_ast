@@ -70,10 +70,17 @@ task 'example3' do
   sh "#{ENV['RBENV_COM']} bundle exec ruby example/protobuf/main.rb"
 end
 
+desc 'Execute example3-2 program'
+task 'example3-2' do
+  sh 'echo "== Example3-2: compile =="'
+  sh 'bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto'
+end
+
+
 desc 'Push document repository'
 task 'pushd' => 'doc' do
   sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && make push"
 end
 
 desc 'Before release check'
-task 'prepare' => %w[check tc hello example1 example1_fail example2 pushd]
+task 'prepare' => %w[check tc hello example1 example1_fail example2 example3 example3-2 pushd]

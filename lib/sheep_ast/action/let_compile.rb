@@ -57,9 +57,12 @@ module SheepAst
         namespace = T.unsafe(self).w_or_wo_ns(data, { **options, namespace: true })
         namespace_arr = data[:_namespace]
       end
+      outdir = datastore.value(:_sheep_outdir)
+      template_dir = datastore.value(:_sheep_template_dir)
+      template_file_ = find_file(template_dir, template_file)
 
-      if !template_file.nil?
-        raw = File.read(template_file)
+      if !template_file_.nil?
+        raw = File.read(template_file_)
         head_index = raw.index("\n")
         head = raw[0..T.must(head_index) - 1]
         partitioned = T.must(T.must(head).split('!')[1]).rpartition('.')
@@ -67,7 +70,7 @@ module SheepAst
         title = binding.eval(partitioned.first) # rubocop:disable all
       end
 
-      user_def = T.unsafe(self).user_def_compile(data, datastore, template_file, **options)
+      user_def = T.unsafe(self).user_def_compile(data, datastore, template_file_, **options)
 
       if options[:dry_run]
         _format_dump {
@@ -90,6 +93,7 @@ module SheepAst
       ldebug "erb_head : #{head}"
       ldebug "title : #{title}"
       ldebug "suffix : #{suffix}"
+      ldebug "outdir : #{outdir.inspect}"
       ldebug '=== end ==='
 
       template_contents = T.must(raw)[T.must(head_index) + 1..-1]
@@ -115,6 +119,8 @@ module SheepAst
       else
         lfatal 'Not entering pry debug session.'
         lfatal 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
+        lfatal 'Critical. Exit'
+        exit(1)
       end
       return T.unsafe(self)._ret(**options)
     end

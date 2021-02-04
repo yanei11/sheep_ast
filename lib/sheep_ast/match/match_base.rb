@@ -51,6 +51,9 @@ module SheepAst
     sig { returns(T.nilable(Symbol)) }
     attr_accessor :node_tag
 
+    sig { returns(T.nilable(Symbol)) }
+    attr_accessor :parent_tag
+
     sig { params(name: String).void }
     def kind_name_set(name)
       @kind_name = name
