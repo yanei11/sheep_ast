@@ -1,0 +1,29 @@
+name: Release Appimage
+
+on:
+  push:
+    branches: [ release-appimage ]
+
+jobs:
+  build:
+    name: Build + Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.x
+    - name: Create appimage
+      run: rake appimage
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage
+        asset_name: run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage
+        asset_content_type: application/zip
