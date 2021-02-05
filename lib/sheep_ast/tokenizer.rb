@@ -132,6 +132,11 @@ module SheepAst
       line_count = 0
       file_buf = []
       raw_buf = []
+
+      if !File.exist?(fpath)
+        application_error "#{fpath} is not found"
+      end
+
       File.open(fpath) do |f|
         f.each_line do |line|
           line_count += 1

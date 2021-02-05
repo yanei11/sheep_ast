@@ -10,6 +10,8 @@ module SheepAst
   # This class is for the action to recprd the result
   module LetInclude
     extend T::Sig
+    include LetHelper
+    include Kernel
     include Log
     include Exception
 
@@ -74,8 +76,9 @@ module SheepAst
       exclude_dir_path.each do |epath|
         rp = Regexp.new("#{File.expand_path(epath)}/*")
 
-        if !rp.match(file).nil?
-          ldump "[EXCLUDE] #{file}", :yellow
+        if !rp.match(file).nil? # rubocop:disable all
+          t_file = file.split('/').last
+          ldump "[EXCLUDE] #{t_file}", :yellow
           return true
         end
       end
@@ -84,23 +87,9 @@ module SheepAst
 
     sig { params(relative_path: String).returns(T.nilable(String)) }
     def find_next_file(relative_path)
-      found_paths = []
-      dir_path.each do |base|
-        test_path = "#{base}/#{relative_path}"
-        if File.exist?(test_path)
-          ldebug "file exist: #{test_path}"
-          found_paths << File.expand_path(test_path)
-        end
-      end
-
-      if found_paths.count > 1
-        lfatal "Duplicated include file has been found. #{found_paths.inspect}"
-        application_error
-      end
-
-      file = found_paths.first
+      file = find_file(dir_path, relative_path)
       if file.nil?
-        ldump "[NOT FOUND] #{relative_path.inspect}", :red
+        ldump "[NOT FOUND] #{relative_path}", :red
       end
 
       res = exclude_file?(file) ? nil : file

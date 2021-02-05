@@ -294,7 +294,7 @@ module SheepAst
         res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
         if res.nil?
           @datastore.assign(:_sheep_proessed_file_A, fpath)
-          ldump "[PROCESS] #{fpath}", :cyan
+          ldump "[PROCESS] #{file}", :cyan
         else
           lfatal "Same file is entried -> #{file}"
           application_error
@@ -309,13 +309,14 @@ module SheepAst
         res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
         if res.nil?
           @datastore.assign(:_sheep_proessed_file_A, fpath)
-          ldump "[INCLUDE] #{fpath.inspect}", :green
+          t_file = file.split('/').last
+          ldump "[INCLUDE] #{t_file}", :green
           return true
         elsif process_indirect_again?
-          ldump "[AGAIN] #{fpath.inspect}"
+          ldump "[AGAIN] #{file}"
           return true
         else
-          ldump "[SKIPPED] #{fpath.inspect} is already processed", :yellow
+          ldump "[SKIPPED] #{file} is already processed", :yellow
           return false
         end
       end

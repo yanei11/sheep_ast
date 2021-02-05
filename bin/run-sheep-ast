@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'sheep_ast'
+
+prog = __FILE__.to_s.split('/').last
+
+option = SheepAst::AnalyzerCore.option_parse(ARGV)
+config_file = option[:r]
+
+if config_file.nil?
+  SheepAst::AnalyzerCore.usage
+  exit
+end
+
+puts
+
+if File.exist?(config_file)
+  load config_file
+else
+  puts "#{prog}> #{config_file} could not be found"
+end
+
+if defined? configure
+  puts "#{prog}> Do configure"
+  core = SheepAst::AnalyzerCore.new
+  configure(core)
+  if !ARGV.empty?
+    core.report(raise: false) {
+      puts "#{prog}> Do analyze"
+      core.analyze_file(ARGV) unless ARGV.empty?
+    }
+  else
+    puts "#{prog}> Files are not given to ARGV."
+  end
+end
+
+puts "#{prog}> Finish. Thank you."

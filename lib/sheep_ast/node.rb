@@ -36,6 +36,9 @@ module SheepAst
     sig { returns(T.nilable(ActionBase)) }
     attr_reader :my_action
 
+    sig { returns(T.nilable(Integer)) }
+    attr_reader :my_chain_id
+
     sig { returns(NodeFactory) }
     attr_accessor :my_node_factory
 

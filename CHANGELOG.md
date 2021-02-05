@@ -1,9 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2020-02-05
+### Added
+- Added executable file `bin/run-sheep-ast`
+
 ## [0.4.0] - 2020-01-14
 ### Added
 - Include API to Let object to handle include another files
+
 ### Changed
 - Bugfix [Not open Issue] : Condition Match unexpectedly push matched strings to matched stack at the condition match ended
 
@@ -16,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - repeat option
 - various redirect option
 - API documentation
+
 ### Changed
 - Breaking change: directory structure changed.
 
@@ -24,12 +30,14 @@ All notable changes to this project will be documented in this file.
 - DataStore object can handle multiple value tags
 - Matched expression can be edit at the matched timing by extract: x..y
 - E(:any) expression is added
+
 ### Changed
 - NEQ usage changed
 
 ## [0.2.0] - 2020-12-15
 ### Added
 - Added NEQ syntax for supporting multiple Action shared syntax chain
+
 ### Changed
 - Moved Gemfile dependency to gemspec
 

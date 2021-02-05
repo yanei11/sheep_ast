@@ -24,6 +24,7 @@ module SheepAst
     def initialize
       super()
       @root_node = Node.new(0)
+      @node_tag_db = {}
       create_id(@root_node)
       @root_node.my_node_factory = self
       init
@@ -47,6 +48,12 @@ module SheepAst
 
     sig { params(match: MatchBase, group: String).void }
     def add(match, group)
+      if match.parent_tag
+        test = @node_tag_db[match.parent_tag]
+        if test
+          @__node = from_id(test)
+        end
+      end
       next_node = @__node.find(match.key)
       if next_node.nil?
         if @__node.my_action
@@ -58,6 +65,7 @@ module SheepAst
           end
         end
         next_node = @__node.create(@__chain_num, match, group)
+        @node_tag_db[match.node_tag] = next_node.my_id if match.node_tag
       end
       @__node = next_node
       @__chain_num += 1

@@ -76,6 +76,8 @@ module SheepAst
         create_id(match)
         # match.data_store = @data_store
         match.kind_name_set(kind.to_s)
+        match.node_tag = options[:node_tag]
+        match.parent_tag = options[:parent_tag]
         match_arr << match
       }
 
