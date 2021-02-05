@@ -16,7 +16,7 @@ jobs:
       with:
         ruby-version: 2.6.x
     - name: Create appimage
-      run: rake appimage
+      run: bundle exec rake appimage
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1.0.1
