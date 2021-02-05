@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable all
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
@@ -22,19 +23,24 @@ task 'doc' do
       CHANGELOG.md INSTALL.md manual/*"
 end
 
+desc 'erase appimage files'
+task 'init-appimage' do
+  sh 'rm -rf run-sheep-ast out .Appimage'
+end
+
 desc 'sorbet init'
-task 'srbinit' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec"
+task 'srbinit' => 'init-appimage' do
+  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example --ignore /run-sheep-ast"
 end
 
 desc 'Execute sorbet type check'
-task 'tc' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example "
+task 'tc' => 'init-appimage'do
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example --ignore /run-sheep-ast"
 end
 
 desc 'Execute sorbet type check with auto correct'
-task 'tca' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc -a --ignore=/spec"
+task 'tca' => 'init-appimage' do
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc -a --ignore=/spec --ignore /example --ignore /run-sheep-ast"
 end
 
 desc 'Introduction, Hello world program'
@@ -80,6 +86,13 @@ end
 desc 'Push document repository'
 task 'pushd' => 'doc' do
   sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && make push"
+end
+
+desc 'create appimage'
+task 'appimage' do
+  sh 'wget -c https://github.com/$(wget -q https://github.com/AppImage/pkg2appimage/releases -O - | grep "pkg2appimage-.*-x86_64.AppImage" | head -n 1 | cut -d \'"\' -f 2)'
+  sh 'chmod +x ./pkg2appimage-*.AppImage'
+  sh './pkg2appimage-*.AppImage sheep_ast_appimage.yml'
 end
 
 desc 'Before release check'
