@@ -18,8 +18,8 @@ end
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
 task 'doc' do
   sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
-  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md CHANGELOG.md \
-      INSTALL.md manual/*"
+  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
+      CHANGELOG.md INSTALL.md manual/*"
 end
 
 desc 'sorbet init'
@@ -73,9 +73,9 @@ end
 desc 'Execute example3-2 program'
 task 'example3-2' do
   sh 'echo "== Example3-2: compile =="'
-  sh 'bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto'
+  sh 'bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ \
+      example/protobuf2/example.proto'
 end
-
 
 desc 'Push document repository'
 task 'pushd' => 'doc' do
