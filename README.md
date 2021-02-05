@@ -14,8 +14,6 @@ sheep_ast supports following feature:
 
 # Introduction
 
-## Use as library
-
 Using sheep_ast, user can do pattern matching and extract data very easy like following:
 
 ```ruby
@@ -62,8 +60,6 @@ Extracted result is following:
 
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.  
 
-## Use executable
-
 sheep_ast also has executable format file. It is `run-sheep-ast` which is under the bin/ directory.  
 Basic usage is:
 
@@ -83,10 +79,7 @@ bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t exa
 
 This produce same output for Example3. Please see the example files in the command.  
 
-## Advanced feature
-
 As well as above basic Match - Action function, sheep_ast has following functions for further parsing, code genarating, analysis.
-
 
 - Compile  
   Using sheep_ast and erb, user can generate file from the extracted keywords.
@@ -101,11 +94,6 @@ As well as above basic Match - Action function, sheep_ast has following function
   The example is `#include "xxx.hh"` for cpp language, sheep_ast searh xxx.hh from given paths when it is included.
 
 # Getting Started
-
-## Examples
-Please see following example document for further usage.
-
-## Running examples
 Please clone this repository or install via gem. Following commands from top directory runs testcode and examples.
 
 - rake  
