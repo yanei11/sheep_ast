@@ -74,37 +74,6 @@ As well as above basic Match - Action function, sheep_ast has following function
   Using let_include module, sheep_ast can analyze another file.  
   The example is `#include "xxx.hh"` for cpp language, sheep_ast searh xxx.hh from given paths when it is included.
 
-# Executable
-
-sheep_ast also has executable format file. It is `run-sheep-ast` which is under the bin/ directory.  
-Basic usage is:
-
-```
-run-sheep-ast -r conig-file parse-files
-```
-
-Where the config-file is the AST configuration. `configure(core)` function should be implemented in the file.  
-The parse-files are the given files path to parse.  
-Execute with `-h` option shows help.  
-
-The example to use this executable is to execute following commands from the top of repository:
-
-```
-bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto 
-```
-
-This produce same output for Example3. Please see the example files in the command.  
-
-# Appimage
-
-sheep_ast releases Appimage format. Unfortunately, for this repository's appimage has limitation that the file can't accept relative path.  
-So, it is needed to specify absolute path. i.e. to get above same result, following command is needed:
-
-```
-./run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
-```
-
-`rake appimage` command produce appimage file.
 
 # Getting Started
 Please clone this repository or install via gem. Following commands from top directory runs testcode and examples.
@@ -114,6 +83,43 @@ Please clone this repository or install via gem. Following commands from top dir
 
 - rake example1, rake exampe2, ...  
   This command runs examples introduced below.
+  
+The example explanation is in the below Resources section.
+
+# Executables
+
+sheep_ast supports script file, and appimage executables as well as above library use.
+
+## script
+
+sheep_ast also supports executable format script. It is `run-sheep-ast` and it is under the bin/ directory.  
+Basic usage is:
+
+```
+run-sheep-ast -r conig-file parse-files
+```
+
+Where the config-file is the AST configuration. `configure(core)` function should be implemented in the file.  
+The parse-files are the given files path to parse.  
+Executing with `-h` option shows help.  
+
+The example to use this executable is to execute following commands from the top of repository:
+
+```
+bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto 
+```
+
+This produce same output for Example3. Please see the example files in the command.  
+
+## Appimage
+
+sheep_ast releases Appimage format here https://github.com/yanei11/sheep_ast/releases.  
+So, you can run only download this file and execute it, but unfortunately, for this repository's appimage has limitation that the file can't accept relative path.  
+So, it is needed to specify absolute path. i.e. following command is needed to get above same result.
+
+```
+./run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
+```
 
 # Resources
 - Yard page  
