@@ -1,8 +1,9 @@
 name: Release Appimage
 
 on:
-  push:
-    branches: [ release-appimage ]
+  pull_request:
+    types: [closed]
+    branches: [ release-package ]
 
 jobs:
   build:
