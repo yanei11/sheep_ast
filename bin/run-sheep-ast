@@ -6,7 +6,11 @@ require 'sheep_ast'
 
 prog = __FILE__.to_s.split('/').last
 
+ENV['SHEEP_BIN'] = '1'
 option = SheepAst::AnalyzerCore.option_parse(ARGV)
+
+puts Dir.pwd
+
 config_file = option[:r]
 
 if config_file.nil?
@@ -14,26 +18,32 @@ if config_file.nil?
   exit
 end
 
-puts
-
 if File.exist?(config_file)
   load config_file
 else
   puts "#{prog}> #{config_file} could not be found"
 end
 
+exit_status = false
+
 if defined? configure
   puts "#{prog}> Do configure"
   core = SheepAst::AnalyzerCore.new
   configure(core)
   if !ARGV.empty?
-    core.report(raise: false) {
+    exit_status = core.report(raise: false) {
       puts "#{prog}> Do analyze"
       core.analyze_file(ARGV) unless ARGV.empty?
     }
+
+    if !exit_status
+      puts 'ERROR: Exception is happened in the analyzer core'
+    end
   else
     puts "#{prog}> Files are not given to ARGV."
   end
 end
 
 puts "#{prog}> Finish. Thank you."
+
+exit(exit_status)

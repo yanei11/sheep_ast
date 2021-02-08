@@ -252,11 +252,12 @@ module SheepAst
     #
     sig { void }
     def do_analyze
-      if !ENV['SHEEP_RSPEC']
+      if !ENV['SHEEP_RSPEC'] || !ENV['SHEEP_BIN'].nil?
         process_option
       else
-        @@option = {}
+       @@option = {}
       end
+
       dump(:pwarn) and return if @@option[:d]
 
       @file_manager.analyze do |data|
@@ -348,6 +349,7 @@ module SheepAst
         puts @@optparse.help
         puts ''
       end
+      lprint @@option.inspect
     end
 
     def self.option
@@ -373,6 +375,8 @@ module SheepAst
       sheep_exclude_dir_path_set(@@option[:E]) if @@option[:E]
       sheep_outdir_set(@@option[:o]) if @@option[:o]
       sheep_template_dir_path_set(@@option[:t]) if @@option[:t]
+
+      
     end
   end
 end

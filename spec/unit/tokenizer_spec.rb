@@ -11,13 +11,13 @@ describe SheepAst::Tokenizer do  # rubocop: disable all
   let(:ok_str2) { [["a b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["111", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{+*", "}", "<>", "?", "_", "\n"]] } # rubocop: disable all
   let(:tok) { SheepAst::Tokenizer.new }
   it 'can tokenize' do
-    buf, max_line = tok.tokenize(basepath + '/spec/test.txt')
+    buf, max_line = tok.tokenize(basepath + '/spec/unit/test_files/test3.txt')
     expect(buf).to eq(ok_str)
     expect(max_line).to eq(6)
   end
 
   it 'can tokenize2' do
-    _buf, max_line = tok.tokenize(basepath + '/spec/test2.txt')
+    _buf, max_line = tok.tokenize(basepath + '/spec/unit/test_files/test4.txt')
     expect(max_line).to eq(1)
   end
 
@@ -47,7 +47,7 @@ abc def
     tok.add_token tok.cmp('a', ' ', 'b')
     tok.add_token tok.cmp('123', ' '), '111'
     tok.add_token tok.cmp('{+', '*')
-    buf, max_line = tok.tokenize(basepath + '/spec/test.txt')
+    buf, max_line = tok.tokenize(basepath + '/spec/unit/test_files/test3.txt')
     expect(buf).to eq(ok_str2)
     expect(max_line).to eq(6)
   end
