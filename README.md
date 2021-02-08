@@ -93,17 +93,9 @@ sheep_ast supports script file, and appimage executables as well as above librar
 ## script
 
 sheep_ast also supports executable format script. It is `run-sheep-ast` and it is under the bin/ directory.  
-Basic usage is:
-
-```
-run-sheep-ast -r conig-file parse-files
-```
-
-Where the config-file is the AST configuration. `configure(core)` function should be implemented in the file.  
-The parse-files are the given files path to parse.  
 Executing with `-h` option shows help.  
-
-The example to use this executable is to execute following commands from the top of repository:
+  
+The example to use this executable is to execute following commands from the top of repository:  
 
 ```
 bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto 
