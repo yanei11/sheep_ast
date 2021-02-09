@@ -59,7 +59,7 @@ describe SheepAst::Let do
     end
 
     expect {
-      core.analyze_file(['spec/test_files/test2.txt'])
+      core.analyze_file(['spec/unit/test_files/test2.txt'])
     }.not_to raise_error
   end
 
@@ -115,7 +115,7 @@ describe SheepAst::Let do
 
     expect {
       core.report(raise: true) {
-        core.analyze_file(['spec/test_files/test2.txt'])
+        core.analyze_file(['spec/unit/test_files/test2.txt'])
       }
     }.not_to raise_error
   end

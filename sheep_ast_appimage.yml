@@ -14,7 +14,9 @@ script:
   - tar xf ../ruby-*.tar.bz2 --strip-components=1 -C usr/
   - rm -rf usr/lib/ruby/gems/*/cache
   - export PATH=usr/bin/:$PATH 
-  - ./usr/bin/gem install sheep_ast
+  - pwd
+  - ./usr/bin/gem environment
+  - ./usr/bin/gem install ../sheep_ast-*.gem
   - cp ./usr/lib/ruby/gems/*/gems/sheep_ast-*/bin/run-sheep-ast ./usr/bin/
   - DEPS=$(ldd ./usr/lib/ruby/*/x86_64-linux/*.so | grep "=> /" | cut -d ">" -f 2 | cut -d " " -f 2 | sort | uniq)
   - mkdir -p usr/lib/x86_64-linux-gnu/

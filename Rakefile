@@ -4,11 +4,19 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
-task 'default' => 'check'
+task 'default' => ['unit', 'bin']
 
 desc 'Executing rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
-task 'check' do
-  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}  --fail-fast"
+task 'unit' do
+  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']} --pattern spec/unit/*_spec.rb  --fail-fast"
+end
+
+desc 'Executing rspec/bin'
+task 'bin' do
+  if Dir['out/*.AppImage'].empty?
+    Rake::Task['appimage'].invoke
+  end
+  sh "#{ENV['RBENV_COM']} bundle exec rspec --pattern spec/bin/*_spec.rb --fail-fast"
 end
 
 desc 'Executing all rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
@@ -89,10 +97,15 @@ task 'pushd' => 'doc' do
 end
 
 desc 'create appimage'
-task 'appimage' do
+task 'appimage' => ['init-appimage', 'build'] do
+  workdir = 'run-sheep-ast/'
+  sh "mkdir -p #{workdir}"
+  sh "cp pkg/* #{workdir}"
   sh 'wget -c https://github.com/$(wget -q https://github.com/AppImage/pkg2appimage/releases -O - | grep "pkg2appimage-.*-x86_64.AppImage" | head -n 1 | cut -d \'"\' -f 2)'
   sh 'chmod +x ./pkg2appimage-*.AppImage'
   sh './pkg2appimage-*.AppImage sheep_ast_appimage.yml'
+  sh 'rm -rf run-sheep-ast/ .AppDir pkg'
+  sh 'rm pkg2appimage-*.AppImage'
 end
 
 desc 'Before release check'

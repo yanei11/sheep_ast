@@ -13,8 +13,8 @@ describe SheepAst::LetInclude do
       tok.add_token tok.cmp('/', '/')
     end
  
-    core.sheep_dir_path_set(['spec/test_files/'])
-    core.sheep_exclude_dir_path_set(['spec/test_files/exclude'])
+    core.sheep_dir_path_set(['spec/unit/test_files/'])
+    core.sheep_exclude_dir_path_set(['spec/unit/test_files/exclude'])
 
     core.config_ast('always.ignore') do |ast, syn|
       syn.within {
@@ -53,7 +53,7 @@ describe SheepAst::LetInclude do
       }
     end
   
-    res = core.report(raise: false) { core.analyze_file(['spec/test_files/test1.cc']) }
+    res = core.report(raise: false) { core.analyze_file(['spec/unit/test_files/test1.cc']) }
     expect(res).to be true
     expect(core.data_store.value(:test_H)['Test1']).to eq(["{", "int", "a", ";", "int", "b", ";", "int", "c", ";", "}"])
     expect(core.data_store.value(:test_H)['Test2']).to eq(["{", "int", "i", ";", "int", "j", ";", "int", "k", ";", "}"])
