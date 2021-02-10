@@ -16,12 +16,7 @@ task 'bin' do
   if Dir['out/*.AppImage'].empty?
     Rake::Task['appimage'].invoke
   end
-  sh "#{ENV['RBENV_COM']} bundle exec rspec --pattern spec/bin/*_spec.rb --fail-fast"
-end
-
-desc 'Executing all rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
-task 'allcheck' do
-  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']}"
+  sh "#{ENV['RBENV_COM']} ruby spec/bin/*.rb"
 end
 
 desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
@@ -59,17 +54,17 @@ end
 desc 'Execute example1 program'
 task 'example1' do
   sh 'echo "== Example1: Like Grep program by sheep_ast =="'
-  sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main.rb  'test' spec/scoped_match_file/test1.cc \
-      spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc"
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main.rb  'test' spec/unit/scoped_match_file/test1.cc \
+      spec/unit/scoped_match_file/test2.cc spec/unit/scoped_match_file/test3.cc"
   sh 'echo "== Grep result =="'
-  sh 'grep test spec/scoped_match_file/test1.cc spec/scoped_match_file/test2.cc\
-      spec/scoped_match_file/test3.cc --color=auto'
+  sh 'grep test spec/unit/scoped_match_file/test1.cc spec/unit/scoped_match_file/test2.cc\
+      spec/unit/scoped_match_file/test3.cc --color=auto'
 end
 
 desc 'Execute example1 fail version program'
 task 'example1_fail' do
-  sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main_fail.rb  'test' spec/scoped_match_file/test1.cc \
-      spec/scoped_match_file/test2.cc spec/scoped_match_file/test3.cc"
+  sh "#{ENV['RBENV_COM']} bundle exec ruby example/grep_like/main_fail.rb  'test' spec/unit/scoped_match_file/test1.cc \
+      spec/unit/scoped_match_file/test2.cc spec/unit/scoped_match_file/test3.cc"
 end
 
 desc 'Execute example2 program'
@@ -109,4 +104,4 @@ task 'appimage' => ['init-appimage', 'build'] do
 end
 
 desc 'Before release check'
-task 'prepare' => %w[check tc hello example1 example1_fail example2 example3 example3-2 pushd]
+task 'prepare' => %w[init-appimage tc hello unit bin example1 example1_fail pushd]

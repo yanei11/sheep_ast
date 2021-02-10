@@ -15,7 +15,7 @@ script:
   - rm -rf usr/lib/ruby/gems/*/cache
   - export PATH=usr/bin/:$PATH 
   - pwd
-  - ./usr/bin/gem environment
+  - ./usr/bin/gem install bundler -f
   - ./usr/bin/gem install ../sheep_ast-*.gem
   - cp ./usr/lib/ruby/gems/*/gems/sheep_ast-*/bin/run-sheep-ast ./usr/bin/
   - DEPS=$(ldd ./usr/lib/ruby/*/x86_64-linux/*.so | grep "=> /" | cut -d ">" -f 2 | cut -d " " -f 2 | sort | uniq)

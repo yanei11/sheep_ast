@@ -113,6 +113,8 @@ So, it is needed to specify absolute path. i.e. following command is needed to g
 ./run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
 ```
 
+Please see `rake bin` output for further Appimage example
+
 # Resources
 - Yard page  
   https://yanei11.github.io/sheep_ast_pages/
