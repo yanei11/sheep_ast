@@ -28,8 +28,8 @@ def configure(core)
       register_syntax('analyze') {
         _SS(
           _S << E(:e, 'syntax') << E(:e, '=') << E(:e, '"') << E(:e, 'proto2')\
-             << E(:e, '"') << E(:e, ';') << A(:let, [:show, { disable: true }]),
-          _S << E(:e, 'package') << E(:any) << E(:e, ';') << A(:let, [:show, { disable: true }])
+             << E(:e, '"') << E(:e, ';') << A(:let, [:show, disable: true]),
+          _S << E(:e, 'package') << E(:any) << E(:e, ';') << A(:let, [:show, disable: true])
         )
       }
     }
@@ -39,24 +39,24 @@ def configure(core)
     syn.within {
       register_syntax('analyze') {
         _SS(
-          _S << E(:e, 'optional') << E(:any, { repeat: 4 }) << E(:e, ';')\
+          _S << E(:e, 'optional') << E(:any, repeat: 4) << E(:e, ';')\
                                   << A(
                                     :let,
                                     action1
                                   ),
-          _S << E(:e, 'optional') << E(:any, { repeat: 4 }) << E(:e, '[')\
-                                  << E(:any, { repeat: 4 }) << E(:e, ';')\
+          _S << E(:e, 'optional') << E(:any, repeat: 4) << E(:e, '[')\
+                                  << E(:any, repeat: 4) << E(:e, ';')\
                                   << A(
                                     :let,
                                     action1
                                   ),
-          _S << E(:e, 'repeated') << E(:any, { repeat: 4 }) << E(:e, ';')\
+          _S << E(:e, 'repeated') << E(:any, repeat: 4) << E(:e, ';')\
                                   << A(
                                     :let,
                                     action1
                                   ),
-          _S << E(:e, 'repeated') << E(:any, { repeat: 4 }) << E(:e, '[')\
-                                  << E(:any, { repeat: 4 }) << E(:e, ';')\
+          _S << E(:e, 'repeated') << E(:any, repeat: 4) << E(:e, '[')\
+                                  << E(:any, repeat: 4) << E(:e, ';')\
                                   << A(
                                     :let,
                                     action1
@@ -70,7 +70,7 @@ def configure(core)
     syn.within {
       register_syntax('analyze') {
         _SS(
-          _S << E(:any, { at_head: true }) << E(:any, { repeat: 2 }) << E(:e, ';')\
+          _S << E(:any, at_head: true) << E(:any, repeat: 2) << E(:e, ';')\
              << A(
                :let,
                action2
@@ -85,9 +85,9 @@ def configure(core)
       register_syntax('analyze') {
         _SS(
           _S << E(:e, 'message') << E(:any) << E(:sc, '{', '}') \
-             << A(:let, [:redirect, :_3, 2..-2, { dry_run: dry1, namespace: :_2, ast_include: ['default', 'message'] }]),
+             << A(:let, [:redirect, :_3, 2..-2, dry_run: dry1, namespace: :_2, ast_include: ['default', 'message']]),
           _S << E(:e, 'enum') << E(:any) << E(:sc, '{', '}') \
-             << A(:let, [:redirect, :_3, 2..-2, { dry_run: dry2, namespace: :_2, ast_include: ['enum'] }])
+             << A(:let, [:redirect, :_3, 2..-2, dry_run: dry2, namespace: :_2, ast_include: ['enum']])
         )
       }
     }

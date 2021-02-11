@@ -121,7 +121,7 @@ module SheepAst
       chunk = T.must(chunk)[range]
       application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)
 
-      chunk = T.unsafe(self)._data_shaping(chunk, options)
+      chunk = T.unsafe(self)._data_shaping(chunk, **options)
       return chunk
     end
 

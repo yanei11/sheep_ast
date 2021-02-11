@@ -8,14 +8,14 @@ on:
 jobs:
   build:
     name: Build + Publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.7
+    - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.7.2
+        ruby-version: 3.0.0
     - name: Create appimage
       run: |
         gem install bundler

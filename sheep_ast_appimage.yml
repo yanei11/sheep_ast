@@ -2,7 +2,7 @@ app: run-sheep-ast
 
 ingredients:
   script:
-    - wget -c https://rvm_io.global.ssl.fastly.net/binaries/ubuntu/14.04/x86_64/ruby-2.7.2.tar.bz2
+    - wget -c https://rvm_io.global.ssl.fastly.net/binaries/ubuntu/20.04/x86_64/ruby-3.0.0.tar.bz2
 
 script:
   - unset GEM_HOME

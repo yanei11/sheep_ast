@@ -54,7 +54,7 @@ module SheepAst
     }
     def compile(data, datastore, template_file = nil, **options)
       if !data.nil?
-        namespace = T.unsafe(self).w_or_wo_ns(data, { **options, namespace: true })
+        namespace = T.unsafe(self).w_or_wo_ns(data, **{ **options, namespace: true })
         namespace_arr = data[:_namespace]
       end
       outdir = datastore.value(:_sheep_outdir)

@@ -237,7 +237,7 @@ module SheepAst
       @stages << a_stage
     end
 
-    sig { params(name: String).return(Stage) }
+    sig { params(name: String).returns(Stage) }
     def stage_get(name)
       res = @stages_name[name]
       application_error 'specified name does not hit any stage' unless res
