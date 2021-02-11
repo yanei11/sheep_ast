@@ -8,7 +8,7 @@ task 'default' => ['unit', 'bin']
 
 desc 'Executing rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
 task 'unit' do
-  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']} --pattern spec/unit/*_spec.rb  --fail-fast"
+  sh "#{ENV['RBENV_COM']} bundle exec rspec #{ENV['TESTCASE']} --fail-fast"
 end
 
 desc 'Executing rspec/bin'

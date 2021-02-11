@@ -77,15 +77,25 @@ module SheepAst
     # @note This is used inside :redirect function
     #
     sig {
-      params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(
+      params(
+        data: AnalyzeData,
+        key: Symbol,
+        line_from: Integer,
+        line_to: Integer,
+        trim: T.nilable(Range)
+      ).returns(
         T.nilable(T::Array[T::Array[String]])
       )
     }
-    def _line_from_to(data, line_from, line_to)
-      start_match = get_match(data, line_from)
-      end_match = get_match(data, line_to)
-      start_line = start_match.start_line
-      end_line = end_match.end_line
+    def _line_from_to(data, key, line_from, line_to, trim = nil)
+      baseline_match = get_match(data, key)
+      baseline = baseline_match.start_line
+      start_line = baseline + line_from
+      end_line = baseline + line_to
+      if start_line < 0 || end_line > data.file_info&.max_line
+        lfatal "start_line = #{start_line}, end_line = #{end_line}, max_line = #{data.file_info&.max_line}"
+        application_error 'start_line < 0 or end_line > max_line'
+      end
       ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
       range = start_line..end_line
       return data.file_info&.tokenized&.[](range)

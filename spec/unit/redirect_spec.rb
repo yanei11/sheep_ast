@@ -47,7 +47,6 @@ describe SheepAst::Let do
       }
     end
 
-
     core.config_ast('always.ignore2') do |ast, syn|
       syn.within {
         register_syntax('ignore', A(:let, [:show, disable: true])) {
@@ -114,10 +113,122 @@ describe SheepAst::Let do
     end
 
     expect {
-      core.report(raise: true) {
-        core.analyze_file(['spec/unit/test_files/test2.txt'])
-      }
+      core.analyze_file(['spec/unit/test_files/test2.txt'])
     }.not_to raise_error
+  end
+
+  it 'redirect matched expression and extract multiple line by from/to integer'  do
+    core.config_tok do |tok|
+      tok.use_split_rule { tok.split_space_only }
+    end
+
+    core.config_ast('default.main') do |ast, syn|
+      syn.within {
+        register_syntax('analyze') {
+          _SS(
+           _S << E(:r, 'RSpec*', at_head: true) \
+              << A(:let,
+                   [:redirect,
+                    redirect_line_from_to: -25..1,
+                    dry_run: false,
+                    debug: false,
+                    ast_include: 'redirect'
+                   ]
+                  )
+          )
+        }
+      }
+    end
+
+    core.config_ast('always.ignore2') do |ast, syn|
+      syn.within {
+        register_syntax('ignore', A(:let, [:show, disable: true])) {
+          _SS(
+             _S << E(:any)
+          )
+        }
+      }
+    end
+
+    expect {
+      core.analyze_file(['spec/spec_helper.rb'])
+    }.not_to raise_error
+  end
+
+  it 'redirect matched expression and extract multiple line by from/to integer. Raise exception when out of line is specified'  do
+    core.config_tok do |tok|
+      tok.use_split_rule { tok.split_space_only }
+    end
+
+    core.config_ast('default.main') do |ast, syn|
+      syn.within {
+        register_syntax('analyze') {
+          _SS(
+           _S << E(:r, 'RSpec*', at_head: true) \
+              << A(:let,
+                   [:redirect,
+                    redirect_line_from_to: -26..1,
+                    dry_run: false,
+                    debug: false,
+                    ast_include: 'redirect'
+                   ]
+                  )
+          )
+        }
+      }
+    end
+
+    core.config_ast('always.ignore2') do |ast, syn|
+      syn.within {
+        register_syntax('ignore', A(:let, [:show, disable: true])) {
+          _SS(
+             _S << E(:any)
+          )
+        }
+      }
+    end
+
+    expect {
+      core.analyze_file(['spec/spec_helper.rb'])
+    }.to raise_error(SheepAst::Exception::ApplicationError)
+  end
+
+  it 'redirect matched expression and extract multiple line by from/to integer. Raise exception when out of line is specified'  do
+    core.config_tok do |tok|
+      tok.use_split_rule { tok.split_space_only }
+    end
+
+    core.config_ast('default.main') do |ast, syn|
+      syn.within {
+        register_syntax('analyze') {
+          _SS(
+           _S << E(:r, 'RSpec*', at_head: true) \
+              << A(:let,
+                   [:redirect,
+                    redirect_line_from_to: -1..1000,
+                    dry_run: false,
+                    debug: false,
+                    ast_include: 'redirect'
+                   ]
+                  )
+          )
+        }
+      }
+    end
+
+    core.config_ast('always.ignore2') do |ast, syn|
+      syn.within {
+        register_syntax('ignore', A(:let, [:show, disable: true])) {
+          _SS(
+             _S << E(:any)
+          )
+        }
+      }
+    end
+
+    expect {
+      core.analyze_file(['spec/spec_helper.rb'])
+    }.to raise_error(SheepAst::Exception::ApplicationError)
   end
 
 end

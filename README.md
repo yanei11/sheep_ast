@@ -105,17 +105,23 @@ This produce same output for Example3. Please see the example files in the comma
 
 ## Appimage
 
-sheep_ast releases Appimage format here https://github.com/yanei11/sheep_ast/releases.  
+sheep_ast releases Appimage format here:
+https://github.com/yanei11/sheep_ast/releases.  
+
+Appimage is introduced at:
+https://appimage.org/
+
 So, you can run only download this file and execute it, but unfortunately, for this repository's appimage has limitation that the file can't accept relative path.  
 So, it is needed to specify absolute path. i.e. following command is needed to get above same result.
 
 ```
-./run-sheep-ast-0.4.1.glibc2.3-x86_64.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
+./run-sheep-ast-*.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
 ```
 
 Please see `rake bin` output for further Appimage example
 
 # Resources
+
 - Yard page  
   https://yanei11.github.io/sheep_ast_pages/
 
