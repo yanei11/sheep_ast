@@ -375,8 +375,6 @@ module SheepAst
       sheep_exclude_dir_path_set(@@option[:E]) if @@option[:E]
       sheep_outdir_set(@@option[:o]) if @@option[:o]
       sheep_template_dir_path_set(@@option[:t]) if @@option[:t]
-
-      
     end
   end
 end

@@ -105,10 +105,9 @@ This produce same output for Example3. Please see the example files in the comma
 
 ## Appimage
 
-sheep_ast releases Appimage format here:
-https://github.com/yanei11/sheep_ast/releases.  
-Appimage is introduced at:
-https://appimage.org/
+sheep_ast releases Appimage format here: https://github.com/yanei11/sheep_ast/releases.  
+
+Appimage is introduced at:https://appimage.org/  
 
 So, you can run only download this file and execute it, but unfortunately, for this repository's appimage has limitation that the file can't accept relative path.  
 So, it is needed to specify absolute path. i.e. following command is needed to get above same result.
