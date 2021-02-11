@@ -107,7 +107,6 @@ This produce same output for Example3. Please see the example files in the comma
 
 sheep_ast releases Appimage format here:
 https://github.com/yanei11/sheep_ast/releases.  
-
 Appimage is introduced at:
 https://appimage.org/
 
