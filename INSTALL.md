@@ -7,6 +7,9 @@ You should just add execute permission to the file and you can try sheep_ast to 
 The example command is listed in [bin/bin_test.rb](https://github.com/yanei11/sheep_ast/blob/master/spec/bin/bin_test.rb)  
 This AppImage is just executing [bin/run-sheep-ast](https://github.com/yanei11/sheep_ast/blob/master/bin/run-sheep-ast) file.
 
+Unfortunately, the AppImage in this repository has a limitation that it can take only **absolute path** for the option.  
+Available option can be seen by executing with `-h` option. 
+
 # For the library user, or developer
 
 proceding following steps:
