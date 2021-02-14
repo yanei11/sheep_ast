@@ -74,14 +74,16 @@ As well as above basic Tokenize - Parse - Action function, sheep_ast has followi
   Using let_include module, sheep_ast can analyze another file.  
   The example is `#include "xxx.hh"` for cpp language, sheep_ast searh xxx.hh from given paths when it is included.
 
-# Getting Started
-
-Please see the [INSTALL.md](https://github.com/yanei11/sheep_ast/blob/master/INSTALL.md) for the installation.  
-sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute it for just using sheep_ast.   
-(The AppImage is just executing bin/run-sheep-ast file)  
+# Getting Started  
   
-Example usage document is listed below Resources section.    
-For further usage, you can try to clone this repository and `rake unit`, `rake bin` command may help you to try and see basic example.
+Please see following Examples at Resources section below for the documentation.
+  
+To try sheep_ast, Please see the [INSTALL.md](https://github.com/yanei11/sheep_ast/blob/master/INSTALL.md) for the installation.  
+sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute it for just using sheep_ast without installing ruby environment.   
+(The AppImage contains ruby and just executing [bin/run-sheep-ast](https://github.com/yanei11/sheep_ast/blob/master/bin/run-sheep-ast) file)  
+  
+For further examples, you can try to clone this repository and `rake unit`, `rake bin` command may help you to try and see basic example.  
+But this commands require to install ruby environement.
 
 # Resources
 
