@@ -143,3 +143,7 @@ Please see `rake bin` output for further Appimage example
 
 - Change Log  
   https://yanei11.github.io/sheep_ast_pages/file.CHANGELOG.html
+
+# Version
+
+ruby 3.0.0 and ruby 2.7.2 are used for development
