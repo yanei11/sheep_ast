@@ -65,11 +65,12 @@ As well as above basic Tokenize - Parse - Action function, sheep_ast has followi
 
 - Compile  
   Using sheep_ast and erb, user can generate file from the extracted keywords.
-  Please see example3 for detail
+  Please see [Example3](https://yanei11.github.io/sheep_ast_pages/file.Example3.html).
 
 - Recursive estimate  
   sheep_ast supports recursive estimation of matched strings by let_redirect module.  
   So, user can have more well readable, easy to use the Ast.
+  Please see [Example2](https://yanei11.github.io/sheep_ast_pages/file.Example2.html) and [Example3](https://yanei11.github.io/sheep_ast_pages/file.Example3.html).
 
 - Including another file  
   Using let_include module, sheep_ast can analyze another file.  
