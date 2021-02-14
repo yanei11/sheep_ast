@@ -2,16 +2,6 @@
 
 sheep_ast is a toolkit made by ruby for those who wants to use Ast(abstract syntax tree) to some analysis. It can be used for parsing, code generating, analysis etc. sheep_ast aims to provide easily customizable user interface for using Ast.
   
-# Feature
-sheep_ast supports following feature:
-
-- Tokenize  
-  sheep_ast has customizable tokenizer. It can split sentence to a string and also it can combine it to another set of string (token).  
-- Parsing  
-  sheep_ast has stages. The each stage can assign Ast. Parsing by multiple stage is possible like, ignoring pattern by 1st Ast, and extract pattern by 2nd Ast and so on. sheep_ast has function to handle namespace.
-- Action  
-  At the end of Ast, some action can be assigned. e.g. to store Ast result to some symbol, to compile Ast result to another file, etc. User can define customized methods to the Action class `Let`.  
-
 # Introduction
 
 Using sheep_ast, user can do pattern matching and extract data very easy like following:
@@ -60,7 +50,17 @@ Extracted result is following:
 
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.  
 
-As well as above basic Match - Action function, sheep_ast has following functions for further parsing, code genarating, analysis.
+# Feature
+sheep_ast supports following feature:
+
+- Tokenize  
+  sheep_ast has customizable tokenizer. It can split sentence to a string and also it can combine it to another set of string (token).  
+- Parsing  
+  sheep_ast has stages. The each stage can assign Ast. Parsing by multiple stage is possible like, ignoring pattern by 1st Ast, and extract pattern by 2nd Ast and so on. sheep_ast has function to handle namespace.
+- Action  
+  At the end of Ast, some action can be assigned. e.g. to store Ast result to some symbol, to compile Ast result to another file, etc. User can define customized methods to the Action class `Let`.  
+
+As well as above basic Tokenize - Parse - Action function, sheep_ast has following functions for further parsing and code genarating.
 
 - Compile  
   Using sheep_ast and erb, user can generate file from the extracted keywords.
@@ -73,7 +73,6 @@ As well as above basic Match - Action function, sheep_ast has following function
 - Including another file  
   Using let_include module, sheep_ast can analyze another file.  
   The example is `#include "xxx.hh"` for cpp language, sheep_ast searh xxx.hh from given paths when it is included.
-
 
 # Getting Started
 
