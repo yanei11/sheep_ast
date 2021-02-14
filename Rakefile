@@ -4,6 +4,10 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
+cur = Dir.pwd
+
+srb_ignore = ' --ignore /spec --ignore /example'
+
 task 'default' => ['unit', 'bin']
 
 desc 'Executing rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
@@ -12,19 +16,25 @@ task 'unit' do
 end
 
 desc 'Executing rspec/bin'
-task 'bin' do
+task 'bin-appimage' do
+  ENV['AppImage'] = '1'
   if Dir['out/*.AppImage'].empty?
     Rake::Task['appimage'].invoke
   end
   sh "#{ENV['RBENV_COM']} ruby spec/bin/*.rb"
 end
 
-desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
-task 'doc' do
-  sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
-  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
-      CHANGELOG.md INSTALL.md manual/*"
+desc 'Executing rspec/bin'
+task 'bin' do
+  sh "#{ENV['RBENV_COM']} ruby spec/bin/*.rb"
 end
+
+#desc 'Making Yardoc to the SHEEP_DOC_DIR directory.'
+#task 'doc' do
+#  sh "rm -rf  #{ENV['SHEEP_DOC_DIR']}"
+#  sh "#{ENV['RBENV_COM']} bundle exec yardoc -m markdown --plugin sorbet -o #{ENV['SHEEP_DOC_DIR']} - README.md \
+#      CHANGELOG.md INSTALL.md manual/*"
+#end
 
 desc 'erase appimage files'
 task 'init-appimage' do
@@ -33,17 +43,17 @@ end
 
 desc 'sorbet init'
 task 'srbinit' => 'init-appimage' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb init --ignore /spec --ignore /example --ignore /run-sheep-ast"
+  sh "#{ENV['RBENV_COM']} bundle exec srb init #{srb_ignore}"
 end
 
 desc 'Execute sorbet type check'
 task 'tc' => 'init-appimage'do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc --ignore /spec --ignore /example --ignore /run-sheep-ast"
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc #{srb_ignore}"
 end
 
 desc 'Execute sorbet type check with auto correct'
 task 'tca' => 'init-appimage' do
-  sh "#{ENV['RBENV_COM']} bundle exec srb tc -a --ignore=/spec --ignore /example --ignore /run-sheep-ast"
+  sh "#{ENV['RBENV_COM']} bundle exec srb tc -a #{srb_ignore}"
 end
 
 desc 'Introduction, Hello world program'
@@ -86,9 +96,19 @@ task 'example3-2' do
       example/protobuf2/example.proto'
 end
 
+desc 'Create doc repository'
+task 'doc' do
+  sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && SHEEP_RV=#{RUBY_VERSION} rake change-version && SHEEP_DIR=#{cur} rake doc"
+end
+
 desc 'Push document repository'
 task 'pushd' => 'doc' do
-  sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && make push"
+  sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && rake push"
+end
+
+desc 'Push document repository'
+task 'doc-init' do
+  sh "cd #{ENV['SHEEP_DOC_DIR']}/.. && rake init"
 end
 
 desc 'create appimage'
@@ -103,5 +123,17 @@ task 'appimage' => ['init-appimage', 'build'] do
   sh 'rm pkg2appimage-*.AppImage'
 end
 
+desc 'change ruby version by rbenv. Specify SHEEP_RV environment parameter for ruby version'
+task 'change-version' do
+  if !ENV['SHEEP_RV']
+    puts 'specify ruby version like 3.0.0 to SHEEP_RV env'
+    exit 1
+  else
+    sh "rbenv local #{ENV['SHEEP_RV']}"
+    sh 'gem install bundler'
+    sh "bundle update"
+  end
+end
+
 desc 'Before release check'
-task 'prepare' => %w[init-appimage tc hello unit bin example1 example1_fail pushd]
+task 'prepare' => %w[init-appimage tc hello unit bin bin-appimage example1 example1_fail pushd]

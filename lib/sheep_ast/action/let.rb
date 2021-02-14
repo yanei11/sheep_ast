@@ -56,6 +56,7 @@ module SheepAst
       return ins
     end
 
+    # rubocop: disable all
     sig { override.params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def action(data, node)
       @data = data
@@ -67,12 +68,21 @@ module SheepAst
       fsyms.each do |fsym|
         ret = nil
         m = fsym[0]
-        para = fsym[1..-1] #rubocop: disable all
+        para = []
+        opt = {}
+        if fsym.length > 1
+          opt = fsym[-1]
+          para = fsym[1..-2]
+          if !opt.is_a?(Hash)
+            para << opt
+            opt = {}
+          end
+        end
         ldebug "Function : #{m}, para = #{para.inspect}"
         if para.nil? || para.empty?
-          ret = T.unsafe(self).method(m).call(key_data, @data_store)
+          ret = T.unsafe(self).method(m).call(key_data, @data_store, **opt)
         else
-          ret = T.unsafe(self).method(m).call(key_data, @data_store, *para)
+          ret = T.unsafe(self).method(m).call(key_data, @data_store, *para, **opt)
         end
 
         if ret == true # rubocop:disable all

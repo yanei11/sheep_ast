@@ -1,15 +1,26 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+if __FILE__ != $PROGRAM_NAME
+  exit 0
+end
+
 require 'bundler/setup'
 require 'sheep_ast'
+require 'benchmark'
 
 prog = __FILE__.to_s.split('/').last
 
 ENV['SHEEP_BIN'] = '1'
 option = SheepAst::AnalyzerCore.option_parse(ARGV)
 
-puts Dir.pwd
+ruby_version = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
+current_dir = Dir.pwd
+
+puts "Executing on ----------------------"
+puts "  ruby version: #{ruby_version}"
+puts "  current dir : #{current_dir}"
+puts "-----------------------------------"
 
 config_file = option[:r]
 
@@ -25,15 +36,18 @@ else
 end
 
 exit_status = false
+time = nil
 
 if defined? configure
   puts "#{prog}> Do configure"
   core = SheepAst::AnalyzerCore.new
   configure(core)
   if !ARGV.empty?
-    exit_status = core.report(raise: false) {
-      puts "#{prog}> Do analyze"
-      core.analyze_file(ARGV) unless ARGV.empty?
+    time = Benchmark.measure {
+      exit_status = core.report(raise: false) {
+        puts "#{prog}> Do analyze"
+        core.analyze_file(ARGV) unless ARGV.empty?
+      }
     }
 
     if !exit_status
@@ -44,6 +58,7 @@ if defined? configure
   end
 end
 
+puts "#{prog}> Time to process : #{time.real}"
 puts "#{prog}> Finish. Thank you."
 
 exit(exit_status)

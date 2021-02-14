@@ -49,7 +49,7 @@ describe SheepAst::Let do
           'analyze',
           A(:let,
             [:record, :test_A, :_2, namespace_value: true], 
-            [:compile, 'spec/unit/test_files/template1.erb', { dry_run: false, namespace_separator: '_', namespace_separator_file: '_' }], 
+            [:compile, 'spec/unit/test_files/template1.erb', dry_run: false, namespace_separator: '_', namespace_separator_file: '_' ], 
             [:show, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
