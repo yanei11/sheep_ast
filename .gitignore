@@ -6,3 +6,4 @@ sorbet/rbi
 docs
 coverage/
 spec/res
+.ruby-version

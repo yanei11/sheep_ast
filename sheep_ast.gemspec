@@ -36,8 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-performance"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "sorbet"
-  spec.add_development_dependency "yard"
-  spec.add_development_dependency "yard-sorbet"
   spec.add_development_dependency "code-scanning-rubocop"
   spec.add_runtime_dependency "sorbet-runtime"
   spec.add_runtime_dependency "rainbow"
