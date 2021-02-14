@@ -51,7 +51,8 @@ Extracted result is following:
 So, from the `Hello sheep_ast World` string, we can extract `Hello` and `sheep_ast`.  
 
 # Feature
-sheep_ast supports following feature:
+sheep_ast supports following features.  
+The framework desin, and pipeline for the input data is written in the doc [here](https://yanei11.github.io/sheep_ast_pages/file.Framework.html). 
 
 - Tokenize  
   sheep_ast has customizable tokenizer. It can split sentence to a string and also it can combine it to another set of string (token).  
