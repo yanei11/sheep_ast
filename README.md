@@ -76,47 +76,13 @@ As well as above basic Match - Action function, sheep_ast has following function
 
 
 # Getting Started
-Please clone this repository or install via gem. Following commands from top directory runs testcode and examples.
 
-- rake  
-  This command runs rspec. The rspec code has more examples
-
-- rake example1, rake exampe2, ...  
-  This command runs examples introduced below.
+Please see the INSTALL.md for the installation.  
+sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute for just using sheep_ast.   
+(Actually, the AppImage is just executing bin/run-sheep-ast file)  
   
-The example explanation is in the below Resources section.
-
-# Executables
-
-sheep_ast supports script file, and appimage executables as well as above library use.
-
-## script
-
-sheep_ast also supports executable format script. It is `run-sheep-ast` and it is under the bin/ directory.  
-Executing with `-h` option shows help.  
-  
-The example to use this executable is to execute following commands from the top of repository:  
-
-```
-bin/run-sheep-ast -r example/protobuf2/configure.rb -o example/protobuf2/ -t example/protobuf2/ example/protobuf2/example.proto 
-```
-
-This produce same output for Example3. Please see the example files in the command.  
-
-## Appimage
-
-sheep_ast releases Appimage format here: https://github.com/yanei11/sheep_ast/releases.  
-
-Appimage is introduced at:https://appimage.org/  
-
-So, you can run only download this file and execute it, but unfortunately, for this repository's appimage has limitation that the file can't accept relative path.  
-So, it is needed to specify absolute path. i.e. following command is needed to get above same result.
-
-```
-./run-sheep-ast-*.AppImage -r $PWD/example/protobuf2/configure.rb -o $PWD/example/protobuf2 -t $PWD/example/protobuf2/ $PWD/example/protobuf2/example.proto
-```
-
-Please see `rake bin` output for further Appimage example
+Example usage document is listed below Resources section.    
+For further usage, you can try to clone this repository and `rake unit`, `rake bin` command may help you to try and see basic example.
 
 # Resources
 
