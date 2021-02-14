@@ -77,9 +77,9 @@ As well as above basic Match - Action function, sheep_ast has following function
 
 # Getting Started
 
-Please see the INSTALL.md for the installation.  
-sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute for just using sheep_ast.   
-(Actually, the AppImage is just executing bin/run-sheep-ast file)  
+Please see the [INSTALL.md](https://github.com/yanei11/sheep_ast/blob/master/INSTALL.md) for the installation.  
+sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute it for just using sheep_ast.   
+(The AppImage is just executing bin/run-sheep-ast file)  
   
 Example usage document is listed below Resources section.    
 For further usage, you can try to clone this repository and `rake unit`, `rake bin` command may help you to try and see basic example.
