@@ -29,4 +29,4 @@ rake exampleX -> execute example no X program
 
 # Other packages
 
-gem installation is supported. Please see here: https://github.com/yanei11?tab=packages&repo_name=sheep_ast
+gem installation is supported. Please see [gem release](https://github.com/yanei11?tab=packages&repo_name=sheep_ast).
