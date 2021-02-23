@@ -118,3 +118,6 @@ Style/WordArray:
 
 Style/HashAsLastArrayItem:
   Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false

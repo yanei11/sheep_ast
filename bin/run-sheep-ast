@@ -17,10 +17,10 @@ option = SheepAst::AnalyzerCore.option_parse(ARGV)
 ruby_version = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
 current_dir = Dir.pwd
 
-puts "Executing on ----------------------"
-puts "  ruby version: #{ruby_version}"
-puts "  current dir : #{current_dir}"
-puts "-----------------------------------"
+puts "#{prog}> Executing on"
+puts "#{prog}>   version: #{SheepAst::VERSION}"
+puts "#{prog}>   ruby version: #{ruby_version}"
+puts "#{prog}>   current dir: #{current_dir}"
 
 config_file = option[:r]
 

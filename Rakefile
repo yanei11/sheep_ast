@@ -8,7 +8,7 @@ cur = Dir.pwd
 
 srb_ignore = ' --ignore /spec --ignore /example'
 
-task 'default' => ['unit', 'bin']
+task 'default' => ['cop', 'tc', 'unit', 'bin']
 
 desc 'Executing rspec, usage => [TESTCASE=xxx_spec.rb:line] rake'
 task 'unit' do
@@ -27,6 +27,11 @@ end
 desc 'Executing rspec/bin'
 task 'bin' do
   sh "ruby spec/bin/*.rb"
+end
+
+desc 'Executing rubocop'
+task 'cop' do
+  sh 'rubocop'
 end
 
 desc 'erase appimage files'
