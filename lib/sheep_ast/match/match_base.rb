@@ -54,6 +54,15 @@ module SheepAst
     sig { returns(T.nilable(Symbol)) }
     attr_accessor :parent_tag
 
+    sig { returns(T.nilable(String)) }
+    attr_accessor :description
+
+    sig { returns(T.nilable(String)) }
+    attr_accessor :command
+
+    sig { returns(T.nilable(Symbol)) }
+    attr_accessor :my_tag
+
     sig { params(name: String).void }
     def kind_name_set(name)
       @kind_name = name
@@ -74,6 +83,9 @@ module SheepAst
       @extract = options[:extract]
       @start_add_cond = options[:index_cond]
       @end_add_cond = options[:end_cond]
+      @command = options[:command] || key
+      @description = options[:description]
+      @my_tag = options[:tag]
       super()
     end
 

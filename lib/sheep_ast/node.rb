@@ -42,6 +42,12 @@ module SheepAst
     sig { returns(NodeFactory) }
     attr_accessor :my_node_factory
 
+    sig { returns(T.nilable(Symbol)) }
+    attr_accessor :my_tag
+
+    sig { returns(T.nilable(Node)) }
+    attr_accessor :parent_node
+
     sig {
       params(chain_num: Integer, match: T.nilable(MatchBase),
              group: T.nilable(String)).void
@@ -51,8 +57,9 @@ module SheepAst
       @my_match = match
       @my_chain_id = chain_num
       T.must(@my_match).my_chain_num = chain_num unless match.nil?
-      @matches = {}
-      @node_buffer = NodeBuf.new(@matches, @my_match, @my_chain_id, @my_group)
+      @matches_to_node = {}
+      @matches_to_match = {}
+      @node_buffer = NodeBuf.new(@matches_to_node, @my_match, @my_chain_id, @my_group)
       @methods_array = []
       @global_matches = {}
       @methods_array = []
@@ -63,8 +70,10 @@ module SheepAst
     sig { returns(String) }
     def inspect
       "custom inspect: <#{self.class.name} object_id = #{object_id}, my_group = #{@my_group}, "\
-      "my_match = #{@my_match.inspect}, matches = #{@maches.inspect}>, my_chain_id = #{@my_chain_id}"
+        "my_match = #{@my_match.inspect}, matches = #{@maches_to_node.inspect}, "\
+        "my_chain_id = #{@my_chain_id}, my_tag = #{my_tag}>"
     end
+
     # create node from the match kind and the key
     sig {
       params(chain_num: Integer,
@@ -96,7 +105,7 @@ module SheepAst
     # find node key keyession
     sig { params(key: String).returns(T.nilable(Node)) }
     def find(key)
-      return @matches[key]
+      return @matches_to_node[key]
     end
 
     # find next node from maps the node has
@@ -191,12 +200,27 @@ module SheepAst
       @ordered_methods_array = tmp.transpose[1]
     end
 
+    sig { returns(T::Array[NextCommand]) }
+    def next_command
+      res = []
+      @matches_to_match.each do |_k, v|
+        next_command = NextCommand.new
+        next_command.command = v.command
+        next_command.description = v.description
+        res << next_command
+      end
+      return res
+    end
+
     private
 
     sig { params(node: Node, match: MatchBase).void }
     def register_node(node, match) # rubocop: disable all
       match.node_id = node.my_id.dup
       match_container = global_matches[match.kind?.rank]
+      node.my_tag = match.my_tag
+      node.parent_node = self
+      @my_node_factory.register_tag(node.my_tag, node) if node.my_tag
       application_error 'unknown match' if match_container.nil?
 
       if match_container.key? match.key
@@ -213,7 +237,8 @@ module SheepAst
       end
 
       match_container[match.key] = match
-      @matches[match.key] = node
+      @matches_to_node[match.key] = node
+      @matches_to_match[match.key] = match
     end
   end
 end

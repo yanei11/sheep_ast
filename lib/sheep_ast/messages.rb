@@ -7,6 +7,21 @@ require_relative 'stage_manager'
 require 'sorbet-runtime'
 
 module SheepAst
+  # Get next command
+  class NextCommand < T::Struct
+    include Exception
+    extend T::Sig
+    include Log
+
+    prop :command, T.nilable(String), default: nil
+    prop :description, T.nilable(String), default: nil
+
+    def init
+      @command = nil
+      @description = nil
+    end
+  end
+
   # Message struture between components
   #
   # @api private
@@ -14,6 +29,7 @@ module SheepAst
   class MatchKind < T::Enum
     include Exception
     extend T::Sig
+    include Log
 
     enums do
       Any = new

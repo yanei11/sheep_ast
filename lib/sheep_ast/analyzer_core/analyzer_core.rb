@@ -1,14 +1,15 @@
 # typed:ignore
 # frozen_string_literal:true
 
-require_relative 'exception'
-require_relative 'factory_base'
-require_relative 'ast_manager'
-require_relative 'tokenizer'
-require_relative 'datastore'
-require_relative 'sheep_obj'
-require_relative 'stage_manager'
-require_relative 'fof'
+require_relative '../exception'
+require_relative '../factory_base'
+require_relative '../ast_manager'
+require_relative '../tokenizer'
+require_relative '../datastore'
+require_relative '../sheep_obj'
+require_relative '../stage_manager'
+require_relative '../fof'
+require_relative 'node_operation'
 require 'optparse'
 require 'pry'
 
@@ -22,6 +23,7 @@ module SheepAst
     include Exception
     extend T::Sig
     include FactoryBase
+    include NodeOperation
 
     @@option = nil
     @@optparse = nil

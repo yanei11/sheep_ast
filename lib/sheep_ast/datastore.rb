@@ -11,7 +11,7 @@ module SheepAst
   # This is used by Let object's :record fuction
   #
   # @api public
-  class DataStore # rubocop:disable all
+  class DataStore
     extend T::Sig
     include Exception
     include Log

@@ -37,6 +37,16 @@ module SheepAst
       super()
       @ast = ast
       init
+      @committed_node_id = 0
+    end
+
+    sig { returns(Node) }
+    def current_node
+      node = @ast.node_factory.from_id(T.must(info).node_id)
+      if node.nil?
+        application_error 'current node is not found. Bug?'
+      end
+      return node
     end
 
     sig { params(info: NodeInfo).void }
@@ -98,12 +108,14 @@ module SheepAst
       T.must(@info).copy(info)
     end
 
-    def revert_node
-      T.must(@info).copy(@commited_node)
+    def move_committed_node
+      node_info = NodeInfo.new
+      node_info.node_id = @committed_node_id
+      move_node(node_info)
     end
 
     def commit_node
-      T.must(@commited_node).copy(@info)
+      @committed_node_id = T.must(@info).node_id
     end
 
 
@@ -210,8 +222,8 @@ module SheepAst
     end
   end
 
-  # TBD
-  class StageManager # rubocop: disable all
+  # StageManager manages stages.
+  class StageManager
     extend T::Sig
     extend T::Helpers
     include Exception
