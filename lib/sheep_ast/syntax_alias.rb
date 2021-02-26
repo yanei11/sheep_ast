@@ -14,6 +14,8 @@ module SheepAst
   module SyntaxAlias
     extend T::Sig
 
+    attr_accessor :s_db
+
     # Returns Match instance.
     # Please see register_syntax for the usage
     #
@@ -37,6 +39,54 @@ module SheepAst
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig {
+      params(
+        index: Symbol,
+        options: T.untyped
+      ).returns(
+        T::Array[T.any(MatchBase, ActionBase)]
+      )
+    }
+    def S(index = :root, **options)
+      if @s_db.nil?
+        @s_db = {}
+        @s_db[:root] = []
+      end
+
+      elem = @s_db[index]&.dup || []
+
+      elem.instance_eval {
+        def <<(elem)
+          if elem.is_a? Enumerable
+            T.unsafe(self).concat(elem)
+          else
+            T.unsafe(self).push(elem)
+          end
+        end
+
+        def parent_ref(parent, index)
+          @parent = parent
+          @index = index
+        end
+
+        def <=(elem)
+          @parent.s_db[@index] = elem if @index
+        end
+      }
+
+      elem.parent_ref(self, index)
+      return elem
+    end
+
+
+    # Holds array of Expressions and Action.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # @deprecated
     #
     # rubocop:disable all
     sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
@@ -140,5 +190,7 @@ module SheepAst
     def idx(*par, **options)
       T.unsafe(IndexCondition).new(*par, **options)
     end
+
+    alias_method :SS, :_SS
   end
 end
