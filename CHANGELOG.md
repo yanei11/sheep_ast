@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2020-02-27
+### Added
+- API for AST node to walk for revert direction is added to analyzer core
+- Syntax improvement to introduce SS(...) and S(...) function
+
+### Breaking Change
+- _SS and _S statement is now deprecated function. Will be removed in major release
+
 ## [0.4.1] - 2020-02-05
 ### Added
 - Added executable file `bin/run-sheep-ast`

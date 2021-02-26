@@ -12,9 +12,9 @@ end
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze') {
-      _SS(
-        _S << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
-           A(:let, [:record, :test_H, :_1, :_2])
+      SS(
+        S() << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
+            A(:let, [:record, :test_H, :_1, :_2])
       )
     }
   }

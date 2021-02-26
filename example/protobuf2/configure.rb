@@ -38,8 +38,8 @@ def configure(core)
   core.config_ast('message.parser') do |_ast, syn|
     syn.within {
       register_syntax('analyze') {
-        S(:branch1) <= S() << E(:e, 'optional') << E(:any, repeat: 4)
-        S(:branch2) <= S() << E(:e, 'repeated') << E(:any, repeat: 4)
+        S(:branch1) { S() << E(:e, 'optional') << E(:any, repeat: 4) }
+        S(:branch2) { S() << E(:e, 'repeated') << E(:any, repeat: 4) }
         SS(
           S(:branch1) << E(:e, ';') << A(:let, action1),
           S(:branch1) << E(:e, '[') << E(:any, repeat: 4) << E(:e, ';')\

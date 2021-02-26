@@ -22,8 +22,8 @@ core.config_ast('default.main') do |_ast, syn|
       'analyze',
       A(:let, [:grep], [:show, disable: true], [:debug, disable: true])
     ) {
-      _SS(
-        _S << E(:encr, input_expr, "\n")
+      SS(
+        S() << E(:encr, input_expr, "\n")
       )
     }
   }

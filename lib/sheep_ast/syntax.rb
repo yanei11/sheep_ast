@@ -37,15 +37,36 @@ module SheepAst
     #  core.config_ast do |ast, syn|
     #    syn.within {
     #      register_syntax('ast.name') {
-    #        _SS(
-    #          _S << E(..) << E(..) << A(..),
-    #          _S << ...,,
-    #          _S << ...
+    #        SS(
+    #          S() << E(..) << E(..) << A(..),
+    #          S() << ...,,
+    #          S() << ...
     #          ...
-    #          )
+    #        )
     #      }
     #    }
     #  end
+    #
+    #
+    # S can receive tag and block, and it can use as variable.
+    # To register via block to the tag, then it can be used inside SS() multiple time.
+    #
+    # @example
+    #
+    #  core.config_ast do |ast, syn|
+    #    syn.within {
+    #      register_syntax('ast.name') {
+    #        S(:example) { S() << E(...) << E(...) }
+    #        SS(
+    #          S(:example) << A(..),
+    #          S(:example) << ...,
+    #          S(:example) << ...
+    #          ...
+    #        )
+    #      }
+    #    }
+    #  end
+    #
     #
     # @api public
     # @note please see Example page for further example

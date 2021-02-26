@@ -21,9 +21,9 @@ end
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze') {
-      _SS(
-        _S << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
-           A(:let, [:record, :test_H, :_1, :_2])
+      SS(
+        S() << E(:e, 'Hello') << E(:any) << E(:e, 'World') <<
+               A(:let, [:record, :test_H, :_1, :_2])
       )
     }
   }
@@ -88,23 +88,19 @@ For further examples, you can try to clone this repository and `rake unit`, `rak
 But this commands require to install ruby environement.
 
 # Resources
-- Example1 (grep like application)  
-  https://yanei11.github.io/sheep_ast_pages/file.Example1.html
+- [Example1 : grep like application](https://yanei11.github.io/sheep_ast_pages/file.Example1.html)
   
-- Example2 (Keyword extraction from cpp file)  
-  https://yanei11.github.io/sheep_ast_pages/file.Example2.html
+- [Example2 : Keyword extraction from cpp file](https://yanei11.github.io/sheep_ast_pages/file.Example2.html)
 
-- Example3 (generate file (compile) from proto file)  
-  https://yanei11.github.io/sheep_ast_pages/file.Example3.html
+- [Example3 : generate file (compile) from proto file](https://yanei11.github.io/sheep_ast_pages/file.Example3.html)
 
-- API document  
-  https://yanei11.github.io/sheep_ast_pages/file.API.html
+- [Example4 : multiple condition matching, and multiple redirection](https://yanei11.github.io/sheep_ast_pages/file.Example4.html)
 
-- Framework Design  
-  https://yanei11.github.io/sheep_ast_pages/file.Framework.html
+- [API document](https://yanei11.github.io/sheep_ast_pages/file.API.html)
 
-- Change Log  
-  https://yanei11.github.io/sheep_ast_pages/file.CHANGELOG.html
+- [Framework Design](https://yanei11.github.io/sheep_ast_pages/file.Framework.html)
+
+- [Change Log](https://yanei11.github.io/sheep_ast_pages/file.CHANGELOG.html)
 
 # Version
 

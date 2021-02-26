@@ -33,9 +33,9 @@ end
 core.config_ast('always.ignore') do |_ast, syn|
   syn.within {
     register_syntax('ignore', A(:na)) {
-      _SS(
-        _S << space,
-        _S << E(:sc, '//', "\n")
+      SS(
+        S() << space,
+        S() << E(:sc, '//', "\n")
       )
     }
   }
@@ -44,17 +44,17 @@ end
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze', A(:let, [:show, { disable: true }], [:debug])) {
-      _SS(
-        _S << E(:e, '#include') << E(:enc, '<', '>'),
-        _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
+      SS(
+        S() << E(:e, '#include') << E(:enc, '<', '>'),
+        S() << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
       )
     }
     register_syntax(
       'analyze',
       A(:let, [:redirect, :test, 1..-2, { namespace: :_2 }], [:show, { disable: true }], [:debug])
     ) {
-      _SS(
-        _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
+      SS(
+        S() << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
       )
     }
     register_syntax(
@@ -64,8 +64,8 @@ core.config_ast('default.main') do |_ast, syn|
         [:show, { disable: true }],
         [:debug])
       ) {
-      _SS(
-        _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
+      SS(
+        S() << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
       )
     }
   }
@@ -74,10 +74,10 @@ end
 core.config_ast('always.ignore2') do |_ast, syn|
   syn.within {
     register_syntax('ignore', A(:na)) {
-      _SS(
-        _S << crlf,
-        _S << lf,
-        _S << eof
+      SS(
+        S() << crlf,
+        S() << lf,
+        S() << eof
       )
     }
   }
@@ -93,10 +93,10 @@ Explanation given in example1 is skipped.
 
 # Chain of match and action
 
-You will see the following Ast registration have multiple `E(...)`. The `_S` can have multiple `E(...)`.
+You will see the following Ast registration have multiple `E(...)`. The `S()` can have multiple `E(...)`.
 
 ```
-        _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
+        S() << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
 ```
 For example this statement means that, target strings that has 'int', nextly 'main', nextly enclosed block from '(' to ')', and such strings should be passed to the `:let` action. The action calls data to `:redirect`, `show`, and `debug` functions.
 
@@ -113,8 +113,8 @@ It is called tag symbol. It means which matched expression will be used in the a
         [:show, { disable: true }],
         [:debug])
       ) {
-      _SS(
-        _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
+      SS(
+        S() << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
       )
     }
 ```
@@ -131,8 +131,8 @@ Let object has function to pass data to multiple functions defined inside Let ob
       'analyze',
       A(:let, [:redirect, :test, 1..-2, { namespace: :_2 }], [:show, { disable: true }], [:debug])
     ) {
-      _SS(
-        _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
+      SS(
+        S() << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
       )
     }
 ```

@@ -13,6 +13,7 @@ module SheepAst
   #
   module SyntaxAlias
     extend T::Sig
+    include Kernel
 
     attr_accessor :s_db
 
@@ -36,6 +37,7 @@ module SheepAst
     end
 
     # Holds array of Expressions and Action.
+    # It can register it to the tag via block.
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
@@ -44,12 +46,15 @@ module SheepAst
     sig {
       params(
         index: Symbol,
-        options: T.untyped
+        options: T.untyped,
+        blk: T.nilable(T.proc.returns(
+          T::Array[MatchBase]
+        )),
       ).returns(
         T::Array[T.any(MatchBase, ActionBase)]
       )
     }
-    def S(index = :root, **options)
+    def S(index = :root, **options, &blk)
       if @s_db.nil?
         @s_db = {}
         @s_db[:root] = []
@@ -65,18 +70,13 @@ module SheepAst
             T.unsafe(self).push(elem)
           end
         end
-
-        def parent_ref(parent, index)
-          @parent = parent
-          @index = index
-        end
-
-        def <=(elem)
-          @parent.s_db[@index] = elem if @index
-        end
       }
 
-      elem.parent_ref(self, index)
+      #elem.parent_ref(self, index)
+      if block_given?
+        @s_db[index] = blk.call
+      end
+
       return elem
     end
 
@@ -191,6 +191,7 @@ module SheepAst
       T.unsafe(IndexCondition).new(*par, **options)
     end
 
+    # SS is the alias method of _SS
     alias_method :SS, :_SS
   end
 end
