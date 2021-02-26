@@ -88,13 +88,6 @@ For further examples, you can try to clone this repository and `rake unit`, `rak
 But this commands require to install ruby environement.
 
 # Resources
-
-- Yard page  
-  https://yanei11.github.io/sheep_ast_pages/
-
-- Github repository  
-  https://github.com/yanei11/sheep_ast
-
 - Example1 (grep like application)  
   https://yanei11.github.io/sheep_ast_pages/file.Example1.html
   
