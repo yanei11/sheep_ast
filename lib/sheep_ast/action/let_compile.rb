@@ -1,4 +1,4 @@
-# typed: true
+# typed: false
 # frozen_string_literal:true
 
 require 'erb'
@@ -15,8 +15,8 @@ module SheepAst
   module LetCompile
     extend T::Sig
     extend T::Helpers
-    include LetHelper
     include Kernel
+    include LetHelper
     include Log
     include Exception
 
@@ -54,13 +54,13 @@ module SheepAst
     }
     def compile(data, datastore, template_file = nil, **options)
       if !data.nil?
-        namespace = T.unsafe(self).Helper::w_or_wo_ns(data, **{ **options, namespace: true })
+        namespace = w_or_wo_ns(data, **{ **options, namespace: true })
         namespace_arr = data[:_namespace]
       end
       outdir = datastore.value(:_sheep_outdir)
       outdir = './' if outdir.nil?
       template_dir = datastore.value(:_sheep_template_dir)
-      template_file_ = Helper::find_file(template_dir, template_file)
+      template_file_ = find_file(template_dir, template_file)
 
       if !template_file_.nil?
         raw = File.read(template_file_)
@@ -74,7 +74,7 @@ module SheepAst
       user_def = T.unsafe(self).user_def_compile(data, datastore, template_file_, **options)
 
       if options[:dry_run]
-        _format_dump {
+        format_dump {
           ldump "data : #{data.inspect}"
           ldump "namespace : #{namespace.inspect}"
           ldump "namespace_arr : #{namespace_arr.inspect}"
@@ -83,7 +83,7 @@ module SheepAst
           ldump "title : #{title}"
           ldump "suffix : #{suffix}"
         }
-        return T.unsafe(self)._ret(**options)
+        return T.unsafe(self).ret(**options)
       end
 
       ldebug '=== compile debug ==='
@@ -104,11 +104,11 @@ module SheepAst
       to_file = "#{title}.#{suffix}" if title && suffix
       if to_file.nil?
         puts res
-        return T.unsafe(self)._ret(**options)
+        return T.unsafe(self).ret(**options)
       end
 
-      T.unsafe(self).update_file(to_file, res, **options)
-      return T.unsafe(self)._ret(**options)
+      update_file(to_file, res, **options)
+      return T.unsafe(self).ret(**options)
     rescue => e # rubocop: disable all
       bt = e.backtrace
       lfatal "Exception was occured inside let_compile. bt = #{bt}"
@@ -123,7 +123,7 @@ module SheepAst
         lfatal 'Critical. Exit'
         raise
       end
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
 
     sig {
@@ -134,7 +134,7 @@ module SheepAst
       ).returns(String)
     }
     def construct_file_name(namespace, title, **options)
-      namespace_sep = T.unsafe(self)._namespace_separator_file(**options)
+      namespace_sep = namespace_separator_file(**options)
       namespace.empty? ? title.to_s : "#{namespace}#{namespace_sep}#{title}"
     end
 

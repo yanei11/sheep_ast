@@ -130,6 +130,7 @@ task 'change-version' do
     sh "rbenv local #{ENV['SHEEP_RV']}"
     sh 'gem install bundler'
     sh "bundle update"
+    sh "bundle install"
   end
 end
 
