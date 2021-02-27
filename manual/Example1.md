@@ -20,7 +20,7 @@ Followings are the test file. They are cpp sntax code.
 The example overall source code is following:
 
 ```
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
 require 'sheep_ast'
@@ -40,17 +40,20 @@ end
 
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
-    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
+    register_syntax('analyze', A(:let, [:grep], [:show, disable: true],
+                                 [:debug, disable: true])) {
       SS(
-        S() << E(:encr, input_expr, "\n")
+        S() << E(:r, input_expr)
       )
     }
   }
 
   core.let.within {
-    def grep(key, datastore, **options)
-      str = "#{@data.file_info.file}:".blue
-      str += @data.raw_line.chop.to_s
+    def grep(pair, datastore, **options)
+      data = pair[:_data] # accessing kind of raw information
+      match = line_matched(data)
+      str = "#{data.file_info.file}:".blue
+      str += match.flatten.join
       puts str
     end
   }

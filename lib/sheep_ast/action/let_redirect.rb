@@ -74,7 +74,7 @@ module SheepAst
       if options[:dry_run]
         format_dump {
           ldump "To be redirect : #{chunk.inspect}"
-          ldump "The namespace is #{ns_t}"
+          ldump "Namespace : #{ns_t}"
         }
         return T.unsafe(self).ret(**options)
       end
@@ -82,7 +82,7 @@ module SheepAst
       if options[:debug]
         format_dump {
           ldump "To be redirect : #{chunk.inspect}"
-          ldump "The namespace is #{ns_t}"
+          ldump "Namespace : #{ns_t}"
         }
       end
 

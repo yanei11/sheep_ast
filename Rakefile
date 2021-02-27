@@ -135,4 +135,4 @@ task 'change-version' do
 end
 
 desc 'Before release check'
-task 'prepare' => %w[init-appimage tc hello unit bin bin-appimage example1 example1_fail pushd]
+task 'prepare' => %w[init-appimage tc unit bin bin-appimage pushd]

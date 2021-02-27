@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [0.5.0] - 2020-02-27
+## [0.5.0] - 2020-02-28
 ### Added
 - API for AST node to walk for revert direction is added to analyzer core
 - Syntax improvement to introduce SS(...) and S(...) function

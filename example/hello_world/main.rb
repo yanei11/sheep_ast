@@ -22,10 +22,12 @@ end
 
 input = 'Hello sheep_ast World'
 
-core.report(raise: false) {
+res = core.report(raise: false) {
   core << input
 }
 
 puts "Input string is #{input}"
 puts 'Extracted result is following:'
 p core.data_store.value(:test_H)
+
+exit(res)

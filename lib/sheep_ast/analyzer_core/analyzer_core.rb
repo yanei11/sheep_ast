@@ -292,7 +292,7 @@ module SheepAst
     # @example
     #   ruby your_app.rb -h # shows usage
     #
-    sig { params(argv: T::Array[String]).returns(T.nilable T::Hash[Symbol, T.untyped]) }
+    sig { params(argv: T::Array[String]).returns(T.nilable(T::Hash[Symbol, T.untyped])) }
     def self.option_parse(argv)
       if @@option.nil?
         @@option = {}

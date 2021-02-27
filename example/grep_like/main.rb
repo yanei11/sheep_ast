@@ -29,7 +29,7 @@ core.config_ast('default.main') do |_ast, syn|
   core.let.within {
     def grep(pair, datastore, **options)
       data = pair[:_data] # accessing kind of raw information
-      match = _line_matched(data)
+      match = line_matched(data)
       str = "#{data.file_info.file}:".blue
       str += match.flatten.join
       puts str

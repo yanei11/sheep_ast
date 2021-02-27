@@ -80,39 +80,13 @@ module SheepAst
       return elem
     end
 
-
-    # Holds array of Expressions and Action.
+    # Holds array of S.
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
-    #
-    # @deprecated
-    #
-    # rubocop:disable all
     sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
-    def _S(*para, **options)
-      elem = []
-      elem.instance_eval {
-        def <<(elem)
-          if elem.is_a? Enumerable
-            T.unsafe(self).concat(elem)
-          else
-            T.unsafe(self).push(elem)
-          end
-        end
-      }
-      return elem
-    end
-
-    # Holds array of _S.
-    # Please see register_syntax for the usage
-    #
-    # @see Syntax#register_syntax
-    #
-    # rubocop:disable all
-    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
-    def _SS(*para, **options)
-      return para
+    def SS(*para, **options)
+      return T.unsafe(self)._SS(*para, **options)
     end
 
     # Returns Action instance.
@@ -142,9 +116,9 @@ module SheepAst
     #  is NOT equal to the expression.
     #
     # @example
-    #   _SS(
-    #     _S << E(:e, 'a') << E(:e, 'b') << NEQ('c') << A(...),
-    #     _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(...)
+    #   SS(
+    #     S() << E(:e, 'a') << E(:e, 'b') << NEQ('c') << A(...),
+    #     S() << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(...)
     #   )
     #
     # @param expr [String] expressin to test
@@ -191,7 +165,43 @@ module SheepAst
       T.unsafe(IndexCondition).new(*par, **options)
     end
 
-    # SS is the alias method of _SS
-    alias_method :SS, :_SS
+    # Holds array of Expressions and Action.
+    # Please see register_syntax for the usage
+    #
+    # This function is deprecated. Use method S.
+    #
+    # @see Syntax#register_syntax
+    # @deprecated
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
+    def _S(*para, **options)
+      elem = []
+      elem.instance_eval {
+        def <<(elem)
+          if elem.is_a? Enumerable
+            T.unsafe(self).concat(elem)
+          else
+            T.unsafe(self).push(elem)
+          end
+        end
+      }
+      return elem
+    end
+
+    # Holds array of _S.
+    # Please see register_syntax for the usage
+    #
+    # This function is deprecated. Use method SS.
+    #
+    # @see Syntax#register_syntax
+    # @deprecated
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
+    def _SS(*para, **options)
+      return para
+    end
+
   end
 end

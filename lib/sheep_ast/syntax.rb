@@ -32,47 +32,83 @@ module SheepAst
 
     # Gives user to add Ast definition to handle analysis
     #
-    # @example
+    # @example Usage example
+    #   core.config_ast do |ast, syn|
+    #     syn.within {
+    #       register_syntax('ast.name') {
+    #         SS(
+    #           S() << E(..) << E(..) << A(..),
+    #           S() << ...,,
+    #           S() << ...
+    #           ...
+    #         )
+    #       }
+    #     }
+    #   end
     #
-    #  core.config_ast do |ast, syn|
-    #    syn.within {
-    #      register_syntax('ast.name') {
-    #        SS(
-    #          S() << E(..) << E(..) << A(..),
-    #          S() << ...,,
-    #          S() << ...
-    #          ...
-    #        )
-    #      }
-    #    }
-    #  end
+    # @example name can be omitted. name is set as ast name in this case.
+    #   core.config_ast do |ast, syn|
+    #     syn.within {
+    #       register_syntax {
+    #         SS(
+    #           S() << E(..) << E(..) << A(..),
+    #           S() << ...,,
+    #           S() << ...
+    #           ...
+    #         )
+    #       }
+    #     }
+    #   end
     #
+    # @example S can receive tag and block, and it can use as variable.
+    #   core.config_ast do |ast, syn|
+    #     syn.within {
+    #       register_syntax('ast.name') {
+    #         S(:example) { S() << E(..) << E(..) }
+    #         SS(
+    #           S(:example) << A(..),
+    #           S(:example) << ...,
+    #           S(:example) << ...
+    #           ...
+    #         )
+    #       }
+    #     }
+    #   end
     #
-    # S can receive tag and block, and it can use as variable.
-    # To register via block to the tag, then it can be used inside SS() multiple time.
-    #
-    # @example
-    #
-    #  core.config_ast do |ast, syn|
-    #    syn.within {
-    #      register_syntax('ast.name') {
-    #        S(:example) { S() << E(...) << E(...) }
-    #        SS(
-    #          S(:example) << A(..),
-    #          S(:example) << ...,
-    #          S(:example) << ...
-    #          ...
-    #        )
-    #      }
-    #    }
-    #  end
-    #
+    # @example Action can be aggragated to add. name is OK to be set or not set.
+    #   core.config_ast do |ast, syn|
+    #     syn.within {
+    #       register_syntax('ast.name', A(:na)) {
+    #         SS(
+    #           S() << E(..) << E(..),
+    #           S() << ...,,
+    #           S() << ...
+    #           ...
+    #         )
+    #       }
+    #     }
+    #   end
     #
     # @api public
     # @note please see Example page for further example
     # rubocop:disable all
-    def register_syntax(name, action = nil, &blk)
+    def register_syntax(name_or_action = nil, action = nil, &blk)
       return unless block_given?
+
+      if name_or_action.nil?
+        name = @ast.name
+      else
+        if name_or_action.is_a?(String)
+          name = name_or_action
+        else
+          if action.nil?
+            action = name_or_action
+          else
+            application_error 'it seems that name_or_action is not a String but action is given.'\
+              ' This is a Parameter Error.'
+          end
+        end
+      end
 
       arrs = blk.call
       if depth(arrs) == 1
