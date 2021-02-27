@@ -54,13 +54,13 @@ module SheepAst
     }
     def compile(data, datastore, template_file = nil, **options)
       if !data.nil?
-        namespace = T.unsafe(self).w_or_wo_ns(data, **{ **options, namespace: true })
+        namespace = T.unsafe(self).Helper::w_or_wo_ns(data, **{ **options, namespace: true })
         namespace_arr = data[:_namespace]
       end
       outdir = datastore.value(:_sheep_outdir)
       outdir = './' if outdir.nil?
       template_dir = datastore.value(:_sheep_template_dir)
-      template_file_ = find_file(template_dir, template_file)
+      template_file_ = Helper::find_file(template_dir, template_file)
 
       if !template_file_.nil?
         raw = File.read(template_file_)
@@ -148,45 +148,5 @@ module SheepAst
       ).returns(T.untyped)
     }
     def user_def_compile(data, datastore, template_file, **options); end
-
-    sig {
-      params(
-        file: String,
-        res: String,
-        options: T.untyped
-      ).void
-    }
-    def update_file(file, res, **options)
-      if File.exist?(file)
-        ftime = File.ctime(file)
-        test = ctime_get <=> ftime
-        case test
-        when 1
-          ldebug "#{file} is created before application launch. Delete it first!"
-          File.delete(file)
-        when -1
-          # lprint "#{file} is created after factory created. Nothing to do."
-        else
-          lfatal "Unexpected timestamp info. #{ctime_get}, "\
-            "file = #{ftime}, test = #{test.inspect}"
-          application_error
-        end
-      end
-
-      mode = options[:mode]
-      perm = options[:perm]
-      mode = 'a' if mode.nil?
-      if perm.nil?
-        File.open(file, mode) { |f|
-          f.write(res)
-        }
-      else
-        File.open(file, mode, perm) { |f|
-          f.write(res)
-        }
-      end
-    end
-
-    def ctime_get; end
   end
 end
