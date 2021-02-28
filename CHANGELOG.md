@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - API for AST node to walk for revert direction is added to analyzer core
 - Syntax improvement to introduce SS(...) and S(...) function
+- Example4 is added
 
 ### Breaking Change
 - _SS and _S statement is now deprecated function. Will be removed in major release
