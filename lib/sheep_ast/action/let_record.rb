@@ -50,7 +50,7 @@ module SheepAst
       else
         T.unsafe(self).record_kv(pair, datastore, store_id, T.cast(k_or_v, Symbol), value, **options)
       end
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
 
     # Please use record
@@ -79,7 +79,7 @@ module SheepAst
       ns = T.unsafe(self).w_or_wo_ns(pair, **options)
       key = pair[key_id].to_s
 
-      namespace_sep = T.unsafe(self)._namespace_separator(**options)
+      namespace_sep = T.unsafe(self).namespace_separator(**options)
 
       key = "#{ns}#{namespace_sep}#{key}" if options[:namespace_key]
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
@@ -115,7 +115,7 @@ module SheepAst
         value = pair[value_id]
       end
 
-      namespace_sep = T.unsafe(self)._namespace_separator(**options)
+      namespace_sep = T.unsafe(self).namespace_separator(**options)
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
       ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\

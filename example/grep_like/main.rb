@@ -20,8 +20,8 @@ core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze', A(:let, [:grep], [:show, disable: true],
                                  [:debug, disable: true])) {
-      _SS(
-        _S << E(:encr, input_expr, "\n")
+      SS(
+        S() << E(:r, input_expr)
       )
     }
   }
@@ -29,8 +29,9 @@ core.config_ast('default.main') do |_ast, syn|
   core.let.within {
     def grep(pair, datastore, **options)
       data = pair[:_data] # accessing kind of raw information
+      match = line_matched(data)
       str = "#{data.file_info.file}:".blue
-      str += data.raw_line.chop.to_s
+      str += match.flatten.join
       puts str
     end
   }
@@ -39,8 +40,8 @@ end
 core.config_ast('always.continue') do |_ast, syn|
   syn.within {
     register_syntax('continue', A(:na)) {
-      _SS(
-        _S << any
+      SS(
+        S() << any
       )
     }
   }

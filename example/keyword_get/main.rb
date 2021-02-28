@@ -13,9 +13,9 @@ def configure(core)
   core.config_ast('always.ignore') do |_ast, syn|
     syn.within {
       register_syntax('ignore', A(:na)) {
-        _SS(
-          _S << space,
-          _S << E(:sc, '//', "\n")
+        SS(
+          S() << space,
+          S() << E(:sc, '//', "\n")
         )
       }
     }
@@ -24,17 +24,17 @@ def configure(core)
   core.config_ast('default.main') do |_ast, syn|
     syn.within {
       register_syntax('analyze', A(:let, [:show, disable: true], [:debug, disable: true])) {
-        _SS(
-          _S << E(:e, '#include') << E(:enc, '<', '>'),
-          _S << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
+        SS(
+          S() << E(:e, '#include') << E(:enc, '<', '>'),
+          S() << E(:e, 'int') << E(:e, 'main') << E(:enc, '(', ')') << E(:sc, '{', '}')
         )
       }
       register_syntax(
         'analyze',
         A(:let, [:redirect, :test, 1..-2, namespace: :_2], [:show, disable: true], [:debug, disable: true])
       ) {
-        _SS(
-          _S << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
+        SS(
+          S() << E(:e, 'namespace') << E(:r, '.*') << E(:sc, '{', '}', :test)
         )
       }
       register_syntax(
@@ -44,8 +44,8 @@ def configure(core)
           [:show, disable: true],
           [:debug, disable: true])
       ) {
-        _SS(
-          _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
+        SS(
+          S() << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
         )
       }
     }
@@ -54,10 +54,10 @@ def configure(core)
   core.config_ast('always.ignore2') do |_ast, syn|
     syn.within {
       register_syntax('ignore', A(:na)) {
-        _SS(
-          _S << crlf,
-          _S << lf,
-          _S << eof
+        SS(
+          S() << crlf,
+          S() << lf,
+          S() << eof
         )
       }
     }

@@ -14,8 +14,8 @@ module SheepAst
   module LetRedirect
     extend T::Sig
     extend T::Helpers
-    include LetHelper
     include Kernel
+    include LetHelper
     include Log
     include Exception
 
@@ -58,31 +58,31 @@ module SheepAst
       data = pair[:_data]
 
       if line_matched
-        chunk = _line_matched(data)
+        chunk = line_matched(data)
       elsif line_from_to
         key = :_1 if key.nil?
-        chunk = _line_from_to(data, key, line_from, line_to, nil)
+        chunk = line_from_to(data, key, line_from, line_to, nil)
       else
-        chunk = _line_enclosed(T.must(key), pair, range)
+        chunk = line_enclosed(T.must(key), pair, range)
       end
 
       ldebug "received expr = #{chunk.inspect}, "\
         "pair = #{pair.inspect}, key = #{key.inspect}", :blue
       ldebug "options = #{options.inspect}", :blue
-      ns_t = _ns_get(pair, options[:namespace])
+      ns_t = ns_get(pair, options[:namespace])
 
       if options[:dry_run]
-        _format_dump {
+        format_dump {
           ldump "To be redirect : #{chunk.inspect}"
-          ldump "The namespace is #{ns_t}"
+          ldump "Namespace : #{ns_t}"
         }
-        return T.unsafe(self)._ret(**options)
+        return T.unsafe(self).ret(**options)
       end
 
       if options[:debug]
-        _format_dump {
+        format_dump {
           ldump "To be redirect : #{chunk.inspect}"
-          ldump "The namespace is #{ns_t}"
+          ldump "Namespace : #{ns_t}"
         }
       end
 
@@ -96,7 +96,7 @@ module SheepAst
       )
 
       @data.save_request = save_req
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
   end
 end

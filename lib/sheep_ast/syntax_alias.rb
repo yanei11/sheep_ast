@@ -13,6 +13,9 @@ module SheepAst
   #
   module SyntaxAlias
     extend T::Sig
+    include Kernel
+
+    attr_accessor :s_db
 
     # Returns Match instance.
     # Please see register_syntax for the usage
@@ -34,14 +37,31 @@ module SheepAst
     end
 
     # Holds array of Expressions and Action.
+    # It can register it to the tag via block.
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
     #
     # rubocop:disable all
-    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
-    def _S(*para, **options)
-      elem = []
+    sig {
+      params(
+        index: Symbol,
+        options: T.untyped,
+        blk: T.nilable(T.proc.returns(
+          T::Array[MatchBase]
+        )),
+      ).returns(
+        T::Array[T.any(MatchBase, ActionBase)]
+      )
+    }
+    def S(index = :root, **options, &blk)
+      if @s_db.nil?
+        @s_db = {}
+        @s_db[:root] = []
+      end
+
+      elem = @s_db[index]&.dup || []
+
       elem.instance_eval {
         def <<(elem)
           if elem.is_a? Enumerable
@@ -51,18 +71,22 @@ module SheepAst
           end
         end
       }
+
+      #elem.parent_ref(self, index)
+      if block_given?
+        @s_db[index] = blk.call
+      end
+
       return elem
     end
 
-    # Holds array of _S.
+    # Holds array of S.
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
-    #
-    # rubocop:disable all
-    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
-    def _SS(*para, **options)
-      return para
+    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
+    def SS(*para, **options)
+      return T.unsafe(self)._SS(*para, **options)
     end
 
     # Returns Action instance.
@@ -92,9 +116,9 @@ module SheepAst
     #  is NOT equal to the expression.
     #
     # @example
-    #   _SS(
-    #     _S << E(:e, 'a') << E(:e, 'b') << NEQ('c') << A(...),
-    #     _S << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(...)
+    #   SS(
+    #     S() << E(:e, 'a') << E(:e, 'b') << NEQ('c') << A(...),
+    #     S() << E(:e, 'a') << E(:e, 'b') << E(:e, 'c') << A(...)
     #   )
     #
     # @param expr [String] expressin to test
@@ -140,5 +164,44 @@ module SheepAst
     def idx(*par, **options)
       T.unsafe(IndexCondition).new(*par, **options)
     end
+
+    # Holds array of Expressions and Action.
+    # Please see register_syntax for the usage
+    #
+    # This function is deprecated. Use method S.
+    #
+    # @see Syntax#register_syntax
+    # @deprecated
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
+    def _S(*para, **options)
+      elem = []
+      elem.instance_eval {
+        def <<(elem)
+          if elem.is_a? Enumerable
+            T.unsafe(self).concat(elem)
+          else
+            T.unsafe(self).push(elem)
+          end
+        end
+      }
+      return elem
+    end
+
+    # Holds array of _S.
+    # Please see register_syntax for the usage
+    #
+    # This function is deprecated. Use method SS.
+    #
+    # @see Syntax#register_syntax
+    # @deprecated
+    #
+    # rubocop:disable all
+    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
+    def _SS(*para, **options)
+      return para
+    end
+
   end
 end

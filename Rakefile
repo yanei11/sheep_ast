@@ -130,8 +130,9 @@ task 'change-version' do
     sh "rbenv local #{ENV['SHEEP_RV']}"
     sh 'gem install bundler'
     sh "bundle update"
+    sh "bundle install"
   end
 end
 
 desc 'Before release check'
-task 'prepare' => %w[init-appimage tc hello unit bin bin-appimage example1 example1_fail pushd]
+task 'prepare' => %w[init-appimage tc unit bin bin-appimage pushd]

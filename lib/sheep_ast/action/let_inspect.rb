@@ -14,8 +14,8 @@ module SheepAst
   module LetInspect
     extend T::Sig
     extend T::Helpers
-    include Log
     include LetHelper
+    include Log
 
     # show variable data passed from the Let action
     #
@@ -33,9 +33,9 @@ module SheepAst
     }
     def show(pair, datastore, **options)
       if !options[:disable]
-        _format_dump { ldump "pair = #{pair.inspect}", :lightgreen }
+        format_dump { ldump "pair = #{pair.inspect}", :lightgreen }
       end
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
 
     # show variable data passed from the Let action
@@ -54,7 +54,7 @@ module SheepAst
     }
     def break(pair, datastore, **options)
       if !options[:disable]
-        _format_dump { ldump "pair = #{pair.inspect}", :yellow }
+        format_dump { ldump "pair = #{pair.inspect}", :yellow }
         return true
       end
       return false
@@ -81,7 +81,7 @@ module SheepAst
       if !options[:disable] && ENV['SHEEP_LET_DISABLE_DEBUG'].nil?
         binding.pry if T.unsafe(self)._do_pry(**options) # rubocop:disable all
       end
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
 
     sig {
