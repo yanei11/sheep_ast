@@ -351,7 +351,6 @@ module SheepAst
         puts @@optparse.help
         puts ''
       end
-      lprint @@option.inspect
     end
 
     def self.option
