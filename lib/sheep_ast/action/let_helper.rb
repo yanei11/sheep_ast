@@ -20,6 +20,10 @@ module SheepAst
     include Log
     include Exception
 
+    def initialize
+      super()
+    end
+
     def get_first_match(data)
       missing_impl
     end
@@ -57,12 +61,52 @@ module SheepAst
       return found_paths.first
     end
 
+    sig {
+      params(
+        file: String,
+        res: String,
+        options: T.untyped
+      ).void
+    }
+    def update_file(file, res, **options)
+      if File.exist?(file)
+        ftime = File.ctime(file)
+        test = ctime_get <=> ftime
+        case test
+        when 1
+          ldebug "#{file} is created before application launch. Delete it first!"
+          File.delete(file)
+        when -1
+          # lprint "#{file} is created after factory created. Nothing to do."
+        else
+          lfatal "Unexpected timestamp info. #{ctime_get}, "\
+            "file = #{ftime}, test = #{test.inspect}"
+          application_error
+        end
+      end
+
+      mode = options[:mode]
+      perm = options[:perm]
+      mode = 'a' if mode.nil?
+      if perm.nil?
+        File.open(file, mode) { |f|
+          f.write(res)
+        }
+      else
+        File.open(file, mode, perm) { |f|
+          f.write(res)
+        }
+      end
+    end
+
+    def ctime_get; end
+
     # Extract line from first matched line to last matched line
     #
     # @note This is used inside :redirect function
     #
     sig { params(data: AnalyzeData).returns(T.nilable(T::Array[T::Array[String]])) }
-    def _line_matched(data)
+    def line_matched(data)
       start_match = get_first_match(data)
       end_match = get_last_match(data)
       start_line = start_match.start_line
@@ -77,22 +121,32 @@ module SheepAst
     # @note This is used inside :redirect function
     #
     sig {
-      params(data: AnalyzeData, line_from: Symbol, line_to: Symbol).returns(
+      params(
+        data: AnalyzeData,
+        key: Symbol,
+        line_from: Integer,
+        line_to: Integer,
+        trim: T.nilable(Range)
+      ).returns(
         T.nilable(T::Array[T::Array[String]])
       )
     }
-    def _line_from_to(data, line_from, line_to)
-      start_match = get_match(data, line_from)
-      end_match = get_match(data, line_to)
-      start_line = start_match.start_line
-      end_line = end_match.end_line
+    def line_from_to(data, key, line_from, line_to, trim = nil)
+      baseline_match = get_match(data, key)
+      baseline = baseline_match.start_line
+      start_line = baseline + line_from
+      end_line = baseline + line_to
+      if start_line < 0 || end_line > data.file_info&.max_line
+        lfatal "start_line = #{start_line}, end_line = #{end_line}, max_line = #{data.file_info&.max_line}"
+        application_error 'start_line < 0 or end_line > max_line'
+      end
       ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
       range = start_line..end_line
       return data.file_info&.tokenized&.[](range)
     end
 
     # Data specified key is extracted and range is applied to it.
-    # After that, regenerating newline with _data_shaping function.
+    # After that, regenerating newline with data_shaping function.
     #
     # @note This is used inside :redirect function
     #
@@ -104,14 +158,14 @@ module SheepAst
         options: T.untyped
       ).returns(T::Array[T::Array[String]])
     }
-    def _line_enclosed(key, pair, range, **options)
+    def line_enclosed(key, pair, range, **options)
       chunk = pair[key]
       application_error 'specified key did not hit' if chunk.nil?
 
       chunk = T.must(chunk)[range]
       application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)
 
-      chunk = T.unsafe(self)._data_shaping(chunk, options)
+      chunk = T.unsafe(self).data_shaping(chunk, **options)
       return chunk
     end
 
@@ -122,7 +176,7 @@ module SheepAst
         name: T.nilable(T.any(Symbol, String))
       ).returns(T.nilable(String))
     }
-    def _ns_get(pair, name)
+    def ns_get(pair, name)
       return nil if name.nil?
 
       if name.instance_of? Symbol
@@ -146,7 +200,7 @@ module SheepAst
         T.any(T::Array[String], T::Array[T::Array[String]])
       )
     }
-    def _data_shaping(chunk, **options)
+    def data_shaping(chunk, **options)
       if options[:raw]
         [chunk]
       else
@@ -155,7 +209,7 @@ module SheepAst
     end
 
     sig { void }
-    def _format_dump
+    def format_dump
       ldump ''
       ldump '--- show ---'
       yield
@@ -173,7 +227,7 @@ module SheepAst
       t_ns = ''
       namespace_separator = ''
       if options[:namespace_key] || options[:namespace_value] || options[:namespace]
-        namespace_separator = T.unsafe(self)._namespace_separator(**options)
+        namespace_separator = T.unsafe(self).namespace_separator(**options)
         namespace = pair[:_namespace]
         namespace.reverse_each do |elem|
           t_ns = "#{elem}#{namespace_separator}#{t_ns}"
@@ -186,26 +240,20 @@ module SheepAst
       return ns
     end
 
-    def _namespace_separator(**options)
+    def namespace_separator(**options)
       namespace_sep = options[:namespace_separator]
       namespace_sep = '::' if namespace_sep.nil?
       return namespace_sep
     end
 
-    def _namespace_separator_file(**options)
+    def namespace_separator_file(**options)
       namespace_sep = options[:namespace_separator_file]
       namespace_sep = '::' if namespace_sep.nil?
       return namespace_sep
     end
 
-    def _ret(**options)
+    def ret(**options)
       ret = options[:break]
-
-      if ret && @_ret_warn.nil?
-        @_ret_warn = true
-        lwarn 'break option is applied. follows let action is ignored.'\
-          ' This print output only once.'
-      end
     end
   end
 end

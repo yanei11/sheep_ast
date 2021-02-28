@@ -37,6 +37,16 @@ module SheepAst
       super()
       @ast = ast
       init
+      @committed_node_id = 0
+    end
+
+    sig { returns(Node) }
+    def current_node
+      node = @ast.node_factory.from_id(T.must(info).node_id)
+      if node.nil?
+        application_error 'current node is not found. Bug?'
+      end
+      return node
     end
 
     sig { params(info: NodeInfo).void }
@@ -93,6 +103,22 @@ module SheepAst
       return handle_after_action(after_action, data, ret_node_info)
     end
 
+    sig { params(info: NodeInfo).void }
+    def move_node(info)
+      T.must(@info).copy(info)
+    end
+
+    def move_committed_node
+      node_info = NodeInfo.new
+      node_info.node_id = @committed_node_id
+      move_node(node_info)
+    end
+
+    def commit_node
+      @committed_node_id = T.must(@info).node_id
+    end
+
+
     sig { params(after_action: MatchAction, data: AnalyzeData, info: NodeInfo).returns(T.nilable(T::Boolean)) }
     def handle_after_action(after_action, data, info) # rubocop: disable all
       ldebug "#{name} decided to #{after_action.inspect} for the '#{data.expr.inspect}'"
@@ -104,13 +130,13 @@ module SheepAst
       when MatchAction::StayNode
         return true
       when MatchAction::Next
-        T.must(@info).copy(info)
+        move_node(info)
         return true
       when MatchAction::Continue
         init
         return false
       when MatchAction::Finish
-        T.must(@info).copy(info)
+        move_node(info)
         save_req = nil
         if !data.save_request.nil?
           save_req = data.save_request
@@ -196,8 +222,8 @@ module SheepAst
     end
   end
 
-  # TBD
-  class StageManager # rubocop: disable all
+  # StageManager manages stages.
+  class StageManager
     extend T::Sig
     extend T::Helpers
     include Exception
@@ -221,6 +247,14 @@ module SheepAst
       a_stage = Stage.new(ast)
       @stages_name[ast.full_name] = a_stage
       @stages << a_stage
+    end
+
+    sig { params(name: String).returns(Stage) }
+    def stage_get(name)
+      res = @stages_name[name]
+      application_error 'specified name does not hit any stage' unless res
+     
+      return res
     end
 
     sig {
@@ -275,7 +309,9 @@ module SheepAst
     def analyze_stages(data) # rubocop: disable all
       ldebug 'Analyze Stages start!', :red
 
+      data.stage_manager = self
       @data = data
+
       incl = T.must(data.file_info).ast_include
       excl = T.must(data.file_info).ast_exclude
 
@@ -338,7 +374,7 @@ module SheepAst
     def eof_validation
       @stages.each do |stage|
         len = stage.match_id_array.length
-        if len != 0 # rubocop: disable all
+        if len != 0
           lfatal "Validation Fail!!! stage = #{stage.name}."
           lfatal 'To reach here means that in spite of end of file processing, some stages are'
           lfatal 'during AST process. This is thought to be invalid scenario.'

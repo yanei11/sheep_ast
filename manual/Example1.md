@@ -20,7 +20,7 @@ Followings are the test file. They are cpp sntax code.
 The example overall source code is following:
 
 ```
-# typed: false
+# typed: ignore
 # frozen_string_literal: true
 
 require 'sheep_ast'
@@ -40,17 +40,20 @@ end
 
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
-    register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
-      _SS(
-        _S << E(:encr, input_expr, "\n")
+    register_syntax('analyze', A(:let, [:grep], [:show, disable: true],
+                                 [:debug, disable: true])) {
+      SS(
+        S() << E(:r, input_expr)
       )
     }
   }
 
   core.let.within {
-    def grep(key, datastore, **options)
-      str = "#{@data.file_info.file}:".blue
-      str += @data.raw_line.chop.to_s
+    def grep(pair, datastore, **options)
+      data = pair[:_data] # accessing kind of raw information
+      match = line_matched(data)
+      str = "#{data.file_info.file}:".blue
+      str += match.flatten.join
       puts str
     end
   }
@@ -59,8 +62,8 @@ end
 core.config_ast('always.continue') do |_ast, syn|
   syn.within {
     register_syntax('continue', A(:na)) {
-      _SS(
-        _S << any
+      SS(
+        S() << any
       )
     }
   }
@@ -112,8 +115,8 @@ Following code blocks are the AST registrations.
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
-      _SS(
-        _S << E(:encr, input_expr, "\n")
+      SS(
+        S() << E(:encr, input_expr, "\n")
       )
     }
   }
@@ -132,8 +135,8 @@ end
 core.config_ast('always.continue') do |_ast, syn|
   syn.within {
     register_syntax('continue', A(:na)) {
-      _SS(
-        _S << any
+      SS(
+        S() << any
       )
     }
   }
@@ -149,8 +152,8 @@ The meaning of syntax of the above codeblock is following:
 core.config_ast('default.main') do |_ast, syn|
   syn.within {
     register_syntax('analyze', A(:let, [:grep], [:show, { disable: true }], [:debug])) {
-      _SS(
-        _S << E(:encr, input_expr, "\n")
+      SS(
+        S() << E(:encr, input_expr, "\n")
       )
     }
   }
@@ -161,7 +164,7 @@ end
 Ast fullname = default.main is registered. Ast fullname is constucted by two part; domain and name.  The `default` is special domain. The default domain is called initially. It works as entry point. So, the none `default` domain will not be called initially and it will be called when user includes the Ast. This related to the recursive estimation of target strings and also related to namespace. In short, user can specify domain to include or exclude the next recursion process. But in this example, this function is not needed. This topic is shown by other example.
 The `always` domain has also special meaning. It is always called no matter user tries to exclude.  
 
-`register_syntax` parameters are name, action, match. AST perform that when registered matches are hit and reached to action, then the action is called. Here `_SS` means syntaxes, `_S` means syntax, `E` means expression, and `A` is action.  In this syntax, the match is `:encr` which is enclosed_regex match. It matches input_expr for the start and end by "\n". If string matches to regex input_expr is came, and after some strings, when "\n" string is came, then :let object's :grep, :show, :debug function are called accordingly. The :show and :debug are the pre-made API function which is defined in let_xxx.rb files. But :grep function is user defined function and it is defined in the 2nd code block.
+`register_syntax` parameters are name, action, match. AST perform that when registered matches are hit and reached to action, then the action is called. Here `SS(...)` means syntaxes, `S()` means syntax, `E` means expression, and `A` is action.  In this syntax, the match is `:encr` which is enclosed_regex match. It matches input_expr for the start and end by "\n". If string matches to regex input_expr is came, and after some strings, when "\n" string is came, then :let object's :grep, :show, :debug function are called accordingly. The :show and :debug are the pre-made API function which is defined in let_xxx.rb files. But :grep function is user defined function and it is defined in the 2nd code block.
 
 ## 2nd code block
 
@@ -186,8 +189,8 @@ To see what kind of information passed from the framework, you can utilise :show
 core.config_ast('always.continue') do |_ast, syn|
   syn.within {
     register_syntax('continue', A(:na)) {
-      _SS(
-        _S << any
+      SS(
+        S() << any
       )
     }
   }

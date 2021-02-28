@@ -59,7 +59,7 @@ describe SheepAst::Qualifier do
     end
 
     expect {
-      core.analyze_file(['spec/test_files/test1.txt'])
+      core.analyze_file(['spec/unit/test_files/test1.txt'])
     }.not_to raise_error
   end
 end

@@ -115,3 +115,9 @@ Style/SlicingWithRange:
 
 Style/WordArray:
   Enabled: false
+
+Style/HashAsLastArrayItem:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false

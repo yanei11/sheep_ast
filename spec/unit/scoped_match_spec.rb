@@ -179,7 +179,7 @@ describe SheepAst::ScopedMatch do
  
     expect {
       core.report(raise: true) {
-        core.analyze_file(['spec/scoped_match_file/test1.cc'])
+        core.analyze_file(['spec/unit/scoped_match_file/test1.cc'])
       }
     }.not_to raise_error
   end
@@ -227,7 +227,7 @@ describe SheepAst::ScopedMatch do
  
     expect {
       core.report(raise: true) {
-        core.analyze_file(['spec/scoped_match_file/test1.cc'])
+        core.analyze_file(['spec/unit/scoped_match_file/test1.cc'])
       }
     }.not_to raise_error
   end
@@ -288,7 +288,7 @@ describe SheepAst::ScopedMatch do
 
     expect {
       core.report(raise: true) {
-        core.analyze_file(['spec/scoped_match_file/test2.cc'])
+        core.analyze_file(['spec/unit/scoped_match_file/test2.cc'])
       }
     }.not_to raise_error
     expect(core.data_store.value(:ns_test_HL)).to eq({"abc::test3"=>"test3", "abc::bbb::test2"=>"test2", "abc::bbb::ccc::test"=>"test"})
@@ -338,7 +338,7 @@ describe SheepAst::ScopedMatch do
     end
 
     expect {
-      core.analyze_file(['spec/scoped_match_file/test3.cc'])
+      core.analyze_file(['spec/unit/scoped_match_file/test3.cc'])
     }.to raise_error SheepAst::Exception::ApplicationError
   end
 

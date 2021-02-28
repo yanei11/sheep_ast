@@ -49,7 +49,7 @@ describe SheepAst::Let do
           'analyze',
           A(:let,
             [:record, :test_A, :_2, namespace_value: true], 
-            [:compile, 'spec/test_files/template1.erb', { dry_run: false, namespace_separator: '_', namespace_separator_file: '_' }], 
+            [:compile, 'spec/unit/test_files/template1.erb', dry_run: false, namespace_separator: '_', namespace_separator_file: '_' ], 
             [:show, disable: true])) {
           _SS(
            _S << E(:e, 'class') << E(:r, '.*') << E(:sc, '{', '}') << E(:e, ';')
@@ -72,10 +72,10 @@ describe SheepAst::Let do
 
     expect {
       core.report(raise: true) {
-        core.analyze_file(['spec/scoped_match_file/test4.cc'])
+        core.analyze_file(['spec/unit/scoped_match_file/test4.cc'])
       }
     }.not_to raise_error
     #p core.data_store
-    core.data_store.compile('spec/test_files/template2.erb')
+    core.data_store.compile('spec/unit/test_files/template2.erb')
   end
 end

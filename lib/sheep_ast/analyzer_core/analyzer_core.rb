@@ -1,14 +1,15 @@
 # typed:ignore
 # frozen_string_literal:true
 
-require_relative 'exception'
-require_relative 'factory_base'
-require_relative 'ast_manager'
-require_relative 'tokenizer'
-require_relative 'datastore'
-require_relative 'sheep_obj'
-require_relative 'stage_manager'
-require_relative 'fof'
+require_relative '../exception'
+require_relative '../factory_base'
+require_relative '../ast_manager'
+require_relative '../tokenizer'
+require_relative '../datastore'
+require_relative '../sheep_obj'
+require_relative '../stage_manager'
+require_relative '../fof'
+require_relative 'node_operation'
 require 'optparse'
 require 'pry'
 
@@ -22,6 +23,7 @@ module SheepAst
     include Exception
     extend T::Sig
     include FactoryBase
+    include NodeOperation
 
     @@option = nil
     @@optparse = nil
@@ -252,11 +254,12 @@ module SheepAst
     #
     sig { void }
     def do_analyze
-      if !ENV['SHEEP_RSPEC']
+      if !ENV['SHEEP_RSPEC'] || !ENV['SHEEP_BIN'].nil?
         process_option
       else
-        @@option = {}
+       @@option = {}
       end
+
       dump(:pwarn) and return if @@option[:d]
 
       @file_manager.analyze do |data|
@@ -289,7 +292,7 @@ module SheepAst
     # @example
     #   ruby your_app.rb -h # shows usage
     #
-    sig { params(argv: T::Array[String]).returns(T.nilable T::Hash[Symbol, T.untyped]) }
+    sig { params(argv: T::Array[String]).returns(T.nilable(T::Hash[Symbol, T.untyped])) }
     def self.option_parse(argv)
       if @@option.nil?
         @@option = {}
@@ -348,6 +351,7 @@ module SheepAst
         puts @@optparse.help
         puts ''
       end
+      lprint @@option.inspect
     end
 
     def self.option

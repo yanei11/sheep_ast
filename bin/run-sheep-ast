@@ -1,12 +1,27 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+if __FILE__ != $PROGRAM_NAME
+  exit 0
+end
+
 require 'bundler/setup'
 require 'sheep_ast'
+require 'benchmark'
 
 prog = __FILE__.to_s.split('/').last
 
+ENV['SHEEP_BIN'] = '1'
 option = SheepAst::AnalyzerCore.option_parse(ARGV)
+
+ruby_version = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
+current_dir = Dir.pwd
+
+puts "#{prog}> Executing on"
+puts "#{prog}>   version: #{SheepAst::VERSION}"
+puts "#{prog}>   ruby version: #{ruby_version}"
+puts "#{prog}>   current dir: #{current_dir}"
+
 config_file = option[:r]
 
 if config_file.nil?
@@ -14,26 +29,36 @@ if config_file.nil?
   exit
 end
 
-puts
-
 if File.exist?(config_file)
   load config_file
 else
   puts "#{prog}> #{config_file} could not be found"
 end
 
+exit_status = false
+time = nil
+
 if defined? configure
   puts "#{prog}> Do configure"
   core = SheepAst::AnalyzerCore.new
   configure(core)
   if !ARGV.empty?
-    core.report(raise: false) {
-      puts "#{prog}> Do analyze"
-      core.analyze_file(ARGV) unless ARGV.empty?
+    time = Benchmark.measure {
+      exit_status = core.report(raise: false) {
+        puts "#{prog}> Do analyze"
+        core.analyze_file(ARGV) unless ARGV.empty?
+      }
     }
+
+    if !exit_status
+      puts 'ERROR: Exception is happened in the analyzer core'
+    end
   else
     puts "#{prog}> Files are not given to ARGV."
   end
 end
 
+puts "#{prog}> Time to process : #{time.real}"
 puts "#{prog}> Finish. Thank you."
+
+exit(exit_status)

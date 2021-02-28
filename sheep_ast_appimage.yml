@@ -2,7 +2,7 @@ app: run-sheep-ast
 
 ingredients:
   script:
-    - wget -c https://rvm_io.global.ssl.fastly.net/binaries/ubuntu/14.04/x86_64/ruby-2.7.2.tar.bz2
+    - wget -c https://rvm_io.global.ssl.fastly.net/binaries/ubuntu/20.04/x86_64/ruby-3.0.0.tar.bz2
 
 script:
   - unset GEM_HOME
@@ -14,8 +14,9 @@ script:
   - tar xf ../ruby-*.tar.bz2 --strip-components=1 -C usr/
   - rm -rf usr/lib/ruby/gems/*/cache
   - export PATH=usr/bin/:$PATH 
-  - ./usr/bin/gem install sheep_ast
-  - ./usr/bin/gem install --development sheep_ast
+  - pwd
+  - ./usr/bin/gem install bundler -f
+  - ./usr/bin/gem install ../sheep_ast-*.gem
   - cp ./usr/lib/ruby/gems/*/gems/sheep_ast-*/bin/run-sheep-ast ./usr/bin/
   - DEPS=$(ldd ./usr/lib/ruby/*/x86_64-linux/*.so | grep "=> /" | cut -d ">" -f 2 | cut -d " " -f 2 | sort | uniq)
   - mkdir -p usr/lib/x86_64-linux-gnu/

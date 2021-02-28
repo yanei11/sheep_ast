@@ -49,7 +49,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
 
     core.config_ast('default.test4') do |ast, syn, mf, af|
       syn.within {
-      register_syntax('default.test') {
+      register_syntax {
         _SS(
           _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*') << A(:na),
           _S << E(:e, 'a') << E(:e, 'b') << E(:r, '...') << E(:r, '##a') << A(:na)
@@ -66,7 +66,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
 
     core.config_ast('default.test6') do |ast, syn, mf, af|
       syn.within {
-      register_syntax('default.test', A(:na)) {
+      register_syntax(A(:na)) {
         _SS(
           _S << E(:e, 'f') << E(:e, 'd') << E(:r, '.*'),
           _S << E(:e, 'a') << E(:e, 'b') << E(:r, '...') << E(:r, '##a')

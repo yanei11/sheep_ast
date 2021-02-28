@@ -1,28 +1,35 @@
-# Install from GitHub
+# For just using sheep_ast
+  
+sheep_ast supports [AppImage](https://appimage.org/) format.  
+You can download from this link all in one package at [release page](https://github.com/yanei11/sheep_ast/releases).  
+You should just add execute permission to the file and you can try sheep_ast to execute the file.   
+  
+The example command is listed in [bin/bin_test.rb](https://github.com/yanei11/sheep_ast/blob/master/spec/bin/bin_test.rb)  
+This AppImage is just executing [bin/run-sheep-ast](https://github.com/yanei11/sheep_ast/blob/master/bin/run-sheep-ast) file.
 
-To install the sheep_ast, proceding following steps:
+Unfortunately, the AppImage in this repository has a limitation that it can take only **absolute path** for the option.  
+Available option can be seen by executing with `-h` option. 
 
-```
-1. git clone this repository
-2. install ruby. The version in the development is >= 2.4.1p111. You can use rbenv to install the ruby version you want
-3. execute `rbenv exec bundle install`
-4. export RBENV_COM="rbenv exec"
-5. rake srbinit
-```
+# For the library user, or developer
 
-If you use rbenv command, procedure 3 and 4 are required.
-`rake srbinit` initialize sorbet.  
-
-After steps 1 ~ 5, then you can use `rake xxx` commands.  
-The well using command will be:
+proceding following steps:
 
 ```
-rake -> execute rspec command
+- git clone this repository
+- install ruby. # The version in the development is 3.0.0 and 2.7.2. You can use rbenv to install the ruby version you want
+- rake srbinit  # This command only works for 2.7.2. This is current limitation on sorbet. After this command "rake tc" command becomes to work.
+```
+
+The frequently used command are:
+
+```
+rake unit -> execute rspec command
+rake bin -> execute executable test command using bin/run-sheep-ast
+rake bin-appimage -> execute executable test command using AppImage. This is tested on Ubuntu 20.04. Some library might be needed to install.
 rake tc -> execute type check using sorbet
 rake exampleX -> execute example no X program
 ```
 
 # Other packages
 
-Plase check following link. It includes install procedure.
-- https://github.com/yanei11?tab=packages&repo_name=sheep_ast
+gem installation is supported. Please see [gem release](https://github.com/yanei11?tab=packages&repo_name=sheep_ast).

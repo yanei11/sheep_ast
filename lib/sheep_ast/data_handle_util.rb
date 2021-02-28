@@ -25,24 +25,26 @@ module SheepAst
 
     sig {
       params(
-        data: AnalyzeData, index: Integer, newline: T.nilable(T::Boolean)
+        data: AnalyzeData, line_offset: Integer, index: Integer, newline: T.nilable(T::Boolean)
       ).returns(T.nilable(String))
     }
-    def index_data(data, index, newline = nil)
+    def index_data(data, line_offset, index, newline = nil)
       tokenized = T.must(T.must(data).file_info).tokenized
-      line =     T.must(T.must(data).file_info).line
+      line =     T.must(T.must(data).file_info).line + line_offset
       offset =   T.must(T.must(data).file_info).index
       max_line = T.must(T.must(data).file_info).max_line
+
+      offset = 0 unless line_offset.zero?
 
       application_error "index is invalid value: index = #{index}" if index.negative? || index.zero?
 
       ldebug "Current data: expr = #{tokenized&.[](line)&.[](offset - 1)}, "\
-        "for line = #{line}, offset = #{offset},"\
+        "for line = #{line}, line_offset = #{line_offset}, offset = #{offset},"\
         " max_line = #{max_line}. From here to find expr after index = #{index}"
 
       expr = expr_get(tokenized, line, offset, max_line, index, newline)
 
-      ldebug "Index at #{index} is  #{expr}, for line = #{line}, offset = #{offset},"\
+      ldebug "Index at #{index} is  #{expr}, for line = #{line}, line_offset = #{line_offset}, offset = #{offset},"\
         " max_line = #{max_line}"
       return expr
     end
@@ -156,14 +158,16 @@ module SheepAst
     def data_handle_init(exprs, **options)
       @exprs = exprs.is_a?(Enumerable) ? exprs : [exprs]
       offset = options[:offset]
+      offset_line = options[:line_offset]
       @include_newline = options[:includ_newline]
       @offset = offset.nil? ? 1 : offset
+      @offset_line = offset_line.nil? ? 0 : offset_line
     end
 
     sig { params(data: AnalyzeData).returns(T::Boolean) }
     def validate(data)
       @exprs.each_with_index do |expr, idx|
-        idata = index_data(data, @offset + idx, @include_newline)
+        idata = index_data(data, @offset_line, @offset + idx, @include_newline)
         if !match_dh(expr, T.must(idata))
           ldebug "validate fail: #{expr} is not hit for #{idata}"
           return false

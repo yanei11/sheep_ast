@@ -24,7 +24,9 @@ module SheepAst
     def initialize
       super()
       @root_node = Node.new(0)
-      @node_tag_db = {}
+      @root_node.my_tag = :root
+      @root_node.parent_node = @root_node
+      @tag_node_db = {}
       create_id(@root_node)
       @root_node.my_node_factory = self
       init
@@ -44,6 +46,15 @@ module SheepAst
         add(a_match, group)
       end
       add_action(action)
+    end
+
+    # register rules for nodes
+    sig { params(tag: Symbol, node: Node).void }
+    def register_tag(tag, node)
+      if @tag_node_db.key?(tag)
+        application_error 'the tag is already registered'
+      end
+      @tag_node_db[tag] = node
     end
 
     sig { params(match: MatchBase, group: String).void }

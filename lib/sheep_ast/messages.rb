@@ -3,9 +3,25 @@
 
 require_relative 'exception'
 require_relative 'file_manager'
+require_relative 'stage_manager'
 require 'sorbet-runtime'
 
 module SheepAst
+  # Get next command
+  class NextCommand < T::Struct
+    include Exception
+    extend T::Sig
+    include Log
+
+    prop :command, T.nilable(String), default: nil
+    prop :description, T.nilable(String), default: nil
+
+    def init
+      @command = nil
+      @description = nil
+    end
+  end
+
   # Message struture between components
   #
   # @api private
@@ -13,6 +29,7 @@ module SheepAst
   class MatchKind < T::Enum
     include Exception
     extend T::Sig
+    include Log
 
     enums do
       Any = new
@@ -195,6 +212,7 @@ module SheepAst
     prop :raw_line, T.nilable(String), default: nil
     prop :file_info, T.nilable(FileInfo), default: nil
     prop :file_manager, T.nilable(FileManager), default: nil
+    prop :stage_manager, T.nilable(StageManager), default: nil
     prop :stack, T::Array[Integer], default: []
     prop :stack_symbol, T::Array[T.nilable(Symbol)], default: []
     prop :request_next_data, RequestNextData, default: RequestNextData::Next
@@ -205,6 +223,7 @@ module SheepAst
       @tokenized_line = nil
       @file_info = nil
       @file_manager = nil
+      @stage_manager = nil
       @request_next_data = RequestNextData::Next
       @stack = []
       @stack_symbol = []

@@ -10,8 +10,8 @@ module SheepAst
   # This class is for the action to recprd the result
   module LetInclude
     extend T::Sig
-    include LetHelper
     include Kernel
+    include LetHelper
     include Log
     include Exception
 
@@ -64,7 +64,7 @@ module SheepAst
         @data.save_request = save_req
       end
 
-      return T.unsafe(self)._ret(**options)
+      return T.unsafe(self).ret(**options)
     end
 
     private
