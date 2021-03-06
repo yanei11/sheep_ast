@@ -66,7 +66,9 @@ ens5: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1460
 #
 # Also we assuemed user wants to analyze full information for the matched interface (ens4 && 10.146.0.3)
 #
-# So, in this case, multiple condition match is needed.
+# The solution is below code.  
+# Note that this `configure(core)` is needed when using bin/run-sheep-ast or appimage executable.  
+# Please see `rake bin` command example.
 
 #rubocop: disable all
 def configure(core)

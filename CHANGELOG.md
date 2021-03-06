@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - Example4 is added
 
 ### Breaking Change
-- _SS and _S statement is now deprecated function. Will be removed in major release
+- `_SS` and `_S` function is now deprecated function. Will be removed in major release
 
 ## [0.4.1] - 2020-02-05
 ### Added

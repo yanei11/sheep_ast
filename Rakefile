@@ -131,6 +131,7 @@ task 'change-version' do
     sh 'gem install bundler'
     sh "bundle update"
     sh "bundle install"
+    sh "bundle install"
   end
 end
 

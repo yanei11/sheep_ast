@@ -1,4 +1,4 @@
-# typed:ignore
+# typed:true
 # frozen_string_literal:true
 
 require_relative '../log'
@@ -40,7 +40,7 @@ module SheepAst
       when Direction::Up
         parent_node = a_stage.current_node.parent_node
         node_info = NodeInfo.new
-        node_info.node_id = parent_node.my_id
+        node_info.node_id = T.must(parent_node).my_id
         a_stage.move_node(node_info)
       when Direction::Revert
         a_stage.move_committed_node
