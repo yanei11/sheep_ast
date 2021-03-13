@@ -51,7 +51,7 @@ module SheepAst
     def initialize
       @data_store = DataStore.new
       @tokenizer = Tokenizer.new
-      @stage_manager = StageManager.new
+      @stage_manager = StageManager.new(@data_store)
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(@data_store)
       super()
@@ -121,7 +121,7 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(files: T::Array[String]).void }
+    sig { params(files: T::Array[String]).returns(T::Boolean) }
     def analyze_file(files)
       @files = files
       @file_manager.register_files(files)
@@ -138,15 +138,14 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(expr: String).returns(AnalyzerCore) }
+    sig { params(expr: String).returns(T::Boolean) }
     def <<(expr)
       analyze_expr(expr)
-      return self
     end
 
     # @api private
     #
-    sig { params(expr: String).void }
+    sig { params(expr: String).returns(T::Boolean) }
     def analyze_expr(expr)
       @file_manager.register_next_expr(expr)
       do_analyze
@@ -247,13 +246,18 @@ module SheepAst
       @data_store.assign(:_sheep_template_dir, arr)
     end
 
+    # API to raise exception when Lazy Abort
+    def not_raise_when_all_ast_not_found
+      @data_store.assign(:_sheep_not_raise_when_lazy_abort, true)
+    end
+
     private
 
     # @api private
     #
-    sig { void }
+    sig { returns(T::Boolean) }
     def do_analyze
-      if !ENV['SHEEP_RSPEC'] || !ENV['SHEEP_BIN'].nil?
+      if !ENV['SHEEP_RSPEC']
         process_option
       else
        @option = {}
@@ -261,9 +265,16 @@ module SheepAst
 
       dump(:pwarn) and return if @option[:d]
 
+      count = 0
       @file_manager.analyze do |data|
-        @stage_manager.analyze_stages(data)
+        count += 1
+        ret = @stage_manager.analyze_stages(data)
+        if !ret
+          ldebug "Expression not found."
+          return false
+        end
       end
+      return true
     end
 
     # @api private

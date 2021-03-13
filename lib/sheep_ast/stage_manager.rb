@@ -229,11 +229,12 @@ module SheepAst
     include Exception
     include Log
 
-    sig { void }
-    def initialize
+    sig { params(data_store: DataStore).void }
+    def initialize(data_store)
       @stages = []
       @stages_name = {}
       @save_stages = [{}]
+      @data_store = data_store
       super()
     end
 
@@ -305,7 +306,7 @@ module SheepAst
       return ret
     end
 
-    sig { params(data: AnalyzeData).void }
+    sig { params(data: AnalyzeData).returns(T::Boolean) }
     def analyze_stages(data) # rubocop: disable all
       ldebug 'Analyze Stages start!', :red
 
@@ -358,16 +359,24 @@ module SheepAst
         application_error 'default domain AST Manager cannot be found.'
       end
 
+      res = true
       if !found
-        lfatal 'All the AST stage not found expression. Lazy Abort!'
-        expression_not_found "'#{data.expr.inspect}'"
+        if @data_store.value(:_sheep_not_raise_when_lazy_abort)
+          ldebug 'All the AST stage not found expression. But return false'
+          res = false
+        else
+          lfatal 'All the AST stage not found expression. Lazy Abort!'
+          expression_not_found "'#{data.expr.inspect}'"
+        end
       end
 
       if data.expr == '__sheep_eof__'
         eof_validation
       end
 
-      ldebug 'Analyze Stages Finished!', :red
+      ldebug "Analyze Stages Finished with #{res.inspect} !", :red
+
+      return res
     end
 
     sig { void }
@@ -381,7 +390,7 @@ module SheepAst
           lfatal 'Please check if this is really valid case.'
           lfatal 'You can off this by call disable_eof_validation in the AnalyzerCore'
           lfatal 'But the stiation maybe bug of sheep_ast or user code.'
-          application_error
+          application_error 'eof validation error'
         end
       end
     end

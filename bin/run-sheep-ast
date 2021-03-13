@@ -14,12 +14,9 @@ module SheepAst
     def run
       prog = __FILE__.to_s.split('/').last
 
-      ENV['SHEEP_BIN'] = '1'
-
       optparse = option_on
       option = option_parse(ARGV)
 
-      ruby_version = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
       current_dir = Dir.pwd
 
       puts "#{prog}> Executing on"
@@ -27,27 +24,13 @@ module SheepAst
       puts "#{prog}>   ruby version: #{ruby_version}"
       puts "#{prog}>   current dir: #{current_dir}"
 
-      config_file = option[:r]
-
-      if config_file.nil?
-        usage
-        exit
-      end
-
-      if File.exist?(config_file)
-        load config_file
-      else
-        puts "#{prog}> #{config_file} could not be found"
-      end
-
       exit_status = false
       time = nil
 
-      if defined? configure
-        puts "#{prog}> Do configure"
-        core = SheepAst::AnalyzerCore.new
-        core.set_option(option, optparse)
-        configure(core)
+      core = SheepAst::AnalyzerCore.new
+
+      ret = do_configure(core, option, optparse)
+      if ret
         if !ARGV.empty?
           time = Benchmark.measure {
             exit_status = core.report(raise: false) {

@@ -61,6 +61,7 @@ module SheepAst
       @optparse.parse!(argv)
       show_usage
       show_version
+      load_config
       return @option
     end
 
@@ -75,6 +76,24 @@ module SheepAst
       if @option[:v]
         puts SheepAst::VERSION
         exit
+      end
+    end
+
+    def ruby_version
+      "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
+    end
+
+
+    def load_config
+      config_file = @option[:r]
+      if config_file
+        if File.exist?(config_file)
+          load config_file
+        else
+          application_error "#{config_file} could not be found at the specified directory."
+        end
+      else
+        return nil
       end
     end
 
@@ -97,6 +116,15 @@ module SheepAst
     def set_option(opt, optp)
       @option = opt
       @optparse = optp
+    end
+
+    def do_configure(core, option = nil, optparse = nil)
+      if defined? configure
+        core.set_option(option, optparse)
+        configure(core)
+        return true
+      end
+      return false
     end
   end
 end
