@@ -20,6 +20,9 @@ module SheepAst
     include Log
     abstract!
 
+    sig { returns(AnalyzerCore) }
+    attr_accessor :analyzer_core
+ 
     sig { returns(DataStore) }
     attr_accessor :data_store
 
@@ -31,6 +34,9 @@ module SheepAst
 
     sig { returns(FactoryBase) }
     attr_accessor :match_factory
+
+    sig { returns(AstManager) }
+    attr_accessor :my_ast_manager
 
     sig { void }
     def initialize

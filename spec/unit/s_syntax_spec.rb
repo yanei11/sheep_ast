@@ -33,7 +33,7 @@ describe 's_syntax' do
     expect {
       core << "f"
       core << "g h"
-      command = core.next_command('default.test2')
+      command = core.focus_on('default.test2').next_command
       expect(command[0].command).to eq('i')
     }.not_to raise_error
   end
@@ -64,7 +64,7 @@ describe 's_syntax' do
     expect {
       core << "f"
       core << "g h"
-      command = core.next_command('default.test2')
+      command = core.focus_on('default.test2').next_command
       expect(command[0].command).to eq('i')
     }.not_to raise_error
   end
@@ -96,7 +96,8 @@ describe 's_syntax' do
     expect {
       core << "f"
       core << "g h"
-      command = core.next_command('default.test2')
+      core.focus_on('default.test2')
+      command = core.next_command
       expect(command[0].command).to eq('i')
     }.not_to raise_error
   end
@@ -133,7 +134,8 @@ describe 's_syntax' do
         core << "g h"
         core << "f"
         core << "g"
-        command = core.next_command('default.test2')
+        core.focus_on('default.test2')
+        command = core.next_command
         expect(command[0].command).to eq('i')
       }
     }.not_to raise_error

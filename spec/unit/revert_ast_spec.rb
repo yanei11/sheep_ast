@@ -31,11 +31,12 @@ describe 'revert ast' do
       }
     end
     expect {
-      command =  core.next_command('default.test2')
+      core.focus_on('default.test2')
+      command =  core.next_command
       core << "f"
-      command =  core.next_command('default.test2')
+      command =  core.next_command
       core << "g h"
-      command = core.next_command('default.test2')
+      command = core.next_command
       expect(command[0].command).to eq('i')
     }.not_to raise_error
   end
@@ -65,14 +66,15 @@ describe 'revert ast' do
       }
     end
     expect {
+      core.focus_on('default.test2')
       core << "f"
       core << "g h"
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Up)
-      command = core.next_command('default.test2')
+      core.move_node('default.test2', SheepAst::OperateNode::Up)
+      command = core.next_command
       expect(command[0].command).to eq('h')
       expect(command[1].command).to eq('1')
       core << "h"
-      command = core.next_command('default.test2')
+      command = core.next_command
       expect(command[0].command).to eq('i')
     }.not_to raise_error
   end
@@ -101,10 +103,11 @@ describe 'revert ast' do
       }
     end
     expect {
+      core.focus_on('default.test2')
       core << "f"
       core << "g h"
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Top)
-      command = core.next_command('default.test2')
+      core.move_focused_node(SheepAst::OperateNode::Top)
+      command = core.next_command
       expect(command[0].command).to eq('f')
     }.not_to raise_error
   end
@@ -133,18 +136,19 @@ describe 'revert ast' do
       }
     end
     expect {
+      core.focus_on('default.test2')
       core << "f"
       core << "g"
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Commit)
-      command = core.next_command('default.test2')
+      core.move_focused_node(SheepAst::OperateNode::Commit)
+      command = core.next_command
       expect(command[0].command).to eq('h')
       core << "h"
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Revert)
-      command = core.next_command('default.test2')
+      core.move_node('default.test2', SheepAst::OperateNode::Revert)
+      command = core.next_command
       expect(command[0].command).to eq('h')
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Top)
-      core.move_node('default.test2', SheepAst::NodeOperation::Direction::Commit)
-      command = core.next_command('default.test2')
+      core.move_node('default.test2', SheepAst::OperateNode::Top)
+      core.move_node('default.test2', SheepAst::OperateNode::Commit)
+      command = core.next_command
       expect(command[0].command).to eq('f')
     }.not_to raise_error
   end

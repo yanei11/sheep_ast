@@ -20,6 +20,47 @@ module SheepAst
       @command = nil
       @description = nil
     end
+
+    def self.command_array(array)
+      arr = []
+      array.each do |elem|
+        arr << elem.command
+      end
+      return arr
+    end
+
+    def self.desc_array(array)
+      arr = []
+      array.each do |elem|
+        arr << elem.description
+      end
+      return arr
+    end
+  end
+
+  # TBD
+  class OperateAction < T::Enum
+    include Log
+    include Exception
+
+    enums do
+      Disable = new
+      Enable = new
+    end
+  end
+
+  # TBD
+  class OperateNode < T::Enum
+    include Log
+    include Exception
+
+    enums do
+      Top = new
+      Up = new
+      Goto = new
+      Revert = new
+      Commit = new
+    end
   end
 
   # Message struture between components
@@ -53,6 +94,20 @@ module SheepAst
       else
         application_error
       end
+    end
+  end
+
+  # Enum for action of matcher
+  #
+  # @api private
+  #
+  class MatchResult < T::Enum
+    enums do
+      NotFound = new
+      GetNext = new
+      Continue = new
+      Finish = new
+      Default = new
     end
   end
 

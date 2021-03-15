@@ -62,7 +62,7 @@ module SheepAst
       end
     end
 
-    sig { params(data: AnalyzeData).returns(T.nilable(T::Boolean)) }
+    sig { params(data: AnalyzeData).returns(MatchResult) }
     def analyze(data) # rubocop: disable all
       node = @ast.node_factory.from_id(T.must(info).node_id)
       ldebug "analyze start, node_id = #{T.must(info).node_id}, object_id =  #{node.object_id}, data = #{data.inspect}"
@@ -119,22 +119,22 @@ module SheepAst
     end
 
 
-    sig { params(after_action: MatchAction, data: AnalyzeData, info: NodeInfo).returns(T.nilable(T::Boolean)) }
+    sig { params(after_action: MatchAction, data: AnalyzeData, info: NodeInfo).returns(MatchResult) }
     def handle_after_action(after_action, data, info) # rubocop: disable all
       ldebug "#{name} decided to #{after_action.inspect} for the '#{data.expr.inspect}'"
       case after_action
       when MatchAction::Abort
         expression_not_found "'#{data.expr.inspect}'"
       when MatchAction::LazyAbort
-        return nil
+        return MatchResult::NotFound
       when MatchAction::StayNode
-        return true
+        return MatchResult::GetNext
       when MatchAction::Next
         move_node(info)
-        return true
+        return MatchResult::GetNext
       when MatchAction::Continue
         init
-        return false
+        return MatchResult::Continue
       when MatchAction::Finish
         move_node(info)
         save_req = nil
@@ -145,7 +145,7 @@ module SheepAst
         init
         handle_save_request(data, save_req) unless save_req.nil?
 
-        return true
+        return MatchResult::Finish
       else
         application_error "Match action #{after_action} is not defined"
       end
@@ -306,7 +306,7 @@ module SheepAst
       return ret
     end
 
-    sig { params(data: AnalyzeData).returns(T::Boolean) }
+    sig { params(data: AnalyzeData).returns(MatchResult) }
     def analyze_stages(data) # rubocop: disable all
       ldebug 'Analyze Stages start!', :red
 
@@ -334,8 +334,7 @@ module SheepAst
       end
 
       processed = T.let(false, T::Boolean)
-      found = T.let(false, T::Boolean)
-      ret = T.let(nil, T.untyped)
+      ret = T.let(MatchResult::Default, MatchResult)
       @stages.each do |stage|
         if filter?(
             T.cast(incl, T::Array[T.any(String, Regexp)]),
@@ -345,8 +344,7 @@ module SheepAst
           ldebug "#{stage.name} start analyzing data!", :violet
           ret = stage.analyze(data)
 
-          found = true if !ret.nil?
-          break if ret
+          break if ret == MatchResult::GetNext || ret == MatchResult::Finish
         else
           ldebug "#{stage.name} is filtered", :yellow
         end
@@ -359,11 +357,11 @@ module SheepAst
         application_error 'default domain AST Manager cannot be found.'
       end
 
-      res = true
-      if !found
+      application_error 'Should not enter this route. Bug.' if ret == MatchResult::Default
+
+      if ret == MatchResult::NotFound
         if @data_store.value(:_sheep_not_raise_when_lazy_abort)
           ldebug 'All the AST stage not found expression. But return false'
-          res = false
         else
           lfatal 'All the AST stage not found expression. Lazy Abort!'
           expression_not_found "'#{data.expr.inspect}'"
@@ -374,9 +372,9 @@ module SheepAst
         eof_validation
       end
 
-      ldebug "Analyze Stages Finished with #{res.inspect} !", :red
+      ldebug "Analyze Stages Finished with #{ret.inspect} !", :red
 
-      return res
+      return ret
     end
 
     sig { void }

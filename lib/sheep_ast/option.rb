@@ -2,6 +2,7 @@
 # frozen_string_literal:true
 
 require 'optparse'
+require_relative 'exception'
 
 # api public
 module SheepAst
@@ -9,6 +10,7 @@ module SheepAst
   #
   # @api public
   module Option
+    include Exception
     extend T::Sig
 
     def option_on
@@ -67,7 +69,8 @@ module SheepAst
 
     def show_usage
       if @option[:h]
-        AnalyzerCore.usage
+        command
+        usage
         exit
       end
     end
@@ -97,11 +100,16 @@ module SheepAst
       end
     end
 
-    def usage
+    def command
       if @optparse
         puts ''
         puts "Usage: #{@optparse.program_name} [options] arg1, arg2, ..."
         puts '    arg1, arg2, ... : specify files to parse.'
+      end
+    end
+
+    def usage
+      if @optparse
         puts ''
         @optparse.banner = 'Available options :'
         puts @optparse.help

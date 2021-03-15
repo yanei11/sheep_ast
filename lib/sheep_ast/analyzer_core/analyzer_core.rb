@@ -11,11 +11,17 @@ require_relative '../stage_manager'
 require_relative '../fof'
 require_relative '../option'
 require_relative 'node_operation'
+require_relative 'action_operation'
 require 'optparse'
 require 'pry'
 
 # api public
 module SheepAst
+  class AnalyzerCoreReturn < T::Struct
+    prop :result, MatchResult, default: MatchResult::Default
+    prop :next_command, T::Array[NextCommand], default: []
+  end
+
   # Aggregates User interface of sheep_ast library
   #
   # @api public
@@ -25,6 +31,7 @@ module SheepAst
     extend T::Sig
     include FactoryBase
     include NodeOperation
+    include ActionOperation
     include Option
 
     # @api private
@@ -53,7 +60,7 @@ module SheepAst
       @tokenizer = Tokenizer.new
       @stage_manager = StageManager.new(@data_store)
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
-      @fof = FoF.new(@data_store)
+      @fof = FoF.new(self, @data_store)
       super()
     end
 
@@ -121,7 +128,7 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(files: T::Array[String]).returns(T::Boolean) }
+    sig { params(files: T::Array[String]).returns(AnalyzerCoreReturn) }
     def analyze_file(files)
       @files = files
       @file_manager.register_files(files)
@@ -138,14 +145,14 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(expr: String).returns(T::Boolean) }
+    sig { params(expr: String).returns(AnalyzerCoreReturn) }
     def <<(expr)
       analyze_expr(expr)
     end
 
     # @api private
     #
-    sig { params(expr: String).returns(T::Boolean) }
+    sig { params(expr: String).returns(AnalyzerCoreReturn) }
     def analyze_expr(expr)
       @file_manager.register_next_expr(expr)
       do_analyze
@@ -253,9 +260,14 @@ module SheepAst
 
     private
 
+    sig { params(name: String).returns(Stage) }
+    def stage(name)
+      return @stage_manager.stage_get(name)
+    end
+
     # @api private
     #
-    sig { returns(T::Boolean) }
+    sig { returns(AnalyzerCoreReturn) }
     def do_analyze
       if !ENV['SHEEP_RSPEC']
         process_option
@@ -266,15 +278,21 @@ module SheepAst
       dump(:pwarn) and return if @option[:d]
 
       count = 0
+      ret = MatchResult::NotFound
       @file_manager.analyze do |data|
         count += 1
         ret = @stage_manager.analyze_stages(data)
-        if !ret
+        if ret == MatchResult::NotFound
           ldebug "Expression not found."
-          return false
+          break
         end
       end
-      return true
+
+      res = AnalyzerCoreReturn.new
+      res.result = ret.dup
+      res.next_command = next_command
+
+      return res
     end
 
     # @api private

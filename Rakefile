@@ -135,5 +135,8 @@ task 'change-version' do
   end
 end
 
+desc 'Before release check test only'
+task 'prepare' => %w[init-appimage tc unit bin bin-appimage]
+
 desc 'Before release check'
-task 'prepare' => %w[init-appimage tc unit bin bin-appimage pushd]
+task 'prepare full' => %w[init-appimage tc unit bin bin-appimage pushd]

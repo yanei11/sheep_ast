@@ -8,6 +8,8 @@ require_relative 'let_compile'
 require_relative 'let_record'
 require_relative 'let_include'
 require_relative 'let_helper'
+require_relative 'let_operate_node'
+require_relative 'let_operate_action'
 require 'sorbet-runtime'
 require 'rainbow/refinement'
 
@@ -31,6 +33,8 @@ module SheepAst
     include LetCompile
     include LetRecord
     include LetInclude
+    include LetOperateNode
+    include LetOperateAction
 
     sig { returns(T.any(T::Array[Symbol], T::Array[T::Array[Symbol]])) }
     attr_accessor :fsyms
