@@ -32,7 +32,8 @@ describe SheepAst::IndexCondition do
       core.report(raise: true ) {
       core << "a b c d
                a b c d 
-               i j k" << '__sheep_eof__'
+               i j k"
+      core << '__sheep_eof__'
     }
     }.not_to raise_error
     expect( core.data_store.value(:test) ).to eq('a')
@@ -62,7 +63,8 @@ describe SheepAst::IndexCondition do
       core.report(raise: true ) {
       core << "a b c d
                a b c d 
-               i j k" << '__sheep_eof__'
+               i j k"
+      core << '__sheep_eof__'
     }
     }.not_to raise_error
     expect( core.data_store.value(:test) ).to eq('a')
@@ -93,7 +95,8 @@ describe SheepAst::IndexCondition do
       core.report(raise: true ) {
       core << "a b c d
                a b c d 
-               i j k" << '__sheep_eof__'
+               i j k"
+      core << '__sheep_eof__'
     }
     }.not_to raise_error
     expect( core.data_store.value(:test) ).to eq('a')
@@ -123,7 +126,8 @@ describe SheepAst::IndexCondition do
       core.report(raise: true ) {
       core << "a b c d
                a b c d 
-               i j k" << '__sheep_eof__'
+               i j k"
+      core << '__sheep_eof__'
     }
     }.not_to raise_error
     expect( core.data_store.value(:test) ).to eq('a')

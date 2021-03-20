@@ -367,7 +367,8 @@ describe SheepAst::ScopedMatch do
       core.report(raise: true ) {
       core << "a b c d
                a f g h
-               i j k" << '__sheep_eof__'
+               i j k"
+      core << '__sheep_eof__'
     }
     }.not_to raise_error
     core.data_store.dump(:test_A)

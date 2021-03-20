@@ -1,4 +1,4 @@
-# typed:ignore
+# typed: false
 # frozen_string_literal:true
 
 require_relative '../log'
@@ -14,39 +14,41 @@ module SheepAst
     include Exception
     extend T::Sig
 
-    # TBD
-    class Direction < T::Enum
-      include Log
-      include Exception
-
-      enums do
-        Top = new
-        Up = new
-        Goto = new
-        Revert = new
-        Commit = new
+    sig { returns(T::Array[NextCommand]) }
+    def next_command
+      if @focus.nil?
+        ldebug 'Need forcus_on to point ast manager to use this function'
+        return []
       end
+
+      current_node(@focus).next_command
     end
 
-    sig { params(name: String).returns(T::Array[NextCommand]) }
-    def next_command(name)
-      current_node(name).next_command
+    sig { params(name: String).returns(AnalyzerCore) }
+    def focus_on(name)
+      @focus = name
+      return self
     end
 
-    sig { params(name: String, dir: Direction).void }
+    sig { params(dir: OperateNode).void }
+    def move_focused_node(dir)
+      move_node(@focus, dir)
+    end
+
+    sig { params(name: String, dir: OperateNode).void }
     def move_node(name, dir)
       a_stage = stage(name)
       case dir
-      when Direction::Up
+      when OperateNode::Up
         parent_node = a_stage.current_node.parent_node
         node_info = NodeInfo.new
-        node_info.node_id = parent_node.my_id
+        node_info.node_id = T.must(parent_node).my_id
         a_stage.move_node(node_info)
-      when Direction::Revert
+      when OperateNode::Revert
         a_stage.move_committed_node
-      when Direction::Commit
+      when OperateNode::Commit
         a_stage.commit_node
-      when Direction::Top
+      when OperateNode::Top
         node_info = NodeInfo.new
         node_info.node_id = 0 # root node id
         a_stage.move_node(node_info)
@@ -54,11 +56,6 @@ module SheepAst
     end
 
     private
-
-    sig { params(name: String).returns(Stage) }
-    def stage(name)
-      return @stage_manager.stage_get(name)
-    end
 
     sig { params(name: String).returns(Node) }
     def current_node(name)

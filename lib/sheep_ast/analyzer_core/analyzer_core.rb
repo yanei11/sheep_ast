@@ -9,12 +9,20 @@ require_relative '../datastore'
 require_relative '../sheep_obj'
 require_relative '../stage_manager'
 require_relative '../fof'
+require_relative '../option'
 require_relative 'node_operation'
+require_relative 'action_operation'
 require 'optparse'
 require 'pry'
 
 # api public
 module SheepAst
+  class AnalyzerCoreReturn < T::Struct
+    prop :result, MatchResult, default: MatchResult::Default
+    prop :eol, T::Boolean, default: true
+    prop :next_command, T::Array[NextCommand], default: []
+  end
+
   # Aggregates User interface of sheep_ast library
   #
   # @api public
@@ -24,9 +32,8 @@ module SheepAst
     extend T::Sig
     include FactoryBase
     include NodeOperation
-
-    @@option = nil
-    @@optparse = nil
+    include ActionOperation
+    include Option
 
     # @api private
     sig { returns(StageManager) }
@@ -52,9 +59,10 @@ module SheepAst
     def initialize
       @data_store = DataStore.new
       @tokenizer = Tokenizer.new
-      @stage_manager = StageManager.new
+      @stage_manager = StageManager.new(@data_store)
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
-      @fof = FoF.new(@data_store)
+      @fof = FoF.new(self, @data_store)
+      @eol_validation = false
       super()
     end
 
@@ -122,7 +130,7 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(files: T::Array[String]).void }
+    sig { params(files: T::Array[String]).returns(AnalyzerCoreReturn) }
     def analyze_file(files)
       @files = files
       @file_manager.register_files(files)
@@ -139,15 +147,14 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(expr: String).returns(AnalyzerCore) }
+    sig { params(expr: String).returns(AnalyzerCoreReturn) }
     def <<(expr)
       analyze_expr(expr)
-      return self
     end
 
     # @api private
     #
-    sig { params(expr: String).void }
+    sig { params(expr: String).returns(AnalyzerCoreReturn) }
     def analyze_expr(expr)
       @file_manager.register_next_expr(expr)
       do_analyze
@@ -248,23 +255,77 @@ module SheepAst
       @data_store.assign(:_sheep_template_dir, arr)
     end
 
+    # API to raise exception when Lazy Abort
+    def not_raise_when_all_ast_not_found
+      @data_store.assign(:_sheep_not_raise_when_lazy_abort, true)
+    end
+
+    # To check last word, and if it is not matched, ignore the word
+    # This is useful when console application's auto completion
+    def enable_last_word_check(word = ' ')
+      @file_manager.last_word_check = word
+    end
+
+    # disable last word check
+    def disable_last_word_check
+      @file_manager.last_word_check = nil
+    end
+
+    # If an action is called when it is not end of line
+    # The action is ignored. This is useful for console application
+    def enable_eol_validation
+      @eol_validation = true
+    end
+
+    # disable eol validation
+    def disable_eol_validation
+      @eol_validation = false
+    end
+
     private
+
+    sig { params(name: String).returns(Stage) }
+    def stage(name)
+      return @stage_manager.stage_get(name)
+    end
 
     # @api private
     #
-    sig { void }
+    sig { returns(AnalyzerCoreReturn) }
     def do_analyze
-      if !ENV['SHEEP_RSPEC'] || !ENV['SHEEP_BIN'].nil?
+      if !ENV['SHEEP_RSPEC']
         process_option
       else
-       @@option = {}
+       @option = {}
       end
 
-      dump(:pwarn) and return if @@option[:d]
+      dump(:pwarn) and return if @option[:d]
 
+      count = 0
+      is_eol = true
+      ret = MatchResult::NotFound
       @file_manager.analyze do |data|
-        @stage_manager.analyze_stages(data)
+        count += 1
+        ret = @stage_manager.analyze_stages(data)
+
+        if ret == @eol_validation && MatchResult::Finish && !data.is_eol
+          ldebug "Action called but it is not eol"
+          is_eol = false
+          break
+        end
+
+        if ret == MatchResult::NotFound
+          ldebug "Expression not found."
+          break
+        end
       end
+
+      res = AnalyzerCoreReturn.new
+      res.result = ret.dup
+      res.eol = is_eol
+      res.next_command = next_command
+
+      return res
     end
 
     # @api private
@@ -285,84 +346,14 @@ module SheepAst
       @stage_manager.disable_eof_validation
     end
 
-    # Command line option
-    #
-    # @api private
-    #
-    # @example
-    #   ruby your_app.rb -h # shows usage
-    #
-    sig { params(argv: T::Array[String]).returns(T.nilable(T::Hash[Symbol, T.untyped])) }
-    def self.option_parse(argv)
-      if @@option.nil?
-        @@option = {}
-        @@optparse = OptionParser.new do |opt|
-          opt.on(
-            '-E array', Array,
-            'Specify directories to exclude files'
-          ) { |v| @@option[:E] = v }
-          opt.on(
-            '-I array', Array, 'Specify search directories for the include files'
-          ) { |v| @@option[:I] = v }
-          opt.on(
-            '-d', 'Dump Debug information'
-          ) { @@option[:d] = true }
-          opt.on(
-            '-r file', 'Specify configuration ruby file'
-          ) { |v| @@option[:r] = v }
-          opt.on(
-            '-o path', 'outdir variable is set in the let_compile module'
-          ) { |v| @@option[:o] = v }
-          opt.on(
-            '-t array', Array,
-            'Specify search directories for the template files for let_compile module'
-          ) { |v| @@option[:t] = v }
-          opt.on_tail(
-            '-h', '--help', 'show usage'
-          ) { |v| @@option[:h] = true }
-          opt.on_tail(
-            '-v', '--version', 'show version'
-          ) { |v| @@option[:v] = true }
-
-          opt.parse!(argv)
-        end
-      end
-
-      if @@option[:h]
-        AnalyzerCore.usage
-        exit
-      end
-
-      if @@option[:v]
-        puts SheepAst::VERSION
-        exit
-      end
-
-      return @@option
-    end
-
-    def self.usage
-      if @@optparse
-        puts ''
-        puts "Usage: #{@@optparse.program_name} [options] arg1, arg2, ..."
-        puts '    arg1, arg2, ... : specify files to parse.'
-        puts ''
-        @@optparse.banner = 'Available options :'
-        puts @@optparse.help
-        puts ''
-      end
-    end
-
-    def self.option
-      @@option
-    end
-
-    # api private
-    #
     sig { void }
     def process_option
-      AnalyzerCore.option_parse(ARGV)
-      @@option[:D]&.each do |item|
+      if !@option
+        option_on
+        option_parse(ARGV)
+      end
+
+      @option[:D]&.each do |item|
         if item.include?('=')
           key = item.split('=').first
           data = item.split('=').last
@@ -372,10 +363,10 @@ module SheepAst
         end
       end
 
-      sheep_dir_path_set(@@option[:I]) if @@option[:I]
-      sheep_exclude_dir_path_set(@@option[:E]) if @@option[:E]
-      sheep_outdir_set(@@option[:o]) if @@option[:o]
-      sheep_template_dir_path_set(@@option[:t]) if @@option[:t]
+      sheep_dir_path_set(@option[:I]) if @option[:I]
+      sheep_exclude_dir_path_set(@option[:E]) if @option[:E]
+      sheep_outdir_set(@option[:o]) if @option[:o]
+      sheep_template_dir_path_set(@option[:t]) if @option[:t]
     end
   end
 end
