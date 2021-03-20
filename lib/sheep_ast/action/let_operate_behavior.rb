@@ -11,7 +11,7 @@ using Rainbow
 
 module SheepAst
   # Let include module
-  module LetOperateAction
+  module LetOperateBehavior
     extend T::Sig
     extend T::Helpers
     include LetHelper
@@ -25,17 +25,17 @@ module SheepAst
       params(
         pair: T::Hash[Symbol, T::Array[String]],
         datastore: DataStore,
-        ast_name: String, 
-        operation: OperateAction,
+        ast_name: String,
+        operation: OnOff,
         options: T.untyped
       ).returns(T.nilable(T::Boolean))
     }
     def operate_action(pair, datastore, ast_name, operation, **options)
       ldebug "operation Action #{operation.inspect} to #{ast_name.inspect}"
 
-      if operation == OperateAction::Disable
+      if operation == OnOff::Disable
         @analyzer_core.disable_action(ast_name)
-      elsif operation == OperateAction::Enable
+      elsif operation == OnOff::Enable
         @analyzer_core.enable_action(ast_name)
       end
 

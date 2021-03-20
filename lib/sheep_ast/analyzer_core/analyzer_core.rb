@@ -19,6 +19,7 @@ require 'pry'
 module SheepAst
   class AnalyzerCoreReturn < T::Struct
     prop :result, MatchResult, default: MatchResult::Default
+    prop :eol, T::Boolean, default: true
     prop :next_command, T::Array[NextCommand], default: []
   end
 
@@ -61,6 +62,7 @@ module SheepAst
       @stage_manager = StageManager.new(@data_store)
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(self, @data_store)
+      @eol_validation = false
       super()
     end
 
@@ -258,6 +260,28 @@ module SheepAst
       @data_store.assign(:_sheep_not_raise_when_lazy_abort, true)
     end
 
+    # To check last word, and if it is not matched, ignore the word
+    # This is useful when console application's auto completion
+    def enable_last_word_check(word = ' ')
+      @file_manager.last_word_check = word
+    end
+
+    # disable last word check
+    def disable_last_word_check
+      @file_manager.last_word_check = nil
+    end
+
+    # If an action is called when it is not end of line
+    # The action is ignored. This is useful for console application
+    def enable_eol_validation
+      @eol_validation = true
+    end
+
+    # disable eol validation
+    def disable_eol_validation
+      @eol_validation = false
+    end
+
     private
 
     sig { params(name: String).returns(Stage) }
@@ -278,10 +302,18 @@ module SheepAst
       dump(:pwarn) and return if @option[:d]
 
       count = 0
+      is_eol = true
       ret = MatchResult::NotFound
       @file_manager.analyze do |data|
         count += 1
         ret = @stage_manager.analyze_stages(data)
+
+        if ret == @eol_validation && MatchResult::Finish && !data.is_eol
+          ldebug "Action called but it is not eol"
+          is_eol = false
+          break
+        end
+
         if ret == MatchResult::NotFound
           ldebug "Expression not found."
           break
@@ -290,6 +322,7 @@ module SheepAst
 
       res = AnalyzerCoreReturn.new
       res.result = ret.dup
+      res.eol = is_eol
       res.next_command = next_command
 
       return res

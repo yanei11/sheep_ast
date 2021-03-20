@@ -22,7 +22,7 @@ module SheepAst
 
     sig { returns(AnalyzerCore) }
     attr_accessor :analyzer_core
- 
+
     sig { returns(DataStore) }
     attr_accessor :data_store
 

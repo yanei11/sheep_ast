@@ -39,10 +39,7 @@ module SheepAst
   end
 
   # TBD
-  class OperateAction < T::Enum
-    include Log
-    include Exception
-
+  class OnOff < T::Enum
     enums do
       Disable = new
       Enable = new
@@ -263,6 +260,7 @@ module SheepAst
   class AnalyzeData < T::Struct
     extend T::Sig
     prop :expr, T.nilable(String), default: nil
+    prop :is_eol, T.nilable(T::Boolean), default: nil
     prop :tokenized_line, T.nilable(T::Array[String]), default: nil
     prop :raw_line, T.nilable(String), default: nil
     prop :file_info, T.nilable(FileInfo), default: nil
@@ -275,6 +273,7 @@ module SheepAst
 
     def init
       @expr = nil
+      @is_eol = nil
       @tokenized_line = nil
       @file_info = nil
       @file_manager = nil
@@ -289,7 +288,8 @@ module SheepAst
     sig { returns(String) }
     def inspect
       return "custom inspect <#{self.class.name} object_id = #{object_id},"\
-        " expr = '#{expr.inspect}', stack = #{stack.inspect}, stack_symbol = #{stack_symbol.inspect},"\
+        " expr = '#{expr.inspect}', is_eol = '#{is_eol.inspect}',"\
+        " stack = #{stack.inspect}, stack_symbol = #{stack_symbol.inspect},"\
         " request_next_data = #{request_next_data.inspect}, file_info = #{file_info.inspect},"\
         " tokenized_line = #{@tokenized_line.inspect}, raw_line = #{@raw_line.inspect}"
     end
