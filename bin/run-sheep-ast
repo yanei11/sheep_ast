@@ -1,64 +1,61 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-if __FILE__ != $PROGRAM_NAME
-  exit 0
-end
-
 require 'bundler/setup'
 require 'sheep_ast'
 require 'benchmark'
 
-prog = __FILE__.to_s.split('/').last
+module SheepAst
+  # TBD
+  class Run
+    include SheepAst::Option
 
-ENV['SHEEP_BIN'] = '1'
-option = SheepAst::AnalyzerCore.option_parse(ARGV)
+    # rubocop:disable all
+    def run
+      prog = __FILE__.to_s.split('/').last
 
-ruby_version = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
-current_dir = Dir.pwd
+      optparse = option_on
+      option = option_parse(ARGV)
 
-puts "#{prog}> Executing on"
-puts "#{prog}>   version: #{SheepAst::VERSION}"
-puts "#{prog}>   ruby version: #{ruby_version}"
-puts "#{prog}>   current dir: #{current_dir}"
+      current_dir = Dir.pwd
 
-config_file = option[:r]
+      puts "#{prog}> Executing on"
+      puts "#{prog}>   version: #{SheepAst::VERSION}"
+      puts "#{prog}>   ruby version: #{ruby_version}"
+      puts "#{prog}>   current dir: #{current_dir}"
 
-if config_file.nil?
-  SheepAst::AnalyzerCore.usage
-  exit
-end
+      exit_status = false
+      time = nil
 
-if File.exist?(config_file)
-  load config_file
-else
-  puts "#{prog}> #{config_file} could not be found"
-end
+      core = SheepAst::AnalyzerCore.new
 
-exit_status = false
-time = nil
+      ret = do_configure(core, option, optparse)
+      if ret
+        if !ARGV.empty?
+          time = Benchmark.measure {
+            exit_status = core.report(raise: false) {
+              puts "#{prog}> Do analyze"
+              core.analyze_file(ARGV) unless ARGV.empty?
+            }
+          }
 
-if defined? configure
-  puts "#{prog}> Do configure"
-  core = SheepAst::AnalyzerCore.new
-  configure(core)
-  if !ARGV.empty?
-    time = Benchmark.measure {
-      exit_status = core.report(raise: false) {
-        puts "#{prog}> Do analyze"
-        core.analyze_file(ARGV) unless ARGV.empty?
-      }
-    }
+          if !exit_status
+            puts 'ERROR: Exception is happened in the analyzer core'
+          end
+        else
+          puts "#{prog}> Files are not given to ARGV."
+        end
+      end
 
-    if !exit_status
-      puts 'ERROR: Exception is happened in the analyzer core'
+      puts "#{prog}> Time to process : #{time.real}"
+      puts "#{prog}> Finish. Thank you."
+
+      exit(exit_status)
     end
-  else
-    puts "#{prog}> Files are not given to ARGV."
   end
 end
 
-puts "#{prog}> Time to process : #{time.real}"
-puts "#{prog}> Finish. Thank you."
-
-exit(exit_status)
+if __FILE__ == $PROGRAM_NAME
+  prog = SheepAst::Run.new
+  prog.run
+end

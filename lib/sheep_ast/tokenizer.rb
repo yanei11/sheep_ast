@@ -16,6 +16,9 @@ module SheepAst
     include Exception
     include Log
 
+    sig { returns(String) }
+    attr_accessor :last_word_check
+
     sig { void }
     def initialize
       @tokenize_stage = []
@@ -225,10 +228,17 @@ module SheepAst
 
     sig { params(line: String).returns(T::Array[String]) }
     def scan(line)
+      if !@last_word_check.nil?
+        if @last_word_check != line[-1]
+          ldebug "last_word_check failed; drop last word"
+          line = line[0..-2]
+        end
+      end
+
       if @split.nil?
-        test = line.scan(/\w+|\W/)
+        test = T.must(line).scan(/\w+|\W/)
       else
-        test = line.split(@split.call)
+        test = T.must(line).split(@split.call)
       end
 
       test.reject!(&:empty?)

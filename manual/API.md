@@ -25,6 +25,12 @@ If it is set DEBUG, emit ldebug result for debugging.
 
 If this is defined, pry debug session in let's :debug fuction will be always disabled.
 
+## bin/run-sheep-ast and appimage executable
+
+For the executable, please see help by -h option or example command by `rake bin` command.  
+Basically the difference with using as library is that, AST definition must be done by `configure(core)` function and read it by `-r` option.
+Direct example is shown at [Example4]((https://yanei11.github.io/sheep_ast_pages/file.Example4.html))
+
 # Class, Module
 
 Following class and module are the objects that holds external APIs.

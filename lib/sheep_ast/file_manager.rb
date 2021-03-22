@@ -22,6 +22,9 @@ module SheepAst
     sig { returns(T::Set[String]) }
     attr_accessor :processed_file_list
 
+    sig { returns(String) }
+    attr_accessor :last_word_check
+
     sig { params(stage_manager: StageManager, tokenizer: Tokenizer, datastore: DataStore).void }
     def initialize(stage_manager, tokenizer, datastore)
       super()
@@ -94,10 +97,14 @@ module SheepAst
       return line
     end
 
-    sig { params(line: T.nilable(T::Array[String]), rec: T::Boolean).returns(T.nilable(String)) }
+    sig {
+      params(line: T.nilable(T::Array[String]), rec: T::Boolean).returns(
+        [T.nilable(String), T::Boolean]
+      )
+    }
     def feed_expr(line, rec = false) # rubocop:disable all
       expr = line[@file_info.index] unless line.nil?
-      # expr = '__sheep_newline__' if expr == "\n"
+      is_eol = false
 
       ldebug "feed_expr expr = #{expr.inspect}"
       ldebug "feed_expr file_info = #{@file_info.inspect}"
@@ -110,7 +117,7 @@ module SheepAst
         if @file_info.line < @file_info.max_line
           @file_info.index = 0
           ldebug 'reached to the new line. get next line.'
-          expr = feed_expr(feed_line, true)
+          expr, is_eol = feed_expr(feed_line, true)
         elsif @file_info.line == @file_info.max_line
           if !@file_info.file.nil?
             ldebug 'EOF', :red
@@ -124,21 +131,28 @@ module SheepAst
         end
       else
         @file_info.index += 1
+        if T.must(line).size == @file_info.index
+          is_eol = true
+        else
+          is_eol = false
+        end
       end
 
       if !rec
         ldebug "index = #{@file_info.index} is input"
-        ldebug "feed expr returned #{expr.inspect} at #{@file_info.line}:#{@file_info.index}", :red
+        ldebug "feed expr returned #{expr.inspect}, is_eol = #{is_eol.inspect}"\
+          " at #{@file_info.line}:#{@file_info.index}", :red
       end
 
-      return expr
+      return expr, is_eol
     end
 
     sig { returns(AnalyzeData) }
     def next_data
       line = feed_line
-      expr = feed_expr(line)
+      expr, is_eol = feed_expr(line)
       @analyze_data.expr = expr
+      @analyze_data.is_eol = is_eol
       @analyze_data.tokenized_line = @file_info.tokenized[@file_info.line]
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
@@ -212,6 +226,7 @@ module SheepAst
     sig { params(expr: String).void }
     def register_next_expr(expr)
       @file_info.init
+      @tokenizer.last_word_check = @last_word_check
       @file_info.tokenized, @file_info.max_line = @tokenizer << expr
     end
 

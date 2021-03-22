@@ -20,9 +20,10 @@ module SheepAst
     include UseMatchAlias
     include UseActionAlias
 
-    sig { params(data_store: DataStore).void }
-    def initialize(data_store)
+    sig { params(analyzer_core: AnalyzerCore, data_store: DataStore).void }
+    def initialize(analyzer_core, data_store)
       @data_store = data_store
+      @analyzer_core = analyzer_core
       super()
     end
   end

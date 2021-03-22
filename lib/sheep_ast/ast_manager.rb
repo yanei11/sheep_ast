@@ -35,7 +35,18 @@ module SheepAst
 
     sig { returns(String) }
     def inspect
-      "custom inspect <#{self.class.name} object_id = #{object_id}, full_name = #{@full_name.inspect}>"
+      "custom inspect <#{self.class.name} object_id = #{object_id},"\
+        " full_name = #{@full_name.inspect}>"
+    end
+
+    sig { void }
+    def disable_action
+      @disable_action = true
+    end
+
+    sig { void }
+    def enable_action
+      @disable_action = false
     end
 
     sig { void }
@@ -78,6 +89,7 @@ module SheepAst
 
     sig { params(matches: T::Array[MatchBase], action: ActionBase, name: String).void }
     def add(matches, action, name)
+      action.my_ast_manager = self
       @node_factory.register_nodes(matches, action, name)
     end
 
@@ -187,6 +199,11 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def at_end(data, node)
+      if @disable_action
+        ldebug 'disable action is true, so return Finish without calling action'
+        return MatchAction::Finish
+      end
+
       ldebug "matched '#{data.expr.inspect}' at end"
       ldebug "invoking '#{node.my_action.inspect}' at end"
       res = T.must(T.must(node).my_action).action(data, node)

@@ -1,6 +1,20 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2020-03-22
+### Added
+- Check at tokenizer to input strings when last word is specific word (default = space)
+- EOL validation; If the input is continued after an action is called, then break the analyze
+- To disable/enable to call action
+- Analyze functin returns AnalyzeCoreReturn object. It contains `result`, `eol`, `next_command` fields
+
+### Breaking Change
+- << operator returns boolean. It returned AnalyzerCore object before
+
+
+### Breaking Change
+- `_SS` and `_S` function is now deprecated function. Will be removed in major release
+
 ## [0.5.0] - 2020-02-28
 ### Added
 - API for AST node to walk for revert direction is added to analyzer core
@@ -8,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Example4 is added
 
 ### Breaking Change
-- _SS and _S statement is now deprecated function. Will be removed in major release
+- `_SS` and `_S` function is now deprecated function. Will be removed in major release
 
 ## [0.4.1] - 2020-02-05
 ### Added

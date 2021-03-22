@@ -85,6 +85,10 @@ Please see following Examples at Resources section below for the documentation.
 To try sheep_ast, Please see the [INSTALL.md](https://github.com/yanei11/sheep_ast/blob/master/INSTALL.md) for the installation.  
 sheep_ast supports [AppImage](https://appimage.org/) format as All in one package. You can download it and execute it for just using sheep_ast without installing ruby environment.   
 (The AppImage contains ruby and just executing [bin/run-sheep-ast](https://github.com/yanei11/sheep_ast/blob/master/bin/run-sheep-ast) file)  
+
+For the executable, please see help by executing with `-h` option or example command by `rake bin` command.
+Basically the difference from using as library is that, AST definition must be done by `configure(core)` function and read it by `-r` option.
+Direct example is shown at [Example4](https://yanei11.github.io/sheep_ast_pages/file.Example4.html)
   
 For further examples, you can try to clone this repository and `rake unit`, `rake bin` command may help you to try and see basic example.  
 But this commands require to install ruby environement.

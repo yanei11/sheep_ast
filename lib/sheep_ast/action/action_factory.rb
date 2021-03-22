@@ -18,6 +18,9 @@ module SheepAst
     sig { returns(DataStore) }
     attr_accessor :data_store
 
+    sig { returns(AnalyzerCore) }
+    attr_accessor :analyzer_core
+
     sig { void }
     def initialize
       super()
@@ -42,6 +45,7 @@ module SheepAst
 
       create_id(action)
       action.data_store = @data_store
+      action.analyzer_core = @analyzer_core
       action.action_factory = self
       action.match_factory = my_factory.match_factory
       return action
@@ -58,7 +62,8 @@ module SheepAst
       @action_factory = ActionFactory.new
       @action_factory.my_factory = self
       application_error '@data_store is necessary' if data_store.nil?
-      @action_factory.data_store = data_store
+      @action_factory.data_store = @data_store
+      @action_factory.analyzer_core = @analyzer_core
       super()
     end
   end
