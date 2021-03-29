@@ -228,17 +228,18 @@ module SheepAst
 
     sig { params(line: String).returns(T::Array[String]) }
     def scan(line)
-      if !@last_word_check.nil?
-        if @last_word_check != line[-1]
-          ldebug "last_word_check failed; drop last word"
-          line = line[0..-2]
-        end
-      end
-
+      ldebug "scan line = #{line.inspect}"
       if @split.nil?
         test = T.must(line).scan(/\w+|\W/)
       else
         test = T.must(line).split(@split.call)
+      end
+
+      if !@last_word_check.nil?
+        if @last_word_check != line[-1]
+          ldebug "last_word_check failed; drop last word"
+          test = test[0..-2]
+        end
       end
 
       test.reject!(&:empty?)

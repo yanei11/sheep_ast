@@ -11,10 +11,6 @@ All notable changes to this project will be documented in this file.
 ### Breaking Change
 - << operator returns boolean. It returned AnalyzerCore object before
 
-
-### Breaking Change
-- `_SS` and `_S` function is now deprecated function. Will be removed in major release
-
 ## [0.5.0] - 2020-02-28
 ### Added
 - API for AST node to walk for revert direction is added to analyzer core
