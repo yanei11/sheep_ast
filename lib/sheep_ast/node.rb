@@ -229,11 +229,11 @@ module SheepAst
       end
 
       if @my_match.nil?
-        ldebug? and ldebug "register_node: my node = root, got '#{match.key}',my id = #{my_id} my obect_id = #{object_id},"\
-          " assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
+        ldebug? and ldebug "register_node: my node = root, got '#{match.key}',my id = #{my_id}"\
+          " my obect_id = #{object_id}, assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
       else
-        ldebug? and ldebug "register_node: my node = #{@my_match.key}, got '#{match.key}', my object_id = #{object_id},"\
-          " assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
+        ldebug? and ldebug "register_node: my node = #{@my_match.key}, got '#{match.key}', "\
+          " my object_id = #{object_id}, assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
       end
 
       match_container[match.key] = match

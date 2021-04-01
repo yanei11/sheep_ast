@@ -242,7 +242,7 @@ module SheepAst
         end
       end
 
-      test.reject!(&:empty?)
+      T.must(test).reject!(&:empty?)
       if test.respond_to? :each
         # no process
       elsif test.nil?

@@ -67,7 +67,8 @@ module SheepAst
         bind_name(name, @current_id)
       end
 
-      ldebug? and ldebug2 "id = #{@current_id}, obj.my_id = #{obj.my_id} registrated object_id = #{obj.object_id}, name = '#{name}'"
+      ldebug? and ldebug2 "id = #{@current_id}, obj.my_id = #{obj.my_id}"\
+        " registrated object_id = #{obj.object_id}, name = '#{name}'"
       return @current_id
     end
 

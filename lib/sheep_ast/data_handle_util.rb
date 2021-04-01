@@ -44,7 +44,8 @@ module SheepAst
 
       expr = expr_get(tokenized, line, offset, max_line, index, newline)
 
-      ldebug? and ldebug "Index at #{index} is  #{expr}, for line = #{line}, line_offset = #{line_offset}, offset = #{offset},"\
+      ldebug? and ldebug "Index at #{index} is  #{expr}, for line = #{line},"\
+        " line_offset = #{line_offset}, offset = #{offset},"\
         " max_line = #{max_line}"
       return expr
     end
