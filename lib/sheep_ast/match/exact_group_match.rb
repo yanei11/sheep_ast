@@ -41,14 +41,14 @@ module SheepAst
     sig { params(data: AnalyzeData).returns(T::Boolean) }
     def lookup(data)
       key = data.expr
-      ldebug "lookup for #{T.must(key)}"
+      ldebug? and ldebug "lookup for #{T.must(key)}"
       @keys.each do |item|
         if key == item
-          ldebug 'Found'
+          ldebug? and ldebug 'Found'
           return true
         end
       end
-      ldebug "Not Found => group keys: #{keys.inspect}"
+      ldebug? and ldebug "Not Found => group keys: #{keys.inspect}"
       return false
     end
   end

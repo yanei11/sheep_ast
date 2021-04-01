@@ -31,7 +31,7 @@ module SheepAst
       ).returns(T.nilable(T::Boolean))
     }
     def operate_node(pair, datastore, ast_name, operation, **options)
-      ldebug "Node operation #{operation.inspect} to #{ast_name}"
+      ldebug? and ldebug "Node operation #{operation.inspect} to #{ast_name}"
       if @analyzer_core.nil?
         application_error 'analyzer_core must be set'
       end

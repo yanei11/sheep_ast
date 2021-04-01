@@ -43,7 +43,7 @@ module SheepAst
 
     sig { params(file: String).returns(T.nilable(T::Set[String])) }
     def processed?(file)
-      ldebug "Mark processed => #{File.expand_path(file)}", :blue
+      ldebug? and ldebug "Mark processed => #{File.expand_path(file)}", :blue
       return @processed_file_list.add?(File.expand_path(file))
     end
 
@@ -77,23 +77,23 @@ module SheepAst
         # strategy1: check if resume info is existed
         restored = restore_info
         if restored
-          ldebug 'resume info is existed'
+          ldebug? and ldebug 'resume info is existed'
           @file_info.copy(restored)
           line = @file_info.tokenized[@file_info.line]
         else
           # strategy2: no resume info. Get next file
           if consume_file # rubocop: disable all
-            ldebug 'Got another file'
+            ldebug? and ldebug 'Got another file'
             line = @file_info.tokenized[@file_info.line]
           else
             # Strategy3: So, nothing to process. GIve up
-            ldebug 'Give up!!'
+            ldebug? and ldebug 'Give up!!'
             line = nil
           end
         end
       end
 
-      ldebug "feed line returned #{line.inspect}, line_no = #{@file_info.line}", :red
+      ldebug? and ldebug "feed line returned #{line.inspect}, line_no = #{@file_info.line}", :red
       return line
     end
 
@@ -106,8 +106,8 @@ module SheepAst
       expr = line[@file_info.index] unless line.nil?
       is_eol = false
 
-      ldebug "feed_expr expr = #{expr.inspect}"
-      ldebug "feed_expr file_info = #{@file_info.inspect}"
+      ldebug? and ldebug "feed_expr expr = #{expr.inspect}"
+      ldebug? and ldebug "feed_expr file_info = #{@file_info.inspect}"
 
       if expr.nil?
         # strategy1: expr = nil case is two,
@@ -116,18 +116,18 @@ module SheepAst
         @file_info.line += 1
         if @file_info.line < @file_info.max_line
           @file_info.index = 0
-          ldebug 'reached to the new line. get next line.'
+          ldebug? and ldebug 'reached to the new line. get next line.'
           expr, is_eol = feed_expr(feed_line, true)
         elsif @file_info.line == @file_info.max_line
           if !@file_info.file.nil?
-            ldebug 'EOF', :red
+            ldebug? and ldebug 'EOF', :red
             expr = '__sheep_eof__'
             # else
-            # ldebug 'EOC', :red
+            # ldebug? and ldebug 'EOC', :red
             # expr = '__sheep_eoc__'
           end
         else
-          ldebug 'Bug route?'
+          ldebug? and ldebug 'Bug route?'
         end
       else
         @file_info.index += 1
@@ -139,8 +139,8 @@ module SheepAst
       end
 
       if !rec
-        ldebug "index = #{@file_info.index} is input"
-        ldebug "feed expr returned #{expr.inspect}, is_eol = #{is_eol.inspect}"\
+        ldebug? and ldebug "index = #{@file_info.index} is input"
+        ldebug? and ldebug "feed expr returned #{expr.inspect}, is_eol = #{is_eol.inspect}"\
           " at #{@file_info.line}:#{@file_info.index}", :red
       end
 
@@ -172,7 +172,7 @@ module SheepAst
 
     sig { returns(T::Boolean) }
     def consume_file
-      ldebug 'consume file called', :red
+      ldebug? and ldebug 'consume file called', :red
       first_time = T.let(true, T::Boolean)
       loop do
         file = @reg_files.shift
@@ -237,7 +237,7 @@ module SheepAst
       info.copy(@file_info)
       @resume_info << info
 
-      ldebug "Suspended info process!! resume_stack = #{@resume_info.length}"\
+      ldebug? and ldebug "Suspended info process!! resume_stack = #{@resume_info.length}"\
         " for info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
 
       @file_info.init
@@ -254,7 +254,7 @@ module SheepAst
     sig { returns(T.nilable(FileInfo)) }
     def restore_info
       info = @resume_info.pop
-      ldebug "restore_info, info = #{info.inspect}"
+      ldebug? and ldebug "restore_info, info = #{info.inspect}"
       return nil if info.nil?
 
       @stage_manager.restore_info
@@ -262,7 +262,7 @@ module SheepAst
       # analyze_data shall be init here
       @analyze_data.init
 
-      ldebug "Resumed info process!! resume_stack = #{@resume_info.length}"\
+      ldebug? and ldebug "Resumed info process!! resume_stack = #{@resume_info.length}"\
         " for info = #{info.inspect}, for analyze_data = #{@analyze_data.inspect}", :indianred
       return info
     end
@@ -271,7 +271,7 @@ module SheepAst
     def put_namespace(namespace)
       @file_info.namespace_stack = @resume_info.last.namespace_stack.dup
       @file_info.namespace_stack << namespace
-      ldebug "putting namespace = #{namespace.inspect}, and stack is #{@file_info.namespace_stack.inspect}"
+      ldebug? and ldebug "putting namespace = #{namespace.inspect}, and stack is #{@file_info.namespace_stack.inspect}"
     end
 
     sig {

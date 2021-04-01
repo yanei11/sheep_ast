@@ -84,7 +84,7 @@ module SheepAst
       key = "#{ns}#{namespace_sep}#{key}" if options[:namespace_key]
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
 
-      ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\
+      ldebug? and ldebug "store => '#{store_id}', key_id => '#{key_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', key_id => '#{key_id}', value_id => '#{value_id}', "\
         "key => '#{key}', value => '#{value}'"
 
@@ -117,7 +117,7 @@ module SheepAst
 
       namespace_sep = T.unsafe(self).namespace_separator(**options)
       value = "#{ns}#{namespace_sep}#{value}" if options[:namespace_value]
-      ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
+      ldebug? and ldebug "store => '#{store_id}', value_id => '#{value_id}', "\
         "pair_data => '#{pair}', value_id => '#{value_id}', "\
         "value => '#{value}'"
       datastore.assign(store_id, value)

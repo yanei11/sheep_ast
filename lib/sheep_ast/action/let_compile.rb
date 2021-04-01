@@ -86,16 +86,16 @@ module SheepAst
         return T.unsafe(self).ret(**options)
       end
 
-      ldebug '=== compile debug ==='
-      ldebug "data : #{data.inspect}"
-      ldebug "namespace : #{namespace.inspect}"
-      ldebug "namespace_arr : #{namespace_arr.inspect}"
-      ldebug "user_def : #{user_def.inspect}"
-      ldebug "erb_head : #{head}"
-      ldebug "title : #{title}"
-      ldebug "suffix : #{suffix}"
-      ldebug "outdir : #{outdir.inspect}"
-      ldebug '=== end ==='
+      ldebug? and ldebug '=== compile debug ==='
+      ldebug? and ldebug "data : #{data.inspect}"
+      ldebug? and ldebug "namespace : #{namespace.inspect}"
+      ldebug? and ldebug "namespace_arr : #{namespace_arr.inspect}"
+      ldebug? and ldebug "user_def : #{user_def.inspect}"
+      ldebug? and ldebug "erb_head : #{head}"
+      ldebug? and ldebug "title : #{title}"
+      ldebug? and ldebug "suffix : #{suffix}"
+      ldebug? and ldebug "outdir : #{outdir.inspect}"
+      ldebug? and ldebug '=== end ==='
 
       template_contents = T.must(raw)[T.must(head_index) + 1..-1]
       erb = ERB.new(template_contents, trim_mode: 1)

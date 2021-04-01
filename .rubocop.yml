@@ -54,7 +54,7 @@ Style/ConditionalAssignment:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 30
+  Max: 40
 
 Metrics/ClassLength:
   Max: 150
@@ -63,10 +63,10 @@ Metrics/ModuleLength:
   Max: 150
 
 Metrics/CyclomaticComplexity:
-  Max: 10
+  Max: 12
 
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 21
 
 Style/NegatedIf:
   Enabled: false

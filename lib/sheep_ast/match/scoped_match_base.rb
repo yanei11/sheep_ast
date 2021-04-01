@@ -81,7 +81,8 @@ module SheepAst
         sem_inc
       end
 
-      ldebug "test_finish ? key = #{key.inspect}, end_expr = #{@end_expr.inspect}, sem = #{@sem}, ret = #{ret}"
+      ldebug? and ldebug "test_finish ? key = #{key.inspect},"\
+        " end_expr = #{@end_expr.inspect}, sem = #{@sem}, ret = #{ret}"
 
       return ret
     end

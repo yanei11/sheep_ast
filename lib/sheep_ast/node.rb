@@ -111,7 +111,7 @@ module SheepAst
     # find next node from maps the node has
     sig { params(data: AnalyzeData).returns(NodeInfo) }
     def find_next_node(data) # rubocop: disable all
-      ldebug "#{inspect} start processing..."
+      ldebug? and ldebug "#{inspect} start processing..."
 
       if @reordered.nil?
         reordered
@@ -120,11 +120,11 @@ module SheepAst
 
       @ordered_methods_array.each do |m| #rubocop: disable all
         match = m.call(data)
-        ldebug "Got match #{match.inspect} at #{m.name}" unless match.nil?
+        ldebug? and ldebug "Got match #{match.inspect} at #{m.name}" unless match.nil?
 
         match = nil unless match&.additional_cond(data)
         # if !match.nil? && !match.validate(data)
-        #   ldebug 'Additional condition cannot be fullfiled. set nil'
+        #   ldebug? and ldebug 'Additional condition cannot be fullfiled. set nil'
         #   match = nil
         # end
 
@@ -142,10 +142,10 @@ module SheepAst
           # The condition match is not done.
           # This is clearly not End of AST lookup
           if condition_change?
-            ldebug 'MatchStatus::ConditionMatchingStart'
+            ldebug? and ldebug 'MatchStatus::ConditionMatchingStart'
             node_info.status = MatchStatus::ConditionMatchingStart
           else
-            ldebug 'MatchStatus::ConditionMatchingProgress'
+            ldebug? and ldebug 'MatchStatus::ConditionMatchingProgress'
             node_info.status = MatchStatus::ConditionMatchingProgress
           end
         elsif node.my_action.nil?
@@ -171,15 +171,15 @@ module SheepAst
           node_info.status = MatchStatus::MatchingProgress
         end
 
-        ldebug "node_info.status = #{node_info.status}"
-        ldebug "condition flag = #{@condition_flag.inspect}"
+        ldebug? and ldebug "node_info.status = #{node_info.status}"
+        ldebug? and ldebug "condition flag = #{@condition_flag.inspect}"
         if node_info.status == MatchStatus::AtEnd && condition_change?
-          ldebug 'MatchStatus::ConditionMatchingAtEnd'
+          ldebug? and ldebug 'MatchStatus::ConditionMatchingAtEnd'
           node_info.status = MatchStatus::ConditionMatchingAtEnd
         end
 
         if node_info.status == MatchStatus::MatchingProgress && condition_change?
-          ldebug 'MatchStatus::ConditionEndButMatchingProgress'
+          ldebug? and ldebug 'MatchStatus::ConditionEndButMatchingProgress'
           node_info.status = MatchStatus::ConditionEndButMatchingProgress
         end
 
@@ -190,7 +190,7 @@ module SheepAst
       # The given keyword does not match any registered nodes.
       # This is not found status
 
-      ldebug "No matching match. NotFound. my_id = #{@my_id}, object_id = #{object_id}"
+      ldebug? and ldebug "No matching match. NotFound. my_id = #{@my_id}, object_id = #{object_id}"
       return NodeInfo.new(status: MatchStatus::NotFound)
     end
 
@@ -229,11 +229,11 @@ module SheepAst
       end
 
       if @my_match.nil?
-        ldebug "register_node: my node = root, got '#{match.key}',my id = #{my_id} my obect_id = #{object_id},"\
-          " assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
+        ldebug? and ldebug "register_node: my node = root, got '#{match.key}',my id = #{my_id}"\
+          " my obect_id = #{object_id}, assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
       else
-        ldebug "register_node: my node = #{@my_match.key}, got '#{match.key}', my object_id = #{object_id},"\
-          " assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
+        ldebug? and ldebug "register_node: my node = #{@my_match.key}, got '#{match.key}', "\
+          " my object_id = #{object_id}, assigned id = #{node.my_id}, assigned object_id = #{node.object_id}"
       end
 
       match_container[match.key] = match

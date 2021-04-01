@@ -17,7 +17,7 @@ module SheepAst
     sig { returns(T::Array[NextCommand]) }
     def next_command
       if @focus.nil?
-        ldebug 'Need forcus_on to point ast manager to use this function'
+        ldebug? and ldebug 'Need forcus_on to point ast manager to use this function'
         return []
       end
 

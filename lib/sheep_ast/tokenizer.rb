@@ -228,20 +228,21 @@ module SheepAst
 
     sig { params(line: String).returns(T::Array[String]) }
     def scan(line)
-      if !@last_word_check.nil?
-        if @last_word_check != line[-1]
-          ldebug "last_word_check failed; drop last word"
-          line = line[0..-2]
-        end
-      end
-
+      ldebug? and ldebug "scan line = #{line.inspect}"
       if @split.nil?
         test = T.must(line).scan(/\w+|\W/)
       else
         test = T.must(line).split(@split.call)
       end
 
-      test.reject!(&:empty?)
+      if !@last_word_check.nil?
+        if @last_word_check != line[-1]
+          ldebug? and ldebug "last_word_check failed; drop last word"
+          test = test[0..-2]
+        end
+      end
+
+      T.must(test).reject!(&:empty?)
       if test.respond_to? :each
         # no process
       elsif test.nil?
@@ -257,16 +258,16 @@ module SheepAst
     def shaping(line)
       buf = line
 
-      ldebug2 "#{line} will be combined process"
+      ldebug? and ldebug2 "#{line} will be combined process"
 
       prev = T.let(nil, T.nilable(T::Array[String]))
       @tokenize_stage.each do |blk|
         loop do
           buf, options = basic_shaping(buf, blk)
           if T.must(options)[:recursive]
-            ldebug 'recursiv option enable'
-            ldebug "buf  => #{buf.inspect}"
-            ldebug "prev => #{prev.inspect}"
+            ldebug? and ldebug 'recursiv option enable'
+            ldebug? and ldebug "buf  => #{buf.inspect}"
+            ldebug? and ldebug "prev => #{prev.inspect}"
             if buf != prev
               prev = buf.dup
             else

@@ -15,7 +15,9 @@ module SheepAst
       prog = __FILE__.to_s.split('/').last
 
       optparse = option_on
-      option = option_parse(ARGV)
+      argv = ARGV.dup
+
+      option = option_parse(argv)
 
       current_dir = Dir.pwd
 
@@ -31,11 +33,11 @@ module SheepAst
 
       ret = do_configure(core, option, optparse)
       if ret
-        if !ARGV.empty?
+        if !argv.empty?
           time = Benchmark.measure {
             exit_status = core.report(raise: false) {
               puts "#{prog}> Do analyze"
-              core.analyze_file(ARGV) unless ARGV.empty?
+              core.analyze_file(argv) unless argv.empty?
             }
           }
 
@@ -43,7 +45,7 @@ module SheepAst
             puts 'ERROR: Exception is happened in the analyzer core'
           end
         else
-          puts "#{prog}> Files are not given to ARGV."
+          puts "#{prog}> Files are not given to argv."
         end
       end
 

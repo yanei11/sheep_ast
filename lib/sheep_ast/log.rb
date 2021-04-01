@@ -29,6 +29,7 @@ module SheepAst
       lev = level_get
       dev = device_get
       @stack_base = stack_base_get
+      @loglevel = 0
       set_logger(lev, dev)
       super()
     end
@@ -95,6 +96,12 @@ module SheepAst
         ldebug msg.color(color_)
       end
     end
+
+    sig { returns(T::Boolean) }
+    def ldebug?
+      return @loglevel >= 2
+    end
+
 
     sig { params(msg: String, color_: Symbol).void }
     def ldebug(msg = '', color_ = :antiquewhite)
@@ -182,10 +189,13 @@ module SheepAst
       env = ENV['SHEEP_LOG']
       case env
       when 'DEBUG'
+        @loglevel = 2
         return Logger::DEBUG
       when 'INFO'
+        @loglevel = 1
         return Logger::INFO
       else
+        @loglevel = 0
         return Logger::WARN
       end
     end

@@ -136,12 +136,12 @@ module SheepAst
       # target = target_.gsub(/\||\?|\*|\(|\)|\{|\}|\[|\]|\+|\./) { |word| "\\#{word}" }
       rg = Regexp.new expr_
       @md = rg.match(target_)
-      ldebug @md.inspect
+      ldebug? and ldebug @md.inspect
       if !@md.nil?
-        ldebug 'Found'
+        ldebug? and ldebug 'Found'
         return true
       else
-        ldebug 'Not Found'
+        ldebug? and ldebug 'Not Found'
         return nil
       end
     end
@@ -149,20 +149,20 @@ module SheepAst
     def additional_cond(data)
       if @options[:at_head]
         if data.file_info.index != 1
-          ldebug 'at head : false'
+          ldebug? and ldebug 'at head : false'
           return false
         end
-        ldebug 'at head : true'
+        ldebug? and ldebug 'at head : true'
       end
 
       ret = iterate_cond(data, @start_add_cond)
-      ldebug "additional_cond : #{ret.inspect}"
+      ldebug? and ldebug "additional_cond : #{ret.inspect}"
       return ret
     end
 
     def additional_end_cond(data)
       ret = iterate_cond(data, @end_add_cond)
-      ldebug "additional_end_cond : #{ret.inspect}"
+      ldebug? and ldebug "additional_end_cond : #{ret.inspect}"
       return ret
     end
 
@@ -195,7 +195,7 @@ module SheepAst
 
     sig { void }
     def dump
-      ldebug "matched_expr => #{@matched_expr.inspect}"
+      ldebug? and ldebug "matched_expr => #{@matched_expr.inspect}"
     end
   end
 end

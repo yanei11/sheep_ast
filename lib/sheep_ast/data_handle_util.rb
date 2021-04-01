@@ -38,13 +38,14 @@ module SheepAst
 
       application_error "index is invalid value: index = #{index}" if index.negative? || index.zero?
 
-      ldebug "Current data: expr = #{tokenized&.[](line)&.[](offset - 1)}, "\
+      ldebug? and ldebug "Current data: expr = #{tokenized&.[](line)&.[](offset - 1)}, "\
         "for line = #{line}, line_offset = #{line_offset}, offset = #{offset},"\
         " max_line = #{max_line}. From here to find expr after index = #{index}"
 
       expr = expr_get(tokenized, line, offset, max_line, index, newline)
 
-      ldebug "Index at #{index} is  #{expr}, for line = #{line}, line_offset = #{line_offset}, offset = #{offset},"\
+      ldebug? and ldebug "Index at #{index} is  #{expr}, for line = #{line},"\
+        " line_offset = #{line_offset}, offset = #{offset},"\
         " max_line = #{max_line}"
       return expr
     end
@@ -72,7 +73,7 @@ module SheepAst
         from_index = 0
       end
 
-      ldebug "Hit info: line = #{line_diff}, to_index = #{to_index}, "\
+      ldebug? and ldebug "Hit info: line = #{line_diff}, to_index = #{to_index}, "\
         "line_expr = #{expr_test.inspect}"
 
       return expr_test
@@ -86,7 +87,7 @@ module SheepAst
       test_index = from_index + number
       number += 1
 
-      ldebug "tokenized = #{tokenized.inspect}, line = #{line.inspect}, "\
+      ldebug? and ldebug "tokenized = #{tokenized.inspect}, line = #{line.inspect}, "\
         "from_index = #{from_index.inspect},"\
         " to_index = #{to_index.inspect}, number = #{number}, line_diff = #{line_diff}"
 
@@ -96,7 +97,7 @@ module SheepAst
 
       test_expr = line_expr[test_index]
 
-      ldebug "test expr = #{test_expr.inspect}"
+      ldebug? and ldebug "test expr = #{test_expr.inspect}"
 
       return nil if test_expr.nil?
 
@@ -106,12 +107,12 @@ module SheepAst
 
       offset = offset_get(tokenized, line, from_index, line_diff)
 
-      ldebug "test_index + offset = #{test_index + offset}, "\
+      ldebug? and ldebug "test_index + offset = #{test_index + offset}, "\
         "to_index + @newline_count = #{to_index + @newline_count}"
 
       if test_index + offset == to_index + @newline_count
         expr = line_expr[test_index]
-        ldebug "Find the expression fullfilled given condition. expr = #{expr} !!"
+        ldebug? and ldebug "Find the expression fullfilled given condition. expr = #{expr} !!"
         return expr
       end
 
@@ -135,7 +136,7 @@ module SheepAst
       end
 
       expr = tokenized[line + line_diff][index - offset + @newline_count]
-      ldebug "target_expr is #{expr.inspect}, index = #{index}, offset = #{offset}, "\
+      ldebug? and ldebug "target_expr is #{expr.inspect}, index = #{index}, offset = #{offset}, "\
         "line = #{line.inspect}, line_diff = #{line_diff.inspect}"
 
       return index - offset + @newline_count
@@ -169,10 +170,10 @@ module SheepAst
       @exprs.each_with_index do |expr, idx|
         idata = index_data(data, @offset_line, @offset + idx, @include_newline)
         if !match_dh(expr, T.must(idata))
-          ldebug "validate fail: #{expr} is not hit for #{idata}"
+          ldebug? and ldebug "validate fail: #{expr} is not hit for #{idata}"
           return false
         else
-          ldebug "validte ok: #{expr}"
+          ldebug? and ldebug "validte ok: #{expr}"
         end
       end
       return true
