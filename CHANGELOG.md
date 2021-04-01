@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2020-04-02
+### Changed
+- Performance improved 70% by improving log strategy
+
 ## [0.6.0] - 2020-03-22
 ### Added
 - Check at tokenizer to input strings when last word is specific word (default = space)

@@ -77,13 +77,13 @@ module SheepAst
 
     sig { params(data: AnalyzeData).returns(T::Boolean) }
     def really_end?(data)
-      ldebug 'really_end'
+      ldebug? and ldebug 'really_end'
       if @qualifier.nil?
         lfatal warning
         missing_impl
       else
         ret = @qualifier.qualify(data)
-        ldebug "Really end? = #{ret}"
+        ldebug? and ldebug "Really end? = #{ret}"
         return ret
       end
     end

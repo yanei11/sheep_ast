@@ -50,7 +50,7 @@ module SheepAst
     def include(pair, datastore, key_id, range = 1..-2, **options)
       str = pair[key_id]
       relative_path = T.must(T.must(str)[range]).join
-      ldebug "let include is called with #{relative_path.inspect}"
+      ldebug? and ldebug "let include is called with #{relative_path.inspect}"
 
       file = find_next_file(relative_path)
 

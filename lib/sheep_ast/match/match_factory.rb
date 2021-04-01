@@ -52,7 +52,7 @@ module SheepAst
     # rubocop: disable all
     sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(T.any(T::Array[MatchBase], MatchBase)) }
     def gen(kind, *para, **options)
-      ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
+      ldebug? and ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
 
       match_arr = []
       repeat = options[:repeat].nil? ? 1..1 : 1..options[:repeat]

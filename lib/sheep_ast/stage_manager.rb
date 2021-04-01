@@ -57,17 +57,17 @@ module SheepAst
          info.status != MatchStatus::ConditionEndButMatchingProgress
         @match_id_array << info.match_id
         @match_symbol_array << info.store_symbol
-        ldebug "match_id_array = #{@match_id_array.inspect}"
-        ldebug "match_symbol = #{@match_symbol_array.inspect}"
+        ldebug? and ldebug "match_id_array = #{@match_id_array.inspect}"
+        ldebug? and ldebug "match_symbol = #{@match_symbol_array.inspect}"
       end
     end
 
     sig { params(data: AnalyzeData).returns(MatchResult) }
     def analyze(data) # rubocop: disable all
       node = @ast.node_factory.from_id(T.must(info).node_id)
-      ldebug "analyze start, node_id = #{T.must(info).node_id}, object_id =  #{node.object_id}, data = #{data.inspect}"
+      ldebug? and ldebug "analyze start, node_id = #{T.must(info).node_id}, object_id =  #{node.object_id}, data = #{data.inspect}"
       ret_node_info = @ast.find_next_node(data, node)
-      ldebug "#{name} matched! => info = #{ret_node_info.inspect} for data = #{data.inspect}"
+      ldebug? and ldebug "#{name} matched! => info = #{ret_node_info.inspect} for data = #{data.inspect}"
 
       put_stack(ret_node_info)
       data.stack = @match_id_array.dup
@@ -94,7 +94,7 @@ module SheepAst
         node = @ast.node_factory.from_id(T.must(ret_node_info).node_id)
         application_error 'node is not got' if node.nil?
 
-        ldebug "Invoking action my node id = #{node.my_id}"
+        ldebug? and ldebug "Invoking action my node id = #{node.my_id}"
         after_action = @ast.at_end(data, node)
       else
         application_error "Unknown status #{ret_node_info.status}"
@@ -121,7 +121,7 @@ module SheepAst
 
     sig { params(after_action: MatchAction, data: AnalyzeData, info: NodeInfo).returns(MatchResult) }
     def handle_after_action(after_action, data, info) # rubocop: disable all
-      ldebug "#{name} decided to #{after_action.inspect} for the '#{data.expr.inspect}'"
+      ldebug? and ldebug "#{name} decided to #{after_action.inspect} for the '#{data.expr.inspect}'"
       case after_action
       when MatchAction::Abort
         expression_not_found "'#{data.expr.inspect}'"
@@ -153,7 +153,7 @@ module SheepAst
 
     sig { params(data: AnalyzeData, save_req: SaveRequest).void }
     def handle_save_request(data, save_req)
-      ldebug "handle_save_request save_req = #{save_req.inspect}"
+      ldebug? and ldebug "handle_save_request save_req = #{save_req.inspect}"
       T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk)) unless save_req.chunk.nil?
       T.must(data.file_manager).register_next_file(T.must(save_req.file)) unless save_req.file.nil?
       T.must(data.file_manager).ast_include_set(save_req.ast_include)
@@ -213,7 +213,7 @@ module SheepAst
 
     sig { void }
     def init
-      ldebug "#{name.inspect} init the node_info now. the info was #{@info.inspect}, match_id_array =>"\
+      ldebug? and ldebug "#{name.inspect} init the node_info now. the info was #{@info.inspect}, match_id_array =>"\
         " #{@match_id_array.inspect}, match_stack => #{@match_symbol_array.inspect}"
       @info = NodeInfo.new if @info.nil?
       @info.init
@@ -279,7 +279,7 @@ module SheepAst
         end
 
         if res
-          ldebug "#{comp} is included", :yellow
+          ldebug? and ldebug "#{comp} is included", :yellow
           ret = true
           break
         end
@@ -297,7 +297,7 @@ module SheepAst
           res = comp =~ full_name if comp.instance_of? Regexp
         end
         if res
-          ldebug "#{comp} is excluded", :yellow
+          ldebug? and ldebug "#{comp} is excluded", :yellow
           ret = false
           break
         end
@@ -308,7 +308,7 @@ module SheepAst
 
     sig { params(data: AnalyzeData).returns(MatchResult) }
     def analyze_stages(data) # rubocop: disable all
-      ldebug 'Analyze Stages start!', :red
+      ldebug? and ldebug 'Analyze Stages start!', :red
 
       data.stage_manager = self
       @data = data
@@ -317,7 +317,7 @@ module SheepAst
       excl = T.must(data.file_info).ast_exclude
 
       if incl.nil?
-        ldebug 'AST with default domain is procssed'
+        ldebug? and ldebug 'AST with default domain is procssed'
         incl = 'default'
       end
 
@@ -341,12 +341,12 @@ module SheepAst
             T.cast(excl, T::Array[T.any(String, Regexp)]),
             stage.ast.domain, stage.ast.full_name)
           processed = true
-          ldebug "#{stage.name} start analyzing data!", :violet
+          ldebug? and ldebug "#{stage.name} start analyzing data!", :violet
           ret = stage.analyze(data)
 
           break if ret == MatchResult::GetNext || ret == MatchResult::Finish
         else
-          ldebug "#{stage.name} is filtered", :yellow
+          ldebug? and ldebug "#{stage.name} is filtered", :yellow
         end
       end
 
@@ -361,7 +361,7 @@ module SheepAst
 
       if ret == MatchResult::NotFound
         if @data_store.value(:_sheep_not_raise_when_lazy_abort)
-          ldebug 'All the AST stage not found expression. But return false'
+          ldebug? and ldebug 'All the AST stage not found expression. But return false'
         else
           lfatal 'All the AST stage not found expression. Lazy Abort!'
           expression_not_found "'#{data.expr.inspect}'"
@@ -372,7 +372,7 @@ module SheepAst
         eof_validation
       end
 
-      ldebug "Analyze Stages Finished with #{ret.inspect} !", :red
+      ldebug? and ldebug "Analyze Stages Finished with #{ret.inspect} !", :red
 
       return ret
     end
@@ -400,7 +400,7 @@ module SheepAst
         save_stage =
           Stage.new(stage.ast)
         save_data[stage.name] = save_stage.save(stage)
-        ldebug "#{stage.name} suspend process !!! info = #{stage.inspect}"
+        ldebug? and ldebug "#{stage.name} suspend process !!! info = #{stage.inspect}"
       end
       @save_stages << save_data
     end
@@ -412,7 +412,7 @@ module SheepAst
 
       @stages.each do |stage|
         stage.copy(save_data[stage.name])
-        ldebug "#{stage.name} resume process !!! info = #{stage.inspect}"
+        ldebug? and ldebug "#{stage.name} resume process !!! info = #{stage.inspect}"
       end
       @save_stages.pop
       return true

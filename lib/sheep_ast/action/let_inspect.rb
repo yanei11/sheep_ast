@@ -92,7 +92,7 @@ module SheepAst
     def _do_pry(**options)
       @count = 1 if @count.nil?
       @count += 1
-      ldebug "Entering debug mode, @count = #{@count}"
+      ldebug? and ldebug "Entering debug mode, @count = #{@count}"
       return true
     end
   end

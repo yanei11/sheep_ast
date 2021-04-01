@@ -22,7 +22,7 @@ module SheepAst
 
     sig { params(data: AnalyzeData).void }
     def start_condition(data)
-      ldebug "start condition with expr #{data.expr.inspect}"
+      ldebug? and ldebug "start condition with expr #{data.expr.inspect}"
       @sem = 1
       @start_info = "#{data.nil?}:#{data.to_enum}: start key:#{data.expr.inspect}"
       @start_line = data.file_info&.line
@@ -36,7 +36,7 @@ module SheepAst
 
     sig { params(data: AnalyzeData).void }
     def end_condition(data)
-      ldebug "ConditionMatch ended by key:#{data.expr.inspect}."\
+      ldebug? and ldebug "ConditionMatch ended by key:#{data.expr.inspect}."\
         "End at #{T.must(data.file_info).file}:#{T.must(data.file_info).line}."\
         "It was start from #{@start_info}."
       @start_info = nil
@@ -83,9 +83,9 @@ module SheepAst
     def try_condition_scope(data) # rubocop: disable all
       if @condition_flag
         if !@active_match.test_finish?(data)
-          ldebug "In condition match. expr = #{data.expr}. condition flag = true. continue"
+          ldebug? and ldebug "In condition match. expr = #{data.expr}. condition flag = true. continue"
         else
-          ldebug "matched. expr = #{data.expr}. condition flag = false"
+          ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = false"
           @condition_flag = false
           @active_match.end_condition(data)
           # @active_match.matched_end(data)
@@ -103,7 +103,7 @@ module SheepAst
     def check_condition_match(data)
       match = @condition_matches[data.expr]
       if !match.nil?
-        ldebug "matched. expr = #{data.expr}. condition flag = true"
+        ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = true"
         @condition_flag = true
         @active_match = match
         @active_match.init
@@ -134,11 +134,11 @@ module SheepAst
 
     sig { returns(T::Boolean) }
     def condition_change?
-      ldebug "condition_flag = #{@condition_flag}, pre_condition_flag = #{@pre_condition_flag}"
+      ldebug? and ldebug "condition_flag = #{@condition_flag}, pre_condition_flag = #{@pre_condition_flag}"
       if @condition_flag == @pre_condition_flag
         return false
       else
-        ldebug 'condition change'
+        ldebug? and ldebug 'condition change'
         @pre_condition_flag = @condition_flag
         return true
       end

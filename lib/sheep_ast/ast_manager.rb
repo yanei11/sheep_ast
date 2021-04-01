@@ -113,7 +113,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def not_found(data, _node)
-      ldebug "'#{data.expr.inspect}' not found."
+      ldebug? and ldebug "'#{data.expr.inspect}' not found."
       if @aboort_immediate.nil?
         @aboort_immediate = ENV['SHEEP_ABORT_FAST']
       end
@@ -132,7 +132,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def not_found_in_progress(data, _node)
-      ldebug "'#{data.expr.inspect}' not found in progress"
+      ldebug? and ldebug "'#{data.expr.inspect}' not found in progress"
       if @aboort_immediate.nil?
         @aboort_immediate = ENV['SHEEP_ABORT_FAST']
       end
@@ -151,7 +151,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def condition_in_progress(data, _node)
-      ldebug "matched '#{data.expr.inspect}' stay node"
+      ldebug? and ldebug "matched '#{data.expr.inspect}' stay node"
       return MatchAction::StayNode
     end
 
@@ -163,7 +163,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def condition_start(data, _node)
-      ldebug "matched '#{data.expr.inspect}' condition start. stay node"
+      ldebug? and ldebug "matched '#{data.expr.inspect}' condition start. stay node"
       return MatchAction::StayNode
     end
 
@@ -175,7 +175,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def in_progress(data, _node)
-      ldebug "matched '#{data.expr.inspect}' next data"
+      ldebug? and ldebug "matched '#{data.expr.inspect}' next data"
       return MatchAction::Next
     end
 
@@ -187,7 +187,7 @@ module SheepAst
     #
     sig { params(data: AnalyzeData, _node: Node).returns(MatchAction) }
     def condition_end_but_in_progress(data, _node)
-      ldebug "matched '#{data.expr.inspect}' next data"
+      ldebug? and ldebug "matched '#{data.expr.inspect}' next data"
       return MatchAction::Next
     end
 
@@ -200,12 +200,12 @@ module SheepAst
     sig { params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def at_end(data, node)
       if @disable_action
-        ldebug 'disable action is true, so return Finish without calling action'
+        ldebug? and ldebug 'disable action is true, so return Finish without calling action'
         return MatchAction::Finish
       end
 
-      ldebug "matched '#{data.expr.inspect}' at end"
-      ldebug "invoking '#{node.my_action.inspect}' at end"
+      ldebug? and ldebug "matched '#{data.expr.inspect}' at end"
+      ldebug? and ldebug "invoking '#{node.my_action.inspect}' at end"
       res = T.must(T.must(node).my_action).action(data, node)
       return res
     end

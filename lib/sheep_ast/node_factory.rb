@@ -88,7 +88,7 @@ module SheepAst
       ).void
     }
     def add_action(action)
-      ldebug "action = #{action.name} is added to node id = #{@__node.my_id}"
+      ldebug? and ldebug "action = #{action.name} is added to node id = #{@__node.my_id}"
       @__node.reg_action(action, nil)
     end
 

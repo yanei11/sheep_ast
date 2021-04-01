@@ -68,7 +68,7 @@ module SheepAst
       @ret = MatchAction::Finish
 
       key_data = keyword_data(data)
-      ldebug "let handle data #{key_data.inspect} to : "
+      ldebug? and ldebug "let handle data #{key_data.inspect} to : "
       fsyms.each do |fsym|
         ret = nil
         m = fsym[0]
@@ -82,7 +82,7 @@ module SheepAst
             opt = {}
           end
         end
-        ldebug "Function : #{m}, para = #{para.inspect}"
+        ldebug? and ldebug "Function : #{m}, para = #{para.inspect}"
         if para.nil? || para.empty?
           ret = T.unsafe(self).method(m).call(key_data, @data_store, **opt)
         else
@@ -99,7 +99,7 @@ module SheepAst
           break
         end
       end
-      ldebug "let end. returns result = #{@ret}"
+      ldebug? and ldebug "let end. returns result = #{@ret}"
 
       return @ret
     end

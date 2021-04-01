@@ -66,9 +66,9 @@ module SheepAst
         chunk = line_enclosed(T.must(key), pair, range)
       end
 
-      ldebug "received expr = #{chunk.inspect}, "\
+      ldebug? and ldebug "received expr = #{chunk.inspect}, "\
         "pair = #{pair.inspect}, key = #{key.inspect}", :blue
-      ldebug "options = #{options.inspect}", :blue
+      ldebug? and ldebug "options = #{options.inspect}", :blue
       ns_t = ns_get(pair, options[:namespace])
 
       if options[:dry_run]
@@ -86,7 +86,7 @@ module SheepAst
         }
       end
 
-      ldebug "To be redirect : #{chunk.inspect}"
+      ldebug? and ldebug "To be redirect : #{chunk.inspect}"
 
       save_req = SaveRequest.new(
         chunk: chunk,

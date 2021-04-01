@@ -67,7 +67,7 @@ module SheepAst
         bind_name(name, @current_id)
       end
 
-      ldebug2 "id = #{@current_id}, obj.my_id = #{obj.my_id} registrated object_id = #{obj.object_id}, name = '#{name}'"
+      ldebug? and ldebug2 "id = #{@current_id}, obj.my_id = #{obj.my_id} registrated object_id = #{obj.object_id}, name = '#{name}'"
       return @current_id
     end
 
@@ -75,7 +75,7 @@ module SheepAst
     def from_id(id)
       ids = @id_store[id]
 
-      ldebug2 "id = #{id}, obj.my_id = #{ids.my_id}, returned object_id = #{ids.object_id}"
+      ldebug? and ldebug2 "id = #{id}, obj.my_id = #{ids.my_id}, returned object_id = #{ids.object_id}"
       return ids
     end
 

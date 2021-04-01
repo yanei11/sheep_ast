@@ -48,7 +48,7 @@ module SheepAst
       dirs.each do |base|
         test_path = "#{base}/#{relative_path}"
         if File.exist?(test_path)
-          ldebug "file exist: #{test_path}"
+          ldebug? and ldebug "file exist: #{test_path}"
           found_paths << File.expand_path(test_path)
         end
       end
@@ -74,7 +74,7 @@ module SheepAst
         test = ctime_get <=> ftime
         case test
         when 1
-          ldebug "#{file} is created before application launch. Delete it first!"
+          ldebug? and ldebug "#{file} is created before application launch. Delete it first!"
           File.delete(file)
         when -1
           # lprint "#{file} is created after factory created. Nothing to do."
@@ -111,7 +111,7 @@ module SheepAst
       end_match = get_last_match(data)
       start_line = start_match.start_line
       end_line = end_match.end_line
-      ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+      ldebug? and ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
       range = start_line..end_line
       return data.file_info&.tokenized&.[](range)
     end
@@ -140,7 +140,7 @@ module SheepAst
         lfatal "start_line = #{start_line}, end_line = #{end_line}, max_line = #{data.file_info&.max_line}"
         application_error 'start_line < 0 or end_line > max_line'
       end
-      ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
+      ldebug? and ldebug "redirecting whole line start from #{start_line.inspect} to #{end_line.inspect}"
       range = start_line..end_line
       return data.file_info&.tokenized&.[](range)
     end
@@ -187,7 +187,7 @@ module SheepAst
         end
       end
 
-      ldebug "namespace is #{ns_t.inspect}", :blue
+      ldebug? and ldebug "namespace is #{ns_t.inspect}", :blue
       return ns_t
     end
 

@@ -98,7 +98,7 @@ module SheepAst
     end
 
     sig { returns(T::Boolean) }
-    def ld
+    def ldebug?
       return @loglevel >= 2
     end
 

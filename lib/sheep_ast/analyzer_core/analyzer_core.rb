@@ -309,13 +309,13 @@ module SheepAst
         ret = @stage_manager.analyze_stages(data)
 
         if ret == @eol_validation && MatchResult::Finish && !data.is_eol
-          ldebug "Action called but it is not eol"
+          ldebug? and ldebug "Action called but it is not eol"
           is_eol = false
           break
         end
 
         if ret == MatchResult::NotFound
-          ldebug "Expression not found."
+          ldebug? and ldebug "Expression not found."
           break
         end
       end
@@ -333,7 +333,7 @@ module SheepAst
     sig { params(file: String).returns(String) }
     def tokenize(file)
       tokenized = @tokenizer.feed_file(file)
-      ldebug "start #{File.expand_path(file)}", :red
+      ldebug? and ldebug "start #{File.expand_path(file)}", :red
       return tokenized
     end
 
