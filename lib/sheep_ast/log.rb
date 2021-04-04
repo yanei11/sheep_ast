@@ -26,10 +26,10 @@ module SheepAst
 
     sig { void }
     def initialize
+      @loglevel = 0
       lev = level_get
       dev = device_get
       @stack_base = stack_base_get
-      @loglevel = 0
       set_logger(lev, dev)
       super()
     end
@@ -102,6 +102,10 @@ module SheepAst
       return @loglevel >= 2
     end
 
+    sig { returns(T::Boolean) }
+    def lprint?
+      return true
+    end
 
     sig { params(msg: String, color_: Symbol).void }
     def ldebug(msg = '', color_ = :antiquewhite)

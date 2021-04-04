@@ -3,6 +3,7 @@
 
 require_relative 'exception'
 require_relative 'action/let_compile'
+require_relative 'cyclic_list'
 require 'sorbet-runtime'
 require 'set'
 
@@ -24,8 +25,14 @@ module SheepAst
     def initialize
       @all_var = Set.new
       @ctime = Time.new
+      @history = 5
       # @temp_var = {}
       super()
+    end
+
+    sig { params(history: Integer).void }
+    def set_history(history)
+      @history = history
     end
 
     # General function to assigh value to given store_id and key
@@ -55,6 +62,10 @@ module SheepAst
         usage and application_error 'trying to assign hash without key' if key.nil?
         instance_variable_set(t_sym, {}) unless is_defined
         add_arr_pair(t_sym, key, value)
+      elsif cyclic_list_var(sym)
+        usage and application_error 'trying to assign with key' unless key.nil?
+        instance_variable_set(t_sym, CyclicList.new(@history)) unless is_defined
+        add_list(t_sym, value)
       else
         unless key.nil?
           lfatal "key is not nil. Given sym should have _H suffix. sym = #{sym}"
@@ -102,8 +113,13 @@ module SheepAst
     end
 
     # usage print out.
-    # Please see inline comment in the function.
     # Depends on the given store_id suffix, it switches data struture inside the object
+    #  :xxx    - Hold single string
+    #  :xxx_A  - Hold Array of string
+    #  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1
+    #  :xxx_HA - Hold Key Value pair of string, push array so dim is 2
+    #  :xxx_HL - Hold Key and Last one Value pair of string
+    #  :xxx_CL - Hold List with Cyclic history
     #
     # e.g. If user specify store_id as xxx_H then datastore object creates Hash object
     #      to allow user to prvide key/value pair to store the data
@@ -119,7 +135,8 @@ module SheepAst
       lfatal '  :xxx_A  - Hold Array of string', :yellow
       lfatal '  :xxx_H  - Hold Key Value pair of string. concat array, so dim is 1', :yellow
       lfatal '  :xxx_HA - Hold Key Value pair of string, push array so dim is 2', :yellow
-      lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin. One data', :yellow
+      lfatal '  :xxx_HL - Hold Key and Last one Value pair of strin', :yellow
+      lfatal '  :xxx_CL - Hold List with Cyclic history', :yellow
       lfatal ''
       lfatal '  Note: let record_kv accept following kind:', :yellow
       lfatal '        xxx_H, xxx_HL, xxx_HA', :yellow
@@ -187,6 +204,13 @@ module SheepAst
 
     # @api private
     #
+    sig { params(sym: Symbol, value: T.untyped).void }
+    def add_list(sym, value)
+      val(sym).send(:put, value)
+    end
+
+    # @api private
+    #
     sig { params(sym: Symbol, key: T.untyped, value: T.untyped).void }
     def concat_pair(sym, key, value)
       val_ = val(sym).send(:[], key)
@@ -239,6 +263,13 @@ module SheepAst
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_arr_var(sym)
       return sym.to_s.end_with?('_HA')
+    end
+
+    # @api private
+    #
+    sig { params(sym: Symbol).returns(T::Boolean) }
+    def cyclic_list_var(sym)
+      return sym.to_s.end_with?('_CL')
     end
 
     def ctime_get
