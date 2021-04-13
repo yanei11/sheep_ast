@@ -11,6 +11,7 @@ module SheepAst
   # @api public
   module Option
     include Exception
+    include Log
     extend T::Sig
 
     def option_on
@@ -27,7 +28,7 @@ module SheepAst
           '-d', 'Dump Debug information'
         ) { @option[:d] = true }
         opt.on(
-          '-r file', 'Specify configuration ruby file'
+          '-r files', Array, 'Specify configuration ruby files'
         ) { |v| @option[:r] = v }
         opt.on(
           '-o path', 'outdir variable is set in the let_compile module'
@@ -88,12 +89,19 @@ module SheepAst
 
 
     def load_config
+      if @loaded_file.nil?
+        @loaded_file = []
+      end
       config_file = @option[:r]
       if config_file
-        if File.exist?(config_file)
-          load config_file
-        else
-          application_error "#{config_file} could not be found at the specified directory."
+        config_file.each_with_index do |file, index|
+          if File.exist?(file)
+            load file
+            alias :"configure_#{index}" :configure
+            @loaded_file << file.split('/').last
+          else
+            application_error "#{config_file} could not be found at the specified directory."
+          end
         end
       else
         return nil
@@ -127,12 +135,16 @@ module SheepAst
     end
 
     def do_configure(core, option = nil, optparse = nil)
-      if defined? configure
+      count = 0
+      loop do
         core.set_option(option, optparse)
-        configure(core)
-        return true
+        method(:"configure_#{count}").call(core)
+        count += 1
       end
-      return false
+    rescue
+      lprint "do_configure: Loaded #{count} config."
+      lprint "Loaded files are #{@loaded_file.inspect}"
+      return count != 0
     end
   end
 end

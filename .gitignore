@@ -7,3 +7,4 @@ docs
 coverage/
 spec/res
 .ruby-version
+out/
