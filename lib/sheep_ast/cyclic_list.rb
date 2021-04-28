@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'log'
@@ -55,11 +55,9 @@ module SheepAst
 
       node_id = @last.my_id
 
-      # Note:
-      # Search algorithm could be several ways.
+      # NOTE : Search algorithm could be several ways.
       # Here get history from hash map is applied for O(N) operation
       #
-      node = nil
       search_id = node_id - history
       if search_id.negative?
         search_id = history + search_id

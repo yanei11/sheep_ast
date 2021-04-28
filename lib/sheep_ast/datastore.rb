@@ -31,7 +31,7 @@ module SheepAst
     end
 
     sig { params(history: Integer).void }
-    def set_history(history)
+    def history_set(history)
       @history = history
     end
 

@@ -31,7 +31,7 @@ module SheepAst
       ).returns(T.nilable(T::Boolean))
     }
     def operate_action(pair, datastore, ast_name, operation, **options)
-      ldebug? and ldebug "operation Action #{operation.inspect} to #{ast_name.inspect}"
+      ldebug? and ldebug "operation Action #{operation.inspect} to #{ast_name.inspect}", :purple
 
       if operation == OnOff::Disable
         @analyzer_core.disable_action(ast_name)

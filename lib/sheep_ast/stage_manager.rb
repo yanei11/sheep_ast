@@ -104,6 +104,13 @@ module SheepAst
     end
 
     sig { params(info: NodeInfo).void }
+    def force_move_node(info)
+      ldebug? and ldebug "force move node to #{info.inspect}", :blue
+      init
+      T.must(@info).copy(info)
+    end
+
+    sig { params(info: NodeInfo).void }
     def move_node(info)
       T.must(@info).copy(info)
     end
@@ -111,7 +118,7 @@ module SheepAst
     def move_committed_node
       node_info = NodeInfo.new
       node_info.node_id = @committed_node_id
-      move_node(node_info)
+      force_move_node(node_info)
     end
 
     def commit_node
@@ -214,7 +221,7 @@ module SheepAst
     sig { void }
     def init
       ldebug? and ldebug "#{name.inspect} init the node_info now. the info was #{@info.inspect}, match_id_array =>"\
-        " #{@match_id_array.inspect}, match_stack => #{@match_symbol_array.inspect}"
+        " #{@match_id_array.inspect}, match_stack => #{@match_symbol_array.inspect}", :cyan
       @info = NodeInfo.new if @info.nil?
       @info.init
       @match_id_array = []

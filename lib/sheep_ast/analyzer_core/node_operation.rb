@@ -43,7 +43,7 @@ module SheepAst
         parent_node = a_stage.current_node.parent_node
         node_info = NodeInfo.new
         node_info.node_id = T.must(parent_node).my_id
-        a_stage.move_node(node_info)
+        a_stage.force_move_node(node_info)
       when OperateNode::Revert
         a_stage.move_committed_node
       when OperateNode::Commit
@@ -51,7 +51,7 @@ module SheepAst
       when OperateNode::Top
         node_info = NodeInfo.new
         node_info.node_id = 0 # root node id
-        a_stage.move_node(node_info)
+        a_stage.force_move_node(node_info)
       end
     end
 

@@ -10,8 +10,10 @@ module SheepAst
   #
   # @api public
   module Option
-    include Exception
-    include Log
+    # NOTE
+    # Do not include Log or Exception module here.
+    # Since this module could be included from other users.
+    # It result with conflict of user module.
     extend T::Sig
 
     def option_on
@@ -87,7 +89,6 @@ module SheepAst
       "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
     end
 
-
     def load_config
       if @loaded_file.nil?
         @loaded_file = []
@@ -100,7 +101,7 @@ module SheepAst
             alias :"configure_#{index}" :configure
             @loaded_file << file.split('/').last
           else
-            application_error "#{config_file} could not be found at the specified directory."
+            raise "#{config_file} could not be found at the specified directory."
           end
         end
       else
@@ -142,8 +143,8 @@ module SheepAst
         count += 1
       end
     rescue
-      lprint "do_configure: Loaded #{count} config."
-      lprint "Loaded files are #{@loaded_file.inspect}"
+      puts "do_configure: Loaded #{count} config."
+      puts "Loaded files are #{@loaded_file.inspect}"
       return count != 0
     end
   end

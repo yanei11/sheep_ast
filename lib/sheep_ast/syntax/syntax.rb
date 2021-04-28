@@ -1,11 +1,11 @@
 # typed:true
 # frozen_string_literal:true
 
-require_relative 'log'
-require_relative 'sheep_obj'
-require_relative 'match/match_factory'
-require_relative 'action/action_factory'
-require_relative 'action/action_base'
+require_relative '../log'
+require_relative '../sheep_obj'
+require_relative '../match/match_factory'
+require_relative '../action/action_factory'
+require_relative '../action/action_base'
 require_relative 'syntax_alias'
 require 'sorbet-runtime'
 

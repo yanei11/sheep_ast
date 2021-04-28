@@ -1,4 +1,8 @@
+# typed: false
+# rubocop: disable all
 # frozen_string_literal: true
+
+
 
 require 'spec_helper'
 require 'sheep_ast/cyclic_list'

@@ -1,8 +1,8 @@
 # typed: true
 # frozen_string_literal:true
 
-require_relative 'action/qualifier'
-require_relative 'match/index_condition'
+require_relative '../action/qualifier'
+require_relative '../match/index_condition'
 require 'sorbet-runtime'
 
 module SheepAst

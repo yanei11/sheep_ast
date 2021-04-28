@@ -7,7 +7,7 @@ require_relative 'sheep_obj'
 require_relative 'messages'
 require_relative 'node'
 require_relative 'node_buf'
-require_relative 'syntax'
+require_relative 'syntax/syntax'
 require_relative 'match/match_factory'
 require_relative 'action/action_factory'
 require_relative 'node_factory'
@@ -200,12 +200,12 @@ module SheepAst
     sig { params(data: AnalyzeData, node: Node).returns(MatchAction) }
     def at_end(data, node)
       if @disable_action
-        ldebug? and ldebug 'disable action is true, so return Finish without calling action'
+        ldebug? and ldebug 'SKIP ACTION ! : disable action is true, so return Finish without calling action', :gold
         return MatchAction::Finish
       end
 
-      ldebug? and ldebug "matched '#{data.expr.inspect}' at end"
-      ldebug? and ldebug "invoking '#{node.my_action.inspect}' at end"
+      ldebug? and ldebug "Do ACTION ! : matched '#{data.expr.inspect}' at end"\
+        ", invoking '#{node.my_action.inspect}' at end", :gold
       res = T.must(T.must(node).my_action).action(data, node)
       return res
     end
