@@ -89,13 +89,14 @@ module SheepAst
           ret = T.unsafe(self).method(m).call(key_data, @data_store, *para, **opt)
         end
 
-        if ret == true # rubocop:disable all
+        if @break # rubocop:disable all
           if @_pwarn.nil?
             @_pwarn = true
             lwarn "Registered method = [#{method(m).name}] returned true."\
               'Follows methods are ignored.', :red
             lwarn 'Exited method loop. This message is printed only once per let object.', :red
           end
+          @break = false
           break
         end
       end

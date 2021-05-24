@@ -98,6 +98,7 @@ module SheepAst
         config_file.each_with_index do |file, index|
           if File.exist?(file)
             load file
+            puts "test #{index}"
             alias :"configure_#{index}" :configure
             @loaded_file << file.split('/').last
           else
@@ -142,9 +143,10 @@ module SheepAst
         method(:"configure_#{count}").call(core)
         count += 1
       end
-    rescue
+    rescue => e
       puts "do_configure: Loaded #{count} config."
       puts "Loaded files are #{@loaded_file.inspect}"
+      p e
       return count != 0
     end
   end

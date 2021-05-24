@@ -3,7 +3,7 @@
 
 require 'set'
 require_relative 'log'
-require_relative 'datastore'
+require_relative 'datastore/datastore'
 require_relative 'tokenizer'
 require 'sorbet-runtime'
 
@@ -157,6 +157,7 @@ module SheepAst
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
       @analyze_data.request_next_data = RequestNextData::Next
+      @datastore.assign(:namespace_stack, @file_info.namespace_stack)
       if !@analyze_data.file_info.line.nil? && !@analyze_data.file_info.raw_lines.nil?
         @analyze_data.raw_line = @file_info.raw_lines[@file_info.line]
       else
@@ -238,7 +239,10 @@ module SheepAst
       @resume_info << info
 
       ldebug? and ldebug "Suspended info process!! resume_stack = #{@resume_info.length}"\
-        " for info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
+        " at info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
+
+      ldump "[REDIRCT] Pushed to Resume stack(#{@resume_info.length - 1}-->#{@resume_info.length})"\
+        " at line = #{info.line.inspect}, index = #{@file_info.index.inspect}", :indianred
 
       @file_info.init
       threshold = ENV['SHEEP_SAVE_STACK'].nil? ? 10 : ENV['SHEEP_SAVE_STACK']
@@ -255,6 +259,8 @@ module SheepAst
     def restore_info
       info = @resume_info.pop
       ldebug? and ldebug "restore_info, info = #{info.inspect}"
+      ldump '[RESUME ] restore info from Resume stack.' unless info.nil?
+
       return nil if info.nil?
 
       @stage_manager.restore_info

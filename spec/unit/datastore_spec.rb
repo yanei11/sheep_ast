@@ -58,6 +58,25 @@ describe SheepAst::DataStore do
        core << "f d aa
      ddd c d"
      }.not_to raise_error
-     expect(core.data_store.value(:test_H)['d']).to eq ['f', 'd']
+     expect(core.data_store.search(:test_H).data['d']).to eq ['f', 'd']
+   end
+   it 'can store hash in hash' do
+     ds = SheepAst::DataStore.new
+     ds.assign(:example_HH).keeplast('a1', 'b1', 'c1')
+     ds.assign(:example_HH).keeplast('a2', 'b2', 'c2')
+     expect(ds.assign(:example_HH).find('a1', 'b1')).to eq('c1')
+     expect(ds.assign(:example_HH).find('a2', 'b2')).to eq('c2')
+     ds.assign(:example_HH).keeplast('a1', 'b1', 'c3')
+     expect(ds.assign(:example_HH).find('a1', 'b1')).to eq('c3')
+   end
+   it 'can store hash in hash with StoreElement' do
+     ds = SheepAst::DataStore.new
+     se = SheepAst::StoreElement.new(1, {'test1' => 1, 'test2' => '2'})
+     ds.assign(:example_HH).keeplast('a1', 'b1', se)
+     expect(ds.assign(:example_HH).find('a1', 'b1').data).to eq 1
+     expect(ds.assign(:example_HH).find('a1', 'b1').meta('test1')).to eq 1
+     expect(ds.assign(:example_HH).find('a1', 'b1').meta('test2')).to eq '2'
+     ds.value(:example_HH).remove
+     expect(ds.value(:example_HH).data).to eq({})
    end
 end

@@ -50,7 +50,7 @@ module SheepAst
         datastore: DataStore,
         template_file: T.nilable(String),
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def compile(data, datastore, template_file = nil, **options)
       if !data.nil?
@@ -83,7 +83,6 @@ module SheepAst
           ldump "title : #{title}"
           ldump "suffix : #{suffix}"
         }
-        return T.unsafe(self).ret(**options)
       end
 
       ldebug? and ldebug '=== compile debug ==='
@@ -104,11 +103,12 @@ module SheepAst
       to_file = "#{title}.#{suffix}" if title && suffix
       if to_file.nil?
         puts res
-        return T.unsafe(self).ret(**options)
+        @break = true
+        return
       end
 
       update_file(to_file, res, **options)
-      return T.unsafe(self).ret(**options)
+
     rescue => e # rubocop: disable all
       bt = e.backtrace
       lfatal "Exception was occured inside let_compile. bt = #{bt}"
@@ -123,7 +123,6 @@ module SheepAst
         lfatal 'Critical. Exit'
         raise
       end
-      return T.unsafe(self).ret(**options)
     end
 
     sig {

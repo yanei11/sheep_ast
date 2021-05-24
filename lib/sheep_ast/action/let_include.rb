@@ -45,7 +45,7 @@ module SheepAst
         key_id: Symbol,
         range: Range,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def include(pair, datastore, key_id, range = 1..-2, **options)
       str = pair[key_id]
@@ -63,8 +63,6 @@ module SheepAst
         )
         @data.save_request = save_req
       end
-
-      return T.unsafe(self).ret(**options)
     end
 
     private

@@ -55,9 +55,9 @@ describe SheepAst::LetInclude do
   
     res = core.report(raise: false) { core.analyze_file(['spec/unit/test_files/test1.cc']) }
     expect(res).to be true
-    expect(core.data_store.value(:test_H)['Test1']).to eq(["{", "int", "a", ";", "int", "b", ";", "int", "c", ";", "}"])
-    expect(core.data_store.value(:test_H)['Test2']).to eq(["{", "int", "i", ";", "int", "j", ";", "int", "k", ";", "}"])
-    expect(core.data_store.value(:test_H)['Test3']).to eq(["{", "int", "x", ";", "int", "y", ";", "int", "z", ";", "}"])
-    expect(core.data_store.value(:test_H)['Test5']).to eq(["{", "int", "i", ";", "int", "j", ";", "int", "k", ";", "}"])
+    expect(core.data_store.value(:test_H).data['Test1']).to eq(["{", "int", "a", ";", "int", "b", ";", "int", "c", ";", "}"])
+    expect(core.data_store.value(:test_H).data['Test2']).to eq(["{", "int", "i", ";", "int", "j", ";", "int", "k", ";", "}"])
+    expect(core.data_store.value(:test_H).data['Test3']).to eq(["{", "int", "x", ";", "int", "y", ";", "int", "z", ";", "}"])
+    expect(core.data_store.value(:test_H).data['Test5']).to eq(["{", "int", "i", ";", "int", "j", ";", "int", "k", ";", "}"])
   end
 end

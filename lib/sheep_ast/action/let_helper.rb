@@ -251,9 +251,5 @@ module SheepAst
       namespace_sep = '::' if namespace_sep.nil?
       return namespace_sep
     end
-
-    def ret(**options)
-      ret = options[:break]
-    end
   end
 end

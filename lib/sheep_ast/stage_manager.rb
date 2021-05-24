@@ -3,7 +3,7 @@
 
 require_relative 'exception'
 require_relative 'messages'
-require_relative 'datastore'
+require_relative 'datastore/datastore'
 require 'rainbow/refinement'
 require 'sorbet-runtime'
 
@@ -435,11 +435,8 @@ module SheepAst
 
       logf = method(logs)
       logf.call
-      logf.call '## Analyze information start ##'
-      logf.call 'Processing file'
-      logf.call "- #{@data&.file_info&.file.inspect}"
-      logf.call
-      logf.call 'Tokenized Expression'
+      logf.call '## Analyze information ##'
+      logf.call 'Processing Data'
       logf.call "- expr = #{@data&.expr}"
       logf.call "- tokenized line = #{@data&.tokenized_line.inspect}"
       logf.call "- line no = #{line_no}"
@@ -448,6 +445,7 @@ module SheepAst
       logf.call "- namespacee = #{@data&.file_info&.namespace_stack.inspect}"
       logf.call "- ast include = #{@data&.file_info&.ast_include.inspect}"
       logf.call "- ast exclude = #{@data&.file_info&.ast_exclude.inspect}"
+      logf.call "- file = #{@data&.file_info&.file.inspect}"
       logf.call
       @stages.each do |stage|
         logf.call '|'

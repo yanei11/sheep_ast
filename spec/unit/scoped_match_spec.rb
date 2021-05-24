@@ -291,9 +291,9 @@ describe SheepAst::ScopedMatch do
         core.analyze_file(['spec/unit/scoped_match_file/test2.cc'])
       }
     }.not_to raise_error
-    expect(core.data_store.value(:ns_test_HL)).to eq({"abc::test3"=>"test3", "abc::bbb::test2"=>"test2", "abc::bbb::ccc::test"=>"test"})
-    expect(core.data_store.value(:ns_test_H)).to eq({"abc::test3"=>["test3"], "abc::bbb::test2"=>["test2"], "abc::bbb::ccc::test"=>["test"]})
-    expect(core.data_store.value(:ns_test_HA)).to eq({"abc::test3"=>[["test3", "test3"]], "abc::bbb::test2"=>[["test2", "test2"]], "abc::bbb::ccc::test"=>[["test", "test"]]})
+    expect(core.data_store.value(:ns_test_HL).data).to eq({"abc::test3"=>"test3", "abc::bbb::test2"=>"test2", "abc::bbb::ccc::test"=>"test"})
+    expect(core.data_store.value(:ns_test_H).data).to eq({"abc::test3"=>["test3"], "abc::bbb::test2"=>["test2"], "abc::bbb::ccc::test"=>["test"]})
+    expect(core.data_store.value(:ns_test_HA).data).to eq({"abc::test3"=>[["test3", "test3"]], "abc::bbb::test2"=>[["test2", "test2"]], "abc::bbb::ccc::test"=>[["test", "test"]]})
   end
 
   it 'validates fail at eof' do
