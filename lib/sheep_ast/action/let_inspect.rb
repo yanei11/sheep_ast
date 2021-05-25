@@ -54,9 +54,8 @@ module SheepAst
     def break(pair, datastore, **options)
       if !options[:disable]
         format_dump { ldump "pair = #{pair.inspect}", :yellow }
-        return true
+        @break = true
       end
-      return false
     end
 
     # Entering Debug shell pry
@@ -85,7 +84,7 @@ module SheepAst
     sig {
       params(
         options: T.untyped
-      ).void
+      ).returns(T::Boolean)
     }
     def _do_pry(**options)
       @count = 1 if @count.nil?

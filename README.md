@@ -110,4 +110,4 @@ But this commands require to install ruby environement.
 
 # Version
 
-ruby 3.0.0 and ruby 2.7.2 are used for development
+ruby > 3.0.0 and ruby 2.7.2 are used for development

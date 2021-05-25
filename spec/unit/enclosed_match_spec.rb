@@ -102,4 +102,33 @@ describe SheepAst::EnclosedMatch do
     #   core << "c d aaa aaa"
     # }.to raise_error SheepAst::Exception::NotFound
   end
+  it 'enclosed regex match ignore scope unlike scoped match' do
+    core.config_ast('default.test') do |ast, syn, mf, af|
+      syn.register_syntax('ignore', syn.A(:na)) {
+        syn._SS(
+          [syn.space],
+          [syn.crlf],
+          [syn.lf],
+          [syn.eof]
+        )
+      }
+      ast.within do
+        def not_found(data, _node)
+          linfo "'#{data.expr}' not found"
+          return SheepAst::MatchAction::Continue
+        end
+      end
+    end
+    core.config_ast('default.test2') do |ast, syn, mf, af|
+      syn.register_syntax('match', syn.A(:na)) {
+        syn._S << syn.E(:encr, 'f.*', 'aaa')
+      }
+    end
+
+    expect {
+      core << "f d"
+      core << "aa f"
+      core << "c d aaa"
+    }.not_to raise_error
+  end
 end

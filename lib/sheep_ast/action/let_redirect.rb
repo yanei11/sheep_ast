@@ -71,6 +71,10 @@ module SheepAst
       ldebug? and ldebug "options = #{options.inspect}", :blue
       ns_t = ns_get(pair, options[:namespace])
 
+      meta1 = options[:meta1]
+      meta2 = options[:meta2]
+      meta3 = options[:meta3]
+
       if options[:dry_run] || options[:dry_exit]
         format_dump {
           ldump "To be redirect : #{chunk.inspect}"
@@ -97,7 +101,10 @@ module SheepAst
         chunk: chunk,
         ast_include: options[:ast_include],
         ast_exclude: options[:ast_exclude],
-        namespace: ns_t
+        namespace: ns_t,
+        meta1: meta1,
+        meta2: meta2,
+        meta3: meta3
       )
 
       @data.save_request = save_req

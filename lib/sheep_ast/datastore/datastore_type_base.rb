@@ -1,4 +1,4 @@
-# typed: strict
+# typed: true
 # frozen_string_literal:true
 
 require 'sorbet-runtime'
@@ -7,6 +7,18 @@ module SheepAst
   class DataStore; end
 
   class StoreElement; end
+
+  class DataStoreArray; end
+
+  class DataStoreHashCat; end
+
+  class DataStoreHashAdd; end
+
+  class DataStoreHashLast; end
+
+  class DataStoreHashHash; end
+
+  class DataStoreHashHashArray; end
 
   # Hold Sorbet Type alias
   module DataStoreTypeBase
@@ -20,6 +32,8 @@ module SheepAst
       Float, T::Array[Float],
       T::Boolean, T::Array[T::Boolean],
       StoreElement, T::Array[StoreElement],
+      DataStoreArray, DataStoreHashCat, DataStoreHashAdd,
+      DataStoreHashLast, DataStoreHashHash, DataStoreHashHashArray,
       DataStore
     )
 
@@ -35,7 +49,8 @@ module SheepAst
       Integer,
       Float,
       T::Boolean,
-      StoreElement
+      StoreElement,
+      DataStore
     )
   end
 end

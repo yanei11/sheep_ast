@@ -32,8 +32,8 @@ describe SheepAst::LetInclude do
       syn.within {
         register_syntax('analyze') {
           _SS(
-            _S << E(:e, '#include') << E(:enc, '<', '>') << A(:let, [:include, :_2]),
-            _S << E(:e, '#include') << E(:enc, '"', '"') << A(:let, [:include, :_2]),
+            _S << E(:e, '#include') << E(:enc, '<', '>') << A(:let, [:include, :_2, skip_not_found: true]),
+            _S << E(:e, '#include') << E(:enc, '"', '"') << A(:let, [:include, :_2, skip_not_found: true]),
             _S << E(:e, 'struct') << E(:any) << E(:sc, '{', '}') << E(:e, ';') << A(:let,
                                                                                     [:show, {disable: true}],
                                                                                     [:record, :test_H, :_2, :_3]

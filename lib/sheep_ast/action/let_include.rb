@@ -52,7 +52,12 @@ module SheepAst
       relative_path = T.must(T.must(str)[range]).join
       ldebug? and ldebug "let include is called with #{relative_path.inspect}"
 
-      file = find_next_file(relative_path)
+      T.unsafe(self).do_include(relative_path, **options)
+    end
+
+    sig { params(relative_path: String, options: T.untyped).void }
+    def do_include(relative_path, **options)
+      file = T.unsafe(self).find_next_file(relative_path, **options)
 
       if !file.nil?
         save_req = SaveRequest.new(
@@ -64,8 +69,6 @@ module SheepAst
         @data.save_request = save_req
       end
     end
-
-    private
 
     sig { params(file: T.nilable(String)).returns(T::Boolean) }
     def exclude_file?(file)
@@ -83,11 +86,12 @@ module SheepAst
       return false
     end
 
-    sig { params(relative_path: String).returns(T.nilable(String)) }
-    def find_next_file(relative_path)
+    sig { params(relative_path: String, options: T.untyped).returns(T.nilable(String)) }
+    def find_next_file(relative_path, **options)
       file = find_file(dir_path, relative_path)
       if file.nil?
-        ldump "[NOT FOUND] #{relative_path}", :red
+        lfatal "[NOT FOUND] #{relative_path}", :red
+        application_error 'include file not found' unless options[:skip_not_found]
       end
 
       res = exclude_file?(file) ? nil : file

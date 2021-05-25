@@ -1,6 +1,7 @@
-# typed: true
+# typed: false
 # frozen_string_literal: true
 
+require_relative '../log'
 require_relative '../exception'
 require_relative '../messages'
 require_relative '../sheep_obj'
@@ -14,12 +15,12 @@ module SheepAst
   class MatchBase < SheepObject
     extend T::Sig
     extend T::Helpers
-    include Log
     include Exception
+    include Log
     abstract!
 
     sig { returns(String) }
-    attr_reader :key
+    attr_accessor :key
 
     sig { returns(T.any(T::Array[T.nilable(String)], T.nilable(String))) }
     attr_accessor :matched_expr
@@ -77,6 +78,7 @@ module SheepAst
     }
     def initialize(key = '', sym = nil, **options)
       @key = key
+      @regex_key = key.dup
       @store_sym = sym
       @options = options
       @debug = options[:debug]
@@ -86,13 +88,17 @@ module SheepAst
       @command = options[:command] || key
       @description = options[:description]
       @my_tag = options[:tag]
+      @regex_end = options[:regex_end]
+      @end_match_index = options[:end_match_index]
+      @start_match_index = options[:start_match_index]
       super()
     end
 
     sig { returns(String) }
     def inspect
       "custom inspect: <#{self.class.name} object_id = #{object_id}, kind_name = #{@kind_name},"\
-        " key = #{@key}, matched_expr = #{@matched_expr.inspect} >"
+        " key = #{@key}, start_line = #{@start_line}, end_line = #{@end_line},"\
+        " matched_expr = #{@matched_expr.inspect} >"
     end
 
     sig { params(data: AnalyzeData).void }
@@ -125,9 +131,43 @@ module SheepAst
       @end_index = index
     end
 
+    def self.check_exact_condition(map, key, data)
+      m = map[key]
+      m = nil if !m&.additional_cond(data)
+      return m
+    end
+
+    def self.check_exact_group_condition(keys, data)
+      key = data.expr
+      ldebug? and ldebug "check_exact_group_condition for #{T.must(key)}"
+      @keys.each do |item|
+        if key == item
+          ldebug? and ldebug 'Found'
+          return true
+        end
+      end
+      ldebug? and ldebug "Not Found => group keys: #{keys.inspect}"
+      return false
+    end
+
+    def self.check_regex_condition(match, data)
+      res = match.match(data)
+      if res
+        match.ldebug? and match.ldebug 'check_regex_condition passed primary cond. Examin additional condition'
+        if !match&.additional_cond(data)
+          match.ldebug? and match.ldebug 'additional condition id not good'
+          res = nil
+        else
+          match.ldebug? and match.ldebug 'additional condition is good'
+          res = true
+        end
+      end
+      return res
+    end
+
     sig { params(data: AnalyzeData).returns(T.nilable(T::Boolean)) }
     def match(data)
-      reg_match(@key, T.must(data.expr))
+      reg_match(@regex_key, T.must(data.expr))
     end
 
     sig { params(expr_: String, target_: String).returns(T.nilable(T::Boolean)) }
@@ -153,6 +193,15 @@ module SheepAst
           return false
         end
         ldebug? and ldebug 'at head : true'
+      end
+
+      word = @options[:include?]
+      if word
+        if data.tokenized_line&.include?(word)
+          return true
+        else
+          return false
+        end
       end
 
       ret = iterate_cond(data, @start_add_cond)
@@ -197,5 +246,7 @@ module SheepAst
     def dump
       ldebug? and ldebug "matched_expr => #{@matched_expr.inspect}"
     end
+
+    def validate(kind); end
   end
 end

@@ -37,20 +37,6 @@ module SheepAst
     def init
       @expr = ''
     end
-
-    sig { params(data: AnalyzeData).returns(T::Boolean) }
-    def lookup(data)
-      key = data.expr
-      ldebug? and ldebug "lookup for #{T.must(key)}"
-      @keys.each do |item|
-        if key == item
-          ldebug? and ldebug 'Found'
-          return true
-        end
-      end
-      ldebug? and ldebug "Not Found => group keys: #{keys.inspect}"
-      return false
-    end
   end
 
   # Match to handle exact group match
@@ -72,7 +58,7 @@ module SheepAst
     }
     def check_exact_group_match(data)
       @exact_group_matches.each do |_, a_chain|
-        test = a_chain.lookup(data)
+        test = a_chain.check_exact_group_condition(a_chain.keys, data)
         next if test.nil?
 
         a_chain.init

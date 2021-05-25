@@ -160,7 +160,14 @@ module SheepAst
     }
     def line_enclosed(key, pair, range, **options)
       chunk = pair[key]
-      application_error 'specified key did not hit' if chunk.nil?
+      data = pair[:_data]
+      baseline_match = get_match(data, key)
+      baseline = baseline_match.start_line
+      # binding.pry
+      if chunk.nil?
+        str = "specified key did not hit. data = #{pair.inspect}, key = #{key}"
+        application_error str
+      end
 
       chunk = T.must(chunk)[range]
       application_error 'cannot redirect exp for no Array' unless chunk.instance_of?(Array)

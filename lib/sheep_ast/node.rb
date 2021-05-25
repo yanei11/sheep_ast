@@ -142,10 +142,10 @@ module SheepAst
           # The condition match is not done.
           # This is clearly not End of AST lookup
           if condition_change?
-            ldebug? and ldebug 'MatchStatus::ConditionMatchingStart'
+            ldebug? and ldebug 'node judged to MatchStatus::ConditionMatchingStart'
             node_info.status = MatchStatus::ConditionMatchingStart
           else
-            ldebug? and ldebug 'MatchStatus::ConditionMatchingProgress'
+            ldebug? and ldebug 'node judged to MatchStatus::ConditionMatchingProgress'
             node_info.status = MatchStatus::ConditionMatchingProgress
           end
         elsif node.my_action.nil?
@@ -153,33 +153,37 @@ module SheepAst
           # The action is nil.
           # This is the case to continue scanning
           node_info.status = MatchStatus::MatchingProgress
+          ldebug? and ldebug 'node judged to MatchStatus::MatchingProgress, route1'
         elsif !node.my_action.need_qualify?
           # Strategy 2
           # The action is not nil and condition match is not scope
           # This is the case of End AST lookup since there are no another nodes
           # to look up but only action
           node_info.status = MatchStatus::AtEnd
+          ldebug? and ldebug 'node judged to  MatchStatus::AtEnd, route1'
         elsif node.my_action.really_end?(data)
           # Strategy 3
           # The action is not nil and condition match is not scope
           # This is the case of End AST by user specified really_end? function
           node_info.status = MatchStatus::AtEnd
+          ldebug? and ldebug 'node judged to  MatchStatus::AtEnd, route2'
         else
           # Strategy 4
           # So, this is the case of not really_end.
           # This is not End of AST lookup
           node_info.status = MatchStatus::MatchingProgress
+          ldebug? and ldebug 'node judged to MatchStatus::MatchingProgress, route2'
         end
 
         ldebug? and ldebug "node_info.status = #{node_info.status}"
         ldebug? and ldebug "condition flag = #{@condition_flag.inspect}"
         if node_info.status == MatchStatus::AtEnd && condition_change?
-          ldebug? and ldebug 'MatchStatus::ConditionMatchingAtEnd'
+          ldebug? and ldebug 'node judged to MatchStatus::ConditionMatchingAtEnd'
           node_info.status = MatchStatus::ConditionMatchingAtEnd
         end
 
         if node_info.status == MatchStatus::MatchingProgress && condition_change?
-          ldebug? and ldebug 'MatchStatus::ConditionEndButMatchingProgress'
+          ldebug? and ldebug 'node judged to MatchStatus::ConditionEndButMatchingProgress'
           node_info.status = MatchStatus::ConditionEndButMatchingProgress
         end
 

@@ -60,9 +60,9 @@ module SheepAst
       return ins
     end
 
-    def match_end(expr, key); end
+    def match_end(expr, key, data); end
 
-    def match_start(expr, key); end
+    def match_start(expr, key, data); end
 
     sig { override.params(data: AnalyzeData).returns(T::Boolean) }
     def test_finish?(data)
@@ -70,14 +70,14 @@ module SheepAst
       ret = false
       application_error('called when sem == 0') if @sem.zero?
 
-      if match_end(@end_expr, key) && additional_end_cond(data)
+      if match_end(@end_expr, key, data) && additional_end_cond(data)
         if sem_get == 1
           ret = true
           sem_set 0
         else
           sem_dec
         end
-      elsif match_start(@start_expr, key)
+      elsif match_start(@start_expr, key, data)
         sem_inc
       end
 

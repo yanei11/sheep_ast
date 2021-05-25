@@ -50,8 +50,13 @@ module SheepAst
       end
 
       puts "#{prog}> Time to process : #{time.real}" unless time.nil?
-      puts "#{prog}> Finish. Thank you."
 
+      if respond_to?(:handle_result)
+        puts "#{prog}> Successfully processed. Call handle_result."
+        handle_result(core)
+      end
+
+      puts "#{prog}> Finish. Thank you."
       exit(exit_status)
     end
   end

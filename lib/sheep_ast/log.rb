@@ -8,6 +8,11 @@ require 'time'
 
 using Rainbow
 
+# Overwrite inspect to stop verbose print
+class Logger
+  def inspect; end
+end
+
 module SheepAst
   # Logger Wrapper module
   #

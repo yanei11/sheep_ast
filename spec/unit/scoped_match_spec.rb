@@ -88,7 +88,7 @@ describe SheepAst::ScopedMatch do
         'match', 
         syn.A(:let,
                [:record, :test_H, :test, :test],
-               [:redirect, :test, 1..-2, namespace: 'test', ast_include: 'test']
+               [:redirect, :test, 1..-2, namespace: 'test', meta1: 'test1', meta2: 'test2', ast_include: 'test']
               )
       ) {
         syn._S << syn.E(:sc, 'f', 'aaa', :test)
@@ -97,8 +97,6 @@ describe SheepAst::ScopedMatch do
         'match2', syn.A(:na)
       ) {
         [
-          syn.E(:e, 'abc'),
-          syn.E(:e, 'abc'),
           syn.E(:e, 'abc'),
         ]
       }

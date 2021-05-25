@@ -73,7 +73,7 @@ module SheepAst
     }
     def check_regex_match(data)
       @regex_matches.each do |_, a_chain|
-        test = a_chain.match(data)
+        test = MatchBase.check_regex_condition(a_chain, data)
         next if test.nil?
 
         a_chain.matched(data)

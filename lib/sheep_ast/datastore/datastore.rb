@@ -15,10 +15,13 @@ module SheepAst
   # @api public
   class DataStore
     extend T::Sig
-    include Exception
     include Log
+    include Exception
     include LetCompile
     include LetHelper
+
+    sig { returns(DataStore) }
+    attr_reader :root
 
     alias let_compile compile
 
@@ -76,16 +79,19 @@ module SheepAst
         add_list(t_sym, value) unless value.nil?
       elsif hash_hash_var(sym)
         instance_variable_set(t_sym, DataStoreHashHash.new) unless is_defined
-        assign_hash(t_sym, key1, key2, value) unless value.nil?
+        assign_hash(t_sym, key, key2, value) unless value.nil?
+      elsif hash_hash_arr_var(sym)
+        instance_variable_set(t_sym, DataStoreHashHashArray.new) unless is_defined
+        assign_hash_arr(t_sym, key, key2, value) unless value.nil?
       else
         unless key.nil?
-          lfatal "key is not nil. Given sym should have _H suffix. sym = #{sym}"
-          usage and application_error 'key is not nil, despite it is not enumerable'
+          lfatal "datastore> key is not nil. Given sym should have _H suffix. sym = #{sym}"
+          usage and exit
         end
 
         if value.nil?
-          lfatal "For this datastore type = #{sym}, value must be specified"
-          usage and application_error
+          lfatal "datastore> For this datastore type = #{sym}, value must be specified"
+          usage and exit
         end
 
         instance_variable_set(t_sym, value)
@@ -123,8 +129,8 @@ module SheepAst
     end
 
     sig { params(sym: Symbol).returns(T.untyped) }
-    def read_clear(sym)
-      obj = val(:"@#{sym}")
+    def readclear(sym)
+      obj = val(:"@#{sym}").dup
       remove(sym)
       return obj
     end
@@ -169,7 +175,8 @@ module SheepAst
       lfatal '  :xxx_H  - Hold Key Value pair of string. concat array', :yellow
       lfatal '  :xxx_HA - Hold Key Value pair of string, push array', :yellow
       lfatal '  :xxx_HL - Hold Key and Last one Value pair', :yellow
-      lfatal '  :xxx_HH - Hold Key1 to Last one Hash with key2 and value pair', :yellow
+      lfatal '  :xxx_HHL - Hold Key1 and key2 and last value', :yellow
+      lfatal '  :xxx_HHA - Hold Key1 and key2 and array value', :yellow
       lfatal '  :xxx_CL - Hold List with Cyclic history', :yellow
       lfatal ''
       lfatal '  Note: let record_kv accept following kind:', :yellow
@@ -266,6 +273,13 @@ module SheepAst
 
     # @api private
     #
+    sig { params(sym: Symbol, key1: T.untyped, key2: T.untyped, value: T.untyped).void }
+    def assign_hash_arr(sym, key1, key2, value)
+      val(sym).send(:add, key1, key2, value)
+    end
+
+    # @api private
+    #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def array_var(sym)
       return sym.to_s.end_with?('_A')
@@ -303,7 +317,14 @@ module SheepAst
     #
     sig { params(sym: Symbol).returns(T::Boolean) }
     def hash_hash_var(sym)
-      return sym.to_s.end_with?('_HH')
+      return sym.to_s.end_with?('_HHL')
+    end
+
+    # @api private
+    #
+    sig { params(sym: Symbol).returns(T::Boolean) }
+    def hash_hash_arr_var(sym)
+      return sym.to_s.end_with?('_HHA')
     end
 
     def ctime_get

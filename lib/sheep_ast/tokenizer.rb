@@ -43,12 +43,18 @@ module SheepAst
       lambda { |array, num|
         res = T.let(true, T::Boolean)
         if !array.nil?
+          size = array.size - 1
           args.each_with_index do |elem, idx|
-            t_res = array[num + idx] == elem if elem.instance_of? String
-            t_res = array[num + idx] =~ elem if elem.instance_of? Regexp
-            if t_res.nil? || !t_res
+            if num + idx == size && array[num + idx] == "\n"
               res = false
+            else
+              t_res = array[num + idx] == elem if elem.instance_of? String
+              t_res = array[num + idx] =~ elem if elem.instance_of? Regexp
+              if t_res.nil? || !t_res
+                res = false
+              end
             end
+
             break if !res
           end
         else
@@ -220,9 +226,9 @@ module SheepAst
     sig { params(par: T.untyped, kwargs: T.untyped).void }
     def token_rule(*par, **kwargs)
       if block_given?
-        add_token(T.unsafe(self).cmb(*par), yield, **kwargs)
+        T.unsafe(self).add_token(T.unsafe(self).cmb(*par), yield, **kwargs)
       else
-        add_token(T.unsafe(self).cmb(*par), **kwargs)
+        T.unsafe(self).add_token(T.unsafe(self).cmb(*par), **kwargs)
       end
     end
 

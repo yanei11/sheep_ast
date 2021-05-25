@@ -165,7 +165,10 @@ module SheepAst
       T.must(data.file_manager).register_next_file(T.must(save_req.file)) unless save_req.file.nil?
       T.must(data.file_manager).ast_include_set(save_req.ast_include)
       T.must(data.file_manager).ast_exclude_set(save_req.ast_exclude)
-      T.must(data.file_manager).put_namespace(save_req.namespace)
+      T.must(data.file_manager).put_namespace(save_req.namespace) unless save_req.namespace.nil?
+      T.must(data.file_manager).put_meta1(save_req.meta1) unless save_req.meta1.nil?
+      T.must(data.file_manager).put_meta2(save_req.meta2) unless save_req.meta2.nil?
+      T.must(data.file_manager).put_meta3(save_req.meta3) unless save_req.meta3.nil?
     end
 
     sig { returns(String) }
@@ -389,13 +392,16 @@ module SheepAst
       @stages.each do |stage|
         len = stage.match_id_array.length
         if len != 0
-          lfatal "Validation Fail!!! stage = #{stage.name}."
-          lfatal 'To reach here means that in spite of end of file processing, some stages are'
-          lfatal 'during AST process. This is thought to be invalid scenario.'
-          lfatal 'Please check if this is really valid case.'
-          lfatal 'You can off this by call disable_eof_validation in the AnalyzerCore'
-          lfatal 'But the stiation maybe bug of sheep_ast or user code.'
-          application_error 'eof validation error'
+          str = "\n\n"\
+                "=========================================\n"\
+                "Validation Fail!!! stage = #{stage.name}\n"\
+                "=========================================\n"\
+                'To reach here means that in spite of end of file (or end of redirected chunk),'\
+                ' some stages are'\
+                ' during AST process. This is thought to be invalid scenario.'\
+                " Please check your registered stage = #{stage.name}, has some bugs."\
+                " You can find something in the [Match Stack] for the #{stage.name} below.\n\n"
+          application_error "eof validation error. Explanation is below. #{str}"
         end
       end
     end

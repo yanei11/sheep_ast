@@ -1,4 +1,4 @@
-# typed: true
+# typed: ignore
 # frozen_string_literal:true
 
 require_relative '../log'
@@ -17,7 +17,7 @@ module SheepAst
     include DataStoreTypeBase
 
     sig { params(value: T.nilable(@@generic_primitive_type), hash: T::Hash[String, @@generic_primitive_type]).void }
-    def initialize(value, hash)
+    def initialize(value, hash = {})
       @data = value
       @meta = hash
     end
