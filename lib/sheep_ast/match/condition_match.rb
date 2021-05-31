@@ -27,8 +27,6 @@ module SheepAst
       @start_info = "#{data.nil?}:#{data.to_enum}: start key:#{data.expr.inspect}"
       @start_line = data.file_info&.line
       @start_index = data.file_info&.index
-      @start_line = data.file_info&.line
-      @start_index = data.file_info&.index
     end
 
     sig { abstract.params(data: AnalyzeData).returns(T::Boolean) }
@@ -119,7 +117,7 @@ module SheepAst
     }
     def check_regex_condition_match(data)
       @regex_condition_matches.each do |_, match|
-        test = match.match(data)
+        test = MatchBase.check_regex_condition(match, data)
         next if test.nil?
 
         @condition_flag = true

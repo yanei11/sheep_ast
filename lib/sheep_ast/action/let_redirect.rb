@@ -47,7 +47,7 @@ module SheepAst
         key: T.nilable(Symbol),
         range: Range,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def redirect(pair, datastore, key = nil, range = 1..-2, **options)
       chunk = nil
@@ -71,12 +71,21 @@ module SheepAst
       ldebug? and ldebug "options = #{options.inspect}", :blue
       ns_t = ns_get(pair, options[:namespace])
 
-      if options[:dry_run]
+      meta1 = options[:meta1]
+      meta2 = options[:meta2]
+      meta3 = options[:meta3]
+
+      if options[:dry_run] || options[:dry_exit]
         format_dump {
           ldump "To be redirect : #{chunk.inspect}"
           ldump "Namespace : #{ns_t}"
+          ldump "previous Namespaces : #{pair[:_namespace]}"
         }
-        return T.unsafe(self).ret(**options)
+        if options[:dry_exit]
+          lfatal 'Requested exit immediately (dry_exit: true).'
+          lfatal 'Good Bye'
+          exit
+        end
       end
 
       if options[:debug]
@@ -92,11 +101,13 @@ module SheepAst
         chunk: chunk,
         ast_include: options[:ast_include],
         ast_exclude: options[:ast_exclude],
-        namespace: ns_t
+        namespace: ns_t,
+        meta1: meta1,
+        meta2: meta2,
+        meta3: meta3
       )
 
       @data.save_request = save_req
-      return T.unsafe(self).ret(**options)
     end
   end
 end

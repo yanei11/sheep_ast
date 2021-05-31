@@ -35,7 +35,7 @@ module SheepAst
       params(
         args: T.any(String, Regexp)
       ).returns(
-        T.proc.params(arg0: T::Array[T.any(String, Regexp)],
+        T.proc.params(arg0: T.nilable(T::Array[T.any(String, Regexp)]),
                       arg1: Integer).returns([T::Array[T.any(String, Regexp)], T::Boolean])
       )
     }
@@ -43,10 +43,18 @@ module SheepAst
       lambda { |array, num|
         res = T.let(true, T::Boolean)
         if !array.nil?
+          size = array.size - 1
           args.each_with_index do |elem, idx|
-            t_res = array[num + idx] == elem if elem.instance_of? String
-            t_res = array[num + idx] =~ elem if elem.instance_of? Regexp
-            res = false if t_res.nil? || !t_res
+            if num + idx == size && array[num + idx] == "\n"
+              res = false
+            else
+              t_res = array[num + idx] == elem if elem.instance_of? String
+              t_res = array[num + idx] =~ elem if elem.instance_of? Regexp
+              if t_res.nil? || !t_res
+                res = false
+              end
+            end
+
             break if !res
           end
         else
@@ -88,7 +96,7 @@ module SheepAst
           [T::Array[T.any(String, Regexp)], T::Boolean]
         ),
         token: T.nilable(String),
-        options: T::Boolean
+        options: T.untyped
       ).void
     }
     def add_token(blk, token = nil, **options) 
@@ -177,15 +185,15 @@ module SheepAst
         args, _, options, token = blk.call(nil, 0)
         token = args.join if !token
         dump_part(idx, args, token, options, logf)
-        logf.call('        |_______|', :cyan) if options[:recursive]
+        logf.call ''
       end
-      logf.call('')
     end
 
     # @api private
     def dump_part(idx, args, token, options, logf)
-      logf.call "stage#{idx + 1} :___\\ #{args.inspect} is combined to "\
-                "#{token.inspect} with options = #{options.inspect}", :cyan
+      logf.call "stage#{idx + 1} :"
+      logf.call " - #{args.inspect} is combined to #{token.inspect}", :cyan
+      logf.call(' - This is recursively evaluated', :cyan) if options[:recursive]
     end
 
     # To specify split rule as space only.
@@ -215,12 +223,12 @@ module SheepAst
     #
     # @api public
     #
-    sig { params(par: T.untyped).void }
-    def token_rule(*par)
+    sig { params(par: T.untyped, kwargs: T.untyped).void }
+    def token_rule(*par, **kwargs)
       if block_given?
-        add_token T.unsafe(self).cmb(*par), yield
+        T.unsafe(self).add_token(T.unsafe(self).cmb(*par), yield, **kwargs)
       else
-        add_token T.unsafe(self).cmb(*par)
+        T.unsafe(self).add_token(T.unsafe(self).cmb(*par), **kwargs)
       end
     end
 
@@ -260,18 +268,15 @@ module SheepAst
 
       ldebug? and ldebug2 "#{line} will be combined process"
 
-      prev = T.let(nil, T.nilable(T::Array[String]))
+      # prev = T.let(nil, T.nilable(T::Array[String]))
       @tokenize_stage.each do |blk|
+        args, _, options, token = blk.call(nil, 0)
+        recursive = true if options[:recursive]
+
         loop do
-          buf, options = basic_shaping(buf, blk)
-          if T.must(options)[:recursive]
-            ldebug? and ldebug 'recursiv option enable'
-            ldebug? and ldebug "buf  => #{buf.inspect}"
-            ldebug? and ldebug "prev => #{prev.inspect}"
-            if buf != prev
-              prev = buf.dup
-            else
-              prev = nil
+          buf, _, changed = basic_shaping(buf, blk, recursive)
+          if recursive
+            if !changed
               break
             end
           else
@@ -289,21 +294,30 @@ module SheepAst
         blk: T.proc.params(arg0: T::Array[String], arg1: Integer).returns(
           T.any(NilClass, [Integer, T.any(String, T::Array[String]),
                            T.nilable(T::Hash[Symbol, T::Boolean])])
-        )
-      ).returns([T::Array[String], T.nilable(T::Hash[Symbol, T::Boolean])])
+        ),
+        recursive: T.nilable(T::Boolean)
+      ).returns([T::Array[String], T.nilable(T::Hash[Symbol, T::Boolean]), T::Boolean])
     }
-    def basic_shaping(line, blk)
+    def basic_shaping(line, blk, recursive)
       num = 0
       ret_array = []
       options = T.let(nil, T.nilable(T::Hash[Symbol, T::Boolean]))
+      changed = T.let(false, T::Boolean)
       while num <= (line.size - 1)
         inc_count = 1
         store_str = line[num]
-        inc_count, store_str, options = basic_shaping_part(blk, line, num)
+        if !recursive || !changed
+          inc_count, store_str, options = basic_shaping_part(blk, line, num)
+        end
+
+        if inc_count != 1
+          changed = true
+        end
+
         num += inc_count
         ret_array << store_str
       end
-      return ret_array, options
+      return ret_array, options, changed
     end
 
     sig {
@@ -319,11 +333,14 @@ module SheepAst
     def basic_shaping_part(blk, line, num)
       args, store_str, options = blk.call(line, num)
       inc_count = T.must(args).size
+      changed = false
 
       if inc_count.nil?
         inc_count = 1
       end
 
+      # In this route, store_str = false
+      # So, it shows token is ended or not started
       if !store_str
         inc_count = 1
         store_str = line[num]

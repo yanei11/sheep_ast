@@ -5,7 +5,7 @@
 
 
 require 'spec_helper'
-require 'sheep_ast/cyclic_list'
+require 'sheep_ast'
 
 describe SheepAst::CyclicList do
   it 'can hold history less than limit' do

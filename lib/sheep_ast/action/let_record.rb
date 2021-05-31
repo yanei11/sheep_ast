@@ -42,7 +42,7 @@ module SheepAst
         k_or_v: T.any(T::Array[Symbol], Symbol),
         value: T.nilable(T.any(T::Array[Symbol], Symbol)),
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def record(pair, datastore, store_id, k_or_v, value = nil, **options)
       if value.nil?
@@ -50,7 +50,6 @@ module SheepAst
       else
         T.unsafe(self).record_kv(pair, datastore, store_id, T.cast(k_or_v, Symbol), value, **options)
       end
-      return T.unsafe(self).ret(**options)
     end
 
     # Please use record

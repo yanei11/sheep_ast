@@ -72,8 +72,7 @@ module SheepAst
     }
     def check_exact_match(data)
       key = data.expr
-
-      match = @exact_matches[key]
+      match = MatchBase.check_exact_condition(@exact_matches, key, data)
 
       return nil if match.nil?
 

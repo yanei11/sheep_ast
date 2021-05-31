@@ -28,7 +28,7 @@ module SheepAst
         ast_name: T.nilable(String),
         operation: OperateNode,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def operate_node(pair, datastore, ast_name, operation, **options)
       ldebug? and ldebug "Node operation #{operation.inspect} to #{ast_name}"
@@ -36,8 +36,6 @@ module SheepAst
         application_error 'analyzer_core must be set'
       end
       @analyzer_core.move_node(ast_name, operation)
-
-      return T.unsafe(self).ret(**options)
     end
   end
 end

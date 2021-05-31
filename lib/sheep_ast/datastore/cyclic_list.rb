@@ -1,8 +1,8 @@
 # typed: true
 # frozen_string_literal:true
 
-require_relative 'log'
-require_relative 'exception'
+require_relative '../log'
+require_relative '../exception'
 
 module SheepAst
   # Factory of factories

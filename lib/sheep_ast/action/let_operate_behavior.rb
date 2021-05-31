@@ -28,7 +28,7 @@ module SheepAst
         ast_name: String,
         operation: OnOff,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def operate_action(pair, datastore, ast_name, operation, **options)
       ldebug? and ldebug "operation Action #{operation.inspect} to #{ast_name.inspect}", :purple
@@ -38,8 +38,6 @@ module SheepAst
       elsif operation == OnOff::Enable
         @analyzer_core.enable_action(ast_name)
       end
-
-      return T.unsafe(self).ret(**options)
     end
   end
 end

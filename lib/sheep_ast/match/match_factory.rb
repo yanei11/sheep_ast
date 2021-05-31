@@ -32,6 +32,8 @@ module SheepAst
     include Exception
     include FactoryBase
 
+    @@uniq_id = 0
+
     sig { void }
     def initialize
       @exact_match = ExactMatch.new
@@ -53,28 +55,40 @@ module SheepAst
     sig { params(kind: Symbol, para: T.untyped, options: T.untyped).returns(T.any(T::Array[MatchBase], MatchBase)) }
     def gen(kind, *para, **options)
       ldebug? and ldebug "kind = #{kind.inspect}, para = #{para.inspect}, options = #{options.inspect}"
-
       match_arr = []
       repeat = options[:repeat].nil? ? 1..1 : 1..options[:repeat]
+
+      para_arr = para
+      if kind == :endl || kind == :endlr
+        para_arr = [para[0], "\n", para[1..-1]].flatten
+        options[:end_match_index] = 1
+      end
 
       repeat.each {
         match =
           case kind
-          when :e    then @exact_match.new(*para, **options)
-          when :r    then @regex_match.new(*para, **options)
-          when :eg   then @exact_group_match.new(*para, **options)
-          when :sc   then @scoped_match.new(*para, **options)
-          when :scr  then @scoped_regex_match.new(*para, **options)
-          when :enc  then @enclosed_match.new(*para, **options)
-          when :encr then @enclosed_regex_match.new(*para, **options)
-          when :any  then @any_match.new('any', *para, **options)
-          when :eof  then @exact_match.new('__sheep_eof__', *para, **options)
+          when :e     then @exact_match.new(*para, **options)
+          when :r     then @regex_match.new(*para, **options)
+          when :eg    then @exact_group_match.new(*para, **options)
+          when :sc    then @scoped_match.new(*para, **options)
+          when :scr   then @scoped_regex_match.new(*para, **options)
+          when :enc   then @enclosed_match.new(*para, **options)
+          when :encr  then @enclosed_regex_match.new(*para, **options)
+          when :any   then @any_match.new('any', *para, **options)
+          when :eof   then @exact_match.new('__sheep_eof__', *para, **options)
+          when :endl  then @scoped_match.new(*(para_arr), **options)
+          when :endlr then @scoped_regex_match.new(*(para_arr), **options)
           else
             application_error 'unknown match'
           end
 
+        if options[:another_node]
+          @@uniq_id += 1
+          match.key = "#{match.key}_#{@@uniq_id}"
+        end
+
+        match.validate(kind)
         create_id(match)
-        # match.data_store = @data_store
         match.kind_name_set(kind.to_s)
         match.node_tag = options[:node_tag]
         match.parent_tag = options[:parent_tag]

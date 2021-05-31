@@ -100,6 +100,12 @@ module SheepAst
       @af.gen(kind, *para, **options)
     end
 
+    def LET(*para, **options)
+      @af.gen(:let, *para, **options)
+    end
+
+
+
     # Returns Qualifier object.
     #
     # In the situation that Ast node has action and match to another node like:

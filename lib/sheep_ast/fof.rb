@@ -3,7 +3,7 @@
 
 require_relative 'log'
 require_relative 'exception'
-require_relative 'datastore'
+require_relative 'datastore/datastore'
 require_relative 'match/match_factory'
 require_relative 'action/action_factory'
 

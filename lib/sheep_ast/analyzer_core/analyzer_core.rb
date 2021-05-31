@@ -1,11 +1,11 @@
-# typed:ignore
+# typed: false
 # frozen_string_literal:true
 
 require_relative '../exception'
 require_relative '../factory_base'
 require_relative '../ast_manager'
 require_relative '../tokenizer'
-require_relative '../datastore'
+require_relative '../datastore/datastore'
 require_relative '../sheep_obj'
 require_relative '../stage_manager'
 require_relative '../fof'
@@ -172,8 +172,27 @@ module SheepAst
       logf = method(logs)
       @tokenizer.dump(logs)
       @stage_manager.dump_tree(logs)
+      logf.call ''
       logf.call '## Resume Info ##'
-      logf.call @file_manager.resume_data.inspect
+      logf.call 'Current Processing Data'
+      logf.call '- See above info', :magenta
+      count = 0
+      @file_manager.resume_data.reverse_each do |elem|
+        count += 1
+        logf.call ''
+        logf.call '|\\'
+        logf.call '|'
+        logf.call "-- stack##{count} --"
+        logf.call "- object_id = #{elem.object_id}"
+        logf.call "- line = #{elem.line}"
+        logf.call "- max_line = #{elem.max_line}"
+        logf.call "- index = #{elem.index}"
+        logf.call "- namespace_stack = #{elem.namespace_stack.inspect}"
+        logf.call "- ast_include = #{elem.ast_include.inspect}"
+        logf.call "- ast_exclude = #{elem.ast_exclude.inspect}"
+        logf.call "- file = #{elem.file}"
+      end
+      logf.call ''
       logf.call ''
     end
 
@@ -207,23 +226,22 @@ module SheepAst
       logf.call '## report Got exception ##'
       logf.call '--------------------------'
       logf.call ''
-      logf.call '## Exception Info'
-      logf.call 'Message'
+      logf.call '## Exception Info ##'
+      logf.call 'Message:'
       logf.call "#{e.inspect}", :red
       logf.call 'BackTrace:'
       logf.call "#{arr.inspect}", :blue
       logf.call ''
       dump(logs)
+      logf.call '## End of Report ##'
       logf.call 'Exception was occured at analyzer core'
       if !ENV['SHEEP_DEBUG_PRY'].nil?
         logf.call 'Entering pry debug session'
         binding.pry # rubocop: disable all
       else
-        logf.call 'Not entering pry debug session.'
-        logf.call 'Please define SHEEP_DEBUG_PRY for entering pry debug session'
+        logf.call 'Define SHEEP_DEBUG_PRY for entering pry debug session here.'
       end
       logf.call ''
-      logf.call 'End of Report'
       logf.call '--------------------------'
       logf.call ''
 

@@ -29,13 +29,12 @@ module SheepAst
         pair: T::Hash[Symbol, T.untyped],
         datastore: DataStore,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def show(pair, datastore, **options)
       if !options[:disable]
         format_dump { ldump "pair = #{pair.inspect}", :lightgreen }
       end
-      return T.unsafe(self).ret(**options)
     end
 
     # show variable data passed from the Let action
@@ -50,14 +49,13 @@ module SheepAst
         pair: T::Hash[Symbol, T.untyped],
         datastore: DataStore,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def break(pair, datastore, **options)
       if !options[:disable]
         format_dump { ldump "pair = #{pair.inspect}", :yellow }
-        return true
+        @break = true
       end
-      return false
     end
 
     # Entering Debug shell pry
@@ -75,19 +73,18 @@ module SheepAst
         pair: T::Hash[Symbol, T.untyped],
         datastore: DataStore,
         options: T.untyped
-      ).returns(T.nilable(T::Boolean))
+      ).void
     }
     def debug(pair, datastore, **options)
       if !options[:disable] && ENV['SHEEP_LET_DISABLE_DEBUG'].nil?
         binding.pry if T.unsafe(self)._do_pry(**options) # rubocop:disable all
       end
-      return T.unsafe(self).ret(**options)
     end
 
     sig {
       params(
         options: T.untyped
-      ).void
+      ).returns(T::Boolean)
     }
     def _do_pry(**options)
       @count = 1 if @count.nil?

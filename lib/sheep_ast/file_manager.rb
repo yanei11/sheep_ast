@@ -3,7 +3,7 @@
 
 require 'set'
 require_relative 'log'
-require_relative 'datastore'
+require_relative 'datastore/datastore'
 require_relative 'tokenizer'
 require 'sorbet-runtime'
 
@@ -157,6 +157,10 @@ module SheepAst
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
       @analyze_data.request_next_data = RequestNextData::Next
+      @datastore.assign(:namespace_stack, @file_info.namespace_stack)
+      @datastore.assign(:meta1_stack, @file_info.meta1_stack)
+      @datastore.assign(:meta2_stack, @file_info.meta2_stack)
+      @datastore.assign(:meta3_stack, @file_info.meta3_stack)
       if !@analyze_data.file_info.line.nil? && !@analyze_data.file_info.raw_lines.nil?
         @analyze_data.raw_line = @file_info.raw_lines[@file_info.line]
       else
@@ -238,7 +242,10 @@ module SheepAst
       @resume_info << info
 
       ldebug? and ldebug "Suspended info process!! resume_stack = #{@resume_info.length}"\
-        " for info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
+        " at info = #{info.inspect}, copied from #{@file_info.inspect}", :indianred
+
+      # ldump "[REDIRCT] Pushed to Resume stack(#{@resume_info.length - 1}-->#{@resume_info.length})"\
+      #   " at line = #{info.line.inspect}, index = #{@file_info.index.inspect}", :indianred
 
       @file_info.init
       threshold = ENV['SHEEP_SAVE_STACK'].nil? ? 10 : ENV['SHEEP_SAVE_STACK']
@@ -255,6 +262,8 @@ module SheepAst
     def restore_info
       info = @resume_info.pop
       ldebug? and ldebug "restore_info, info = #{info.inspect}"
+      # ldump '[RESUME ] restore info from Resume stack.' unless info.nil?
+
       return nil if info.nil?
 
       @stage_manager.restore_info
@@ -272,6 +281,27 @@ module SheepAst
       @file_info.namespace_stack = @resume_info.last.namespace_stack.dup
       @file_info.namespace_stack << namespace
       ldebug? and ldebug "putting namespace = #{namespace.inspect}, and stack is #{@file_info.namespace_stack.inspect}"
+    end
+
+    sig { params(meta1: T.nilable(String)).void }
+    def put_meta1(meta1)
+      @file_info.meta1_stack = @resume_info.last.meta1_stack.dup
+      @file_info.meta1_stack << meta1
+      ldebug? and ldebug "putting meta1 = #{meta1.inspect}, and stack is #{@file_info.meta1_stack.inspect}"
+    end
+
+    sig { params(meta2: T.nilable(String)).void }
+    def put_meta2(meta2)
+      @file_info.meta2_stack = @resume_info.last.meta2_stack.dup
+      @file_info.meta2_stack << meta2
+      ldebug? and ldebug "putting meta2 = #{meta2.inspect}, and stack is #{@file_info.meta2_stack.inspect}"
+    end
+
+    sig { params(meta3: T.nilable(String)).void }
+    def put_meta3(meta3)
+      @file_info.meta3_stack = @resume_info.last.meta3_stack.dup
+      @file_info.meta3_stack << meta3
+      ldebug? and ldebug "putting meta3 = #{meta3.inspect}, and stack is #{@file_info.meta3_stack.inspect}"
     end
 
     sig {

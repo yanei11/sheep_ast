@@ -200,6 +200,9 @@ module SheepAst
     prop :max_line, Integer, default: 0
     prop :index, Integer, default: 0
     prop :namespace_stack, T::Array[T.nilable(String)], default: []
+    prop :meta1_stack, T::Array[T.nilable(String)], default: []
+    prop :meta2_stack, T::Array[T.nilable(String)], default: []
+    prop :meta3_stack, T::Array[T.nilable(String)], default: []
     prop :ast_include, T.nilable(T::Array[T.any(String, Regexp)]), default: nil
     prop :ast_exclude, T.nilable(T::Array[T.any(String, Regexp)]), default: nil
     prop :new_file_validation, T::Boolean, default: false
@@ -212,6 +215,9 @@ module SheepAst
       @max_line = other.max_line.dup
       @index = other.index.dup
       @namespace_stack = other.namespace_stack.dup
+      @meta1_stack = other.meta1_stack.dup
+      @meta2_stack = other.meta2_stack.dup
+      @meta3_stack = other.meta3_stack.dup
       @ast_include = other.ast_include.dup
       @ast_exclude = other.ast_exclude.dup
       @raw_lines = other.raw_lines.dup
@@ -228,6 +234,9 @@ module SheepAst
       @max_line = 0
       @index = 0
       @namespace_stack = []
+      @meta1_stack = []
+      @meta2_stack = []
+      @meta3_stack = []
       @ast_include = nil
       @ast_exclude = nil
       @raw_lines = nil
@@ -239,6 +248,9 @@ module SheepAst
       "custome inspect <#{self.class.name} object_id = #{object_id}, file = #{@file.inspect},"\
         " chunk = #{@chunk.inspect},"" line = #{@line.inspect}, max_line = #{@max_line.inspect},"\
         " index = #{@index.inspect}, namespace_stack = #{@namespace_stack.inspect},"\
+        " meta1_stack = #{@meta1_stack.inspect},"\
+        " meta2_stack = #{@meta2_stack.inspect},"\
+        " meta3_stack = #{@meta3_stack.inspect},"\
         " ast_include = #{@ast_include.inspect}, ast_exclude = #{@ast_exclude.inspect},"\
         " new_file_validation = #{@new_file_validation.inspect}>"
     end
@@ -250,6 +262,9 @@ module SheepAst
     prop :ast_include, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
     prop :ast_exclude, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
     prop :namespace, T.nilable(String), default: nil
+    prop :meta1, T.nilable(String), default: nil
+    prop :meta2, T.nilable(String), default: nil
+    prop :meta3, T.nilable(String), default: nil
   end
 
   # This structure is passed fro file_manager to Match and Action.
