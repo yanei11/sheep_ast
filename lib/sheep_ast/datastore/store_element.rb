@@ -27,12 +27,12 @@ module SheepAst
       @data = value
     end
 
-    sig { params(key: String, value: @@generic_primitive_type).void }
+    sig { params(key: T.any(Symbol, String), value: @@generic_primitive_type).void }
     def add_meta(key, value)
       @meta[key] = value
     end
 
-    sig { params(key: String).returns(T.nilable(@@generic_primitive_type)) }
+    sig { params(key: T.any(Symbol, String)).returns(T.nilable(@@generic_primitive_type)) }
     def meta(key)
       @meta[key]
     end

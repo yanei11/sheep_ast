@@ -257,11 +257,15 @@ module SheepAst
       @data_store.assign(:_sheep_dir_path, arr)
     end
 
+    # API to select files to include by {SheepAst::LetInclude} module
+    def sheep_include_file_filter_set(arr)
+      @data_store.assign(:_sheep_include_file_filter, arr)
+    end
+
     # API to set exclude path to skip analysis by {SheepAst::LetInclude} module
     def sheep_exclude_dir_path_set(arr)
       @data_store.assign(:_sheep_exclude_dir_path, arr)
     end
-
 
     # API to set output directory for {SheepAst::LetCompile} module
     def sheep_outdir_set(path)
@@ -382,6 +386,7 @@ module SheepAst
       end
 
       sheep_dir_path_set(@option[:I]) if @option[:I]
+      sheep_include_file_filter_set(@option[:F]) if @option[:F]
       sheep_exclude_dir_path_set(@option[:E]) if @option[:E]
       sheep_outdir_set(@option[:o]) if @option[:o]
       sheep_template_dir_path_set(@option[:t]) if @option[:t]
