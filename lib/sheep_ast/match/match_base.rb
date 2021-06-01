@@ -95,7 +95,7 @@ module SheepAst
       @include = @options[:include]
       @not_include = @options[:not_include]
       @neq = @options[:neq]
-      @neq = [word] if @neq.is_a? String
+      @neq = [@neq] if @neq.is_a? String
       super()
     end
 
