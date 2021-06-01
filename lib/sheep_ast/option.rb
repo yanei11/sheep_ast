@@ -101,7 +101,6 @@ module SheepAst
         config_file.each_with_index do |file, index|
           if File.exist?(file)
             load file
-            puts "test #{index}"
             alias :"configure_#{index}" :configure
             @loaded_file << file.split('/').last
           else
