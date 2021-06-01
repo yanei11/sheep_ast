@@ -51,6 +51,15 @@ module SheepAst
     def last
       @data.last
     end
+
+    def find(key)
+      @data.each do |elem|
+        if elem == key
+          return true
+        end
+      end
+      return false
+    end
   end
 
   # Hold Hash type value. If array is given, it is concat

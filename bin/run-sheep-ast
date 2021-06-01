@@ -51,9 +51,15 @@ module SheepAst
 
       puts "#{prog}> Time to process : #{time.real}" unless time.nil?
 
-      if respond_to?(:handle_result)
+
+      begin
         puts "#{prog}> Successfully processed. Call handle_result."
-        handle_result(core)
+        method(:handle_result).call(core)
+      rescue NameError
+        puts 'handle_result is not loaded'
+      rescue => e
+        puts 'Unknown ERROR abort'
+        p e
       end
 
       puts "#{prog}> Finish. Thank you."

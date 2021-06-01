@@ -7,6 +7,8 @@ require_relative 'datastore/datastore'
 require_relative 'tokenizer'
 require 'sorbet-runtime'
 
+DEFAULT_SAVE_STACK_SIZE = 20
+
 # TBD
 module SheepAst
   # This object handles input of syntax element after parsing by tokenizer.
@@ -248,9 +250,9 @@ module SheepAst
       #   " at line = #{info.line.inspect}, index = #{@file_info.index.inspect}", :indianred
 
       @file_info.init
-      threshold = ENV['SHEEP_SAVE_STACK'].nil? ? 10 : ENV['SHEEP_SAVE_STACK']
+      threshold = ENV['SHEEP_SAVE_STACK'].nil? ? DEFAULT_SAVE_STACK_SIZE : ENV['SHEEP_SAVE_STACK']
       if @resume_info.length > threshold
-        lfatal "resume stack uses more than #{threshold}. Check bug. Default = 10."
+        lfatal "resume stack uses more than #{threshold}. Check bug. Default = #{DEFAULT_SAVE_STACK_SIZE}."
         lfatal 'Or you can adjust environment parameter SHEEP_SAVE_STACK'
         lfatal "resume_info => #{@resume_info.inspect}"
         application_error
@@ -336,9 +338,10 @@ module SheepAst
     def marc_process_main(file)
       if File.exist?(file)
         fpath = File.expand_path(file)
-        res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
-        if res.nil?
-          @datastore.assign(:_sheep_proessed_file_A, fpath)
+        db = @datastore.assign(:_sheep_processed_file_A)
+        res = db&.find(fpath)
+        if !res
+          db.add(fpath)
           ldump "[PROCESS] #{file}", :cyan
         else
           lfatal "Same file is entried -> #{file}"
@@ -351,9 +354,10 @@ module SheepAst
     def marc_process_indirect(file)
       if File.exist?(file)
         fpath = File.expand_path(file)
-        res = @datastore.value(:_sheep_processed_file_A)&.find { |name| name == fpath }
-        if res.nil?
-          @datastore.assign(:_sheep_proessed_file_A, fpath)
+        db = @datastore.assign(:_sheep_processed_file_A)
+        res = db&.find(fpath)
+        if !res
+          db.add(fpath)
           t_file = file.split('/').last
           ldump "[INCLUDE] #{t_file}", :green
           return true

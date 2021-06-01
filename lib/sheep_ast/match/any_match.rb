@@ -62,7 +62,7 @@ module SheepAst
       super()
       @any_matches = {}
       @global_matches[MatchKind::Any.rank] = @any_matches
-      @methods_array << prio(160, method(:check_any_match))
+      @methods_array << prio(310, method(:check_any_match))
     end
 
     sig {

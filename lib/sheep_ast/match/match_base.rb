@@ -91,6 +91,11 @@ module SheepAst
       @regex_end = options[:regex_end]
       @end_match_index = options[:end_match_index]
       @start_match_index = options[:start_match_index]
+      @at_head = @options[:at_head]
+      @include = @options[:include]
+      @not_include = @options[:not_include]
+      @neq = @options[:neq]
+      @neq = [word] if @neq.is_a? String
       super()
     end
 
@@ -186,8 +191,8 @@ module SheepAst
       end
     end
 
-    def additional_cond(data)
-      if @options[:at_head]
+    def additional_cond(data) #rubocop:disable all
+      if @at_head
         if data.file_info.index != 1
           ldebug? and ldebug 'at head : false'
           return false
@@ -195,11 +200,16 @@ module SheepAst
         ldebug? and ldebug 'at head : true'
       end
 
-      word = @options[:include?]
-      if word
-        if data.tokenized_line&.include?(word)
-          return true
-        else
+      if @include && !data.tokenized_line&.include?(@include)
+        return false
+      end
+
+      if @not_include && data.tokenized_line&.include?(@not_include)
+        return false
+      end
+
+      @neq&.each do |a_word|
+        if data.expr == a_word
           return false
         end
       end

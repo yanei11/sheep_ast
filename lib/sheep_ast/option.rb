@@ -27,6 +27,9 @@ module SheepAst
           '-I array', Array, 'Specify search directories for the include files'
         ) { |v| @option[:I] = v }
         opt.on(
+          '-F files', Array, 'Specify file to filter to include'
+        ) { |v| @option[:F] = v }
+        opt.on(
           '-d', 'Dump Debug information'
         ) { @option[:d] = true }
         opt.on(
@@ -143,11 +146,14 @@ module SheepAst
         method(:"configure_#{count}").call(core)
         count += 1
       end
-    rescue => e
+    rescue NameError
       puts "do_configure: Loaded #{count} config."
       puts "Loaded files are #{@loaded_file.inspect}"
-      p e
       return count != 0
+    rescue => e
+      puts 'Unknown error'
+      p e
+      raise
     end
   end
 end

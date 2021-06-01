@@ -27,6 +27,12 @@ module SheepAst
       return val.nil? ? [] : val
     end
 
+    sig { returns(T::Array[String]) }
+    def include_file_filter
+      val = @data_store.value(:_sheep_include_file_filter)
+      return val.nil? ? [] : val
+    end
+
     # Handle analysis target including another file
     #
     # @example
@@ -83,6 +89,14 @@ module SheepAst
           return true
         end
       end
+
+      include_file_filter.each do |file_filter|
+        if !file.include?(file_filter)
+          ldump "[IGNORED] #{file}", :yellow
+          return true
+        end
+      end
+
       return false
     end
 
