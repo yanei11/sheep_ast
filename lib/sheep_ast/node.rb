@@ -244,5 +244,15 @@ module SheepAst
       @matches_to_node[match.key] = node
       @matches_to_match[match.key] = match
     end
+
+    def condition_up_action(incl, excl)
+      @my_node_factory.my_manager.stage_manager.condition_incl = incl
+      @my_node_factory.my_manager.stage_manager.condition_excl = excl
+    end
+
+    def condition_down_action
+      @my_node_factory.my_manager.stage_manager.condition_incl = nil
+      @my_node_factory.my_manager.stage_manager.condition_excl = nil
+    end
   end
 end

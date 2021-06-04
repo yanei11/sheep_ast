@@ -9,13 +9,95 @@ require 'sorbet-runtime'
 
 module SheepAst
   # Common method for hash variable
-  module HashFind
+  module HashUtil
+    include DataStoreTypeBase
     extend T::Sig
 
-    def find(key)
-      if @data.is_a? Hash
-        return @data[key]
+    sig {
+      params(
+        key: String,
+        options: T.untyped
+      ).returns(T.nilable(@@generic_store_element_type))
+    }
+    def find(key, **options)
+      elem = @data[key]
+
+      if elem.nil?
+        if !options[:allow_not_found]
+          application_error "Specified key = #{key} has nil value"
+        end
       end
+
+      return elem
+    end
+  end
+
+  module HashHashUtil
+    include DataStoreTypeBase
+    extend T::Sig
+    sig {
+      params(
+        key1: String,
+        key2: String,
+        options: T.untyped
+      ).returns(T.nilable(@@generic_store_element_type))
+    }
+    def find(key1, key2, **options)
+      _, elem = find_or_init(key1, key2)
+      if elem.nil?
+        application_error "Specified key1 = #{key1}, key2 = #{key2} has nil value."\
+          " Use nilable_find if you accept nil"
+      end
+
+      return elem
+    end
+
+    sig {
+      params(
+        key1: String,
+        key2: String,
+        options: T.untyped
+      ).returns(T.nilable(@@generic_store_element_type))
+    }
+    def nilable_find(key1, key2, **options)
+      _, elem = find_or_init(key1, key2)
+      return elem
+    end
+
+    sig { params(key1: T.nilable(String), key2: T.nilable(String)).void }
+    def remove(key1 = nil, key2 = nil)
+      if key1.nil? && key2.nil?
+        @data = nil
+        return
+      end
+
+      if key1 && key2
+        @data[key1].delete(key2)
+      else
+        @data.delete(key1)
+      end
+    end
+
+    def find_or_init(key1, key2, value = nil)
+      if @data.nil?
+        @data = {}
+      end
+
+      v1 = @data[key1]
+      if v1.nil?
+        d = { key2 => value }
+        e = { key1 => d  }
+        @data.merge!(e)
+        return false, value
+      end
+
+      v2 = v1[key2]
+      if v2.nil?
+        v1[key2] = value
+        return false, value
+      end
+
+      return true, v2
     end
   end
 
@@ -67,7 +149,7 @@ module SheepAst
     extend T::Sig
     include Log
     include Exception
-    include HashFind
+    include HashUtil
     include DataStoreTypeBase
 
     sig { void }
@@ -99,7 +181,7 @@ module SheepAst
     extend T::Sig
     include Log
     include Exception
-    include HashFind
+    include HashUtil
     include DataStoreTypeBase
 
     sig { void }
@@ -129,8 +211,8 @@ module SheepAst
     end
 
     sig { params(key: String)..returns(@@generic_store_type) }
-    def last
-      @data.last
+    def last(key)
+      @data[key].last
     end
   end
 
@@ -139,7 +221,7 @@ module SheepAst
     extend T::Sig
     include Log
     include Exception
-    include HashFind
+    include HashUtil
     include DataStoreTypeBase
 
     sig { void }
@@ -163,11 +245,11 @@ module SheepAst
     extend T::Sig
     include Log
     include Exception
+    include HashHashUtil
     include DataStoreTypeBase
 
     sig { void }
     def initialize
-      @data = Hash.new { |h, k| h[k] = {} }
     end
 
     sig {
@@ -178,30 +260,9 @@ module SheepAst
       ).void
     }
     def keeplast(key1, key2, value)
-      @data[key1][key2] = value
-    end
-
-    sig {
-      params(
-        key1: String,
-        key2: String
-      ).returns(@@generic_store_element_type)
-    }
-    def find(key1, key2)
-      @data[key1][key2]
-    end
-
-    sig { params(key1: T.nilable(String), key2: T.nilable(String)).void }
-    def remove(key1 = nil, key2 = nil)
-      if key1.nil? && key2.nil?
-        @data = Hash.new { |h, k| h[k] = {} }
-        return
-      end
-
-      if key1 && key2
-        @data[key1].delete(key2)
-      else
-        @data.delete(key1)
+      find, _ = find_or_init(key1, key2, value)
+      if find
+        @data[key1][key2] = value
       end
     end
   end
@@ -211,11 +272,11 @@ module SheepAst
     extend T::Sig
     include Log
     include Exception
+    include HashHashUtil
     include DataStoreTypeBase
 
     sig { void }
     def initialize
-      @data = Hash.new { |h, k| h[k] = {} }
     end
 
     sig {
@@ -226,35 +287,8 @@ module SheepAst
       ).void
     }
     def add(key1, key2, value)
-      if !@data[key1][key2]
-        @data[key1][key2] = []
-      end
-
+      find_or_init(key1, key2, [])
       @data[key1][key2] << value
-    end
-
-    sig {
-      params(
-        key1: String,
-        key2: String
-      ).returns(@@generic_store_element_type)
-    }
-    def find(key1, key2)
-      @data[key1][key2]
-    end
-
-    sig { params(key1: T.nilable(String), key2: T.nilable(String)).void }
-    def remove(key1 = nil, key2 = nil)
-      if key1.nil? && key2.nil?
-        @data = Hash.new { |h, k| h[k] = {} }
-        return
-      end
-
-      if key1 && key2
-        @data[key1].delete(key2)
-      else
-        @data.delete(key1)
-      end
     end
   end
 end

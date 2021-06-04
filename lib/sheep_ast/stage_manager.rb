@@ -239,6 +239,9 @@ module SheepAst
     include Exception
     include Log
 
+    attr_accessor :condition_incl
+    attr_accessor :condition_excl
+
     sig { params(data_store: DataStore).void }
     def initialize(data_store)
       @stages = []
@@ -258,6 +261,7 @@ module SheepAst
       a_stage = Stage.new(ast)
       @stages_name[ast.full_name] = a_stage
       @stages << a_stage
+      ast.stage_manager = self
     end
 
     sig { params(name: String).returns(Stage) }
@@ -273,13 +277,18 @@ module SheepAst
         incl: T::Array[T.any(String, Regexp)],
         excl: T.nilable(T::Array[T.any(String, Regexp)]),
         domain: String,
-        full_name: String
+        full_name: String,
+        kind: String,
       ).returns(T::Boolean)
     }
-    def filter?(incl, excl, domain, full_name) # rubocop: disable all
+    def filter?(incl, excl, domain, full_name, kind = 'redir') # rubocop: disable all
       return true if domain == 'always'
 
       ret = T.let(false, T::Boolean)
+
+      # For kind = 'cond', default is all include
+      ret = true if kind == 'cond'
+
       incl.each do |comp|
         res = comp == domain if comp.instance_of? String
 
@@ -289,14 +298,12 @@ module SheepAst
         end
 
         if res
-          ldebug? and ldebug "#{comp} is included", :yellow
+          ldebug? and ldebug "#{kind}> #{comp} is included", :yellow
           ret = true
           break
+        else
+          ret = false
         end
-      end
-
-      if excl&.empty?
-        return ret
       end
 
       T.must(excl).each do |comp|
@@ -307,10 +314,41 @@ module SheepAst
           res = comp =~ full_name if comp.instance_of? Regexp
         end
         if res
-          ldebug? and ldebug "#{comp} is excluded", :yellow
+          ldebug? and ldebug "#{kind}> #{comp} is excluded", :yellow
           ret = false
           break
         end
+      end
+
+      return ret
+    end
+
+    def incl_init(incl, kind = 'redir')
+      ret = incl.dup
+      if ret.nil?
+        if kind == 'redir'
+          ldebug? and ldebug 'AST with default domain is procssed'
+          ret = ['default']
+        else
+          ret = []
+        end
+      end
+
+      if ret.instance_of?(String)
+        ret = [ret]
+      end
+
+      return ret
+    end
+
+    def excl_init(excl, kind = 'redir')
+      ret = excl.dup
+      if ret.nil?
+        ret = []
+      end
+
+      if ret.instance_of?(String)
+        ret = [ret]
       end
 
       return ret
@@ -323,40 +361,28 @@ module SheepAst
       data.stage_manager = self
       @data = data
 
-      incl = T.must(data.file_info).ast_include
-      excl = T.must(data.file_info).ast_exclude
+      incl = incl_init(T.must(data.file_info).ast_include)
+      excl = excl_init(T.must(data.file_info).ast_exclude)
 
-      if incl.nil?
-        ldebug? and ldebug 'AST with default domain is procssed'
-        incl = 'default'
-      end
-
-      if excl.nil?
-        excl = ''
-      end
-
-      if incl.instance_of?(String)
-        incl = [incl]
-      end
-
-      if excl.instance_of?(String)
-        excl = [excl]
-      end
+      cond_incl = incl_init(condition_incl, 'cond')
+      cond_excl = excl_init(condition_excl, 'cond')
 
       processed = T.let(false, T::Boolean)
       ret = T.let(MatchResult::Default, MatchResult)
+
       @stages.each do |stage|
-        if filter?(
-            T.cast(incl, T::Array[T.any(String, Regexp)]),
-            T.cast(excl, T::Array[T.any(String, Regexp)]),
-            stage.ast.domain, stage.ast.full_name)
+        judge = filter?(incl, excl, stage.ast.domain, stage.ast.full_name)
+        cond_judge = filter?(cond_incl, cond_excl, stage.ast.domain, stage.ast.full_name, 'cond')
+
+        if judge && cond_judge
           processed = true
           ldebug? and ldebug "#{stage.name} start analyzing data!", :violet
           ret = stage.analyze(data)
 
           break if ret == MatchResult::GetNext || ret == MatchResult::Finish
         else
-          ldebug? and ldebug "#{stage.name} is filtered", :yellow
+          ldebug? and ldebug "#{stage.name} is filtered. judge = #{judge},"\
+            " cond_judge = #{cond_judge}", :yellow
         end
       end
 
@@ -451,6 +477,8 @@ module SheepAst
       logf.call "- namespacee = #{@data&.file_info&.namespace_stack.inspect}"
       logf.call "- ast include = #{@data&.file_info&.ast_include.inspect}"
       logf.call "- ast exclude = #{@data&.file_info&.ast_exclude.inspect}"
+      logf.call "- condition ast include = #{condition_incl.inspect}"
+      logf.call "- condition ast exclude = #{condition_excl.inspect}"
       logf.call "- file = #{@data&.file_info&.file.inspect}"
       logf.call
       @stages.each do |stage|

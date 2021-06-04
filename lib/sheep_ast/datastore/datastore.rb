@@ -2,7 +2,6 @@
 # frozen_string_literal:true
 
 require_relative '../exception'
-require_relative '../action/let_compile'
 require_relative 'cyclic_list'
 require_relative 'datastore_part'
 require 'sorbet-runtime'
@@ -15,15 +14,10 @@ module SheepAst
   # @api public
   class DataStore
     extend T::Sig
-    include Log
     include Exception
-    include LetCompile
-    include LetHelper
 
     sig { returns(DataStore) }
     attr_reader :root
-
-    alias let_compile compile
 
     # Constructor
     sig { params(root: T.nilable(DataStore)).void }
@@ -85,12 +79,12 @@ module SheepAst
         assign_hash_arr(t_sym, key, key2, value) unless value.nil?
       else
         unless key.nil?
-          lfatal "datastore> key is not nil. Given sym should have _H suffix. sym = #{sym}"
+          puts "datastore> key is not nil. Given sym should have _H suffix. sym = #{sym}"
           usage and exit
         end
 
         if value.nil?
-          lfatal "datastore> For this datastore type = #{sym}, value must be specified"
+          puts "datastore> For this datastore type = #{sym}, value must be specified"
           usage and exit
         end
 
@@ -135,7 +129,6 @@ module SheepAst
       return obj
     end
 
-
     alias search value
 
     # remove all the data
@@ -145,10 +138,6 @@ module SheepAst
         remove_instance_variable(v) if instance_variable_defined?(v)
       end
       @all_var = Set.new
-    end
-
-    def compile(template_file, **options)
-      T.unsafe(self).let_compile(nil, self, template_file, **options)
     end
 
     # usage print out.
@@ -165,59 +154,27 @@ module SheepAst
     #
     sig { void }
     def usage
-      lfatal ''
-      lfatal 'Please make sure the suffix of the store_id', :yellow
-      lfatal ''
-      lfatal 'Usage =========================================', :yellow
-      lfatal '1. Use following store id depends on the types:', :yellow
-      lfatal '  :xxx    - Hold single string', :yellow
-      lfatal '  :xxx_A  - Hold Array of string', :yellow
-      lfatal '  :xxx_H  - Hold Key Value pair of string. concat array', :yellow
-      lfatal '  :xxx_HA - Hold Key Value pair of string, push array', :yellow
-      lfatal '  :xxx_HL - Hold Key and Last one Value pair', :yellow
-      lfatal '  :xxx_HHL - Hold Key1 and key2 and last value', :yellow
-      lfatal '  :xxx_HHA - Hold Key1 and key2 and array value', :yellow
-      lfatal '  :xxx_CL - Hold List with Cyclic history', :yellow
-      lfatal ''
-      lfatal '  Note: let record_kv accept following kind:', :yellow
-      lfatal '        xxx_H, xxx_HL, xxx_HA', :yellow
-      lfatal ''
-      lfatal '2. Available API', :yellow
-      lfatal '   - compile: To compile given file with datastore data', :yellow
-      lfatal '================================================', :yellow
-      lfatal ''
-    end
-
-    #def inspect
-    #  str = ''.dup
-    #  str += "custom inspect : <#{self.class.name} object_id = #{object_id}, "
-    #  str += dump_data.inspect
-    #  str += '>'
-    #  str
-    #end
-
-    # Dump data as string object.
-    # Dump only specified id if it is given
-    #
-    sig { params(id: T.nilable(Symbol)).returns(T.untyped) }
-    def dump_data(id = nil)
-      data = {}
-      if id.nil?
-        @all_var.each do |elem|
-          data[elem] = instance_variable_get(elem)
-        end
-      else
-        data[id] = instance_variable_get(:"@#{id}")
-      end
-      return data
-    end
-
-    # Dump data to console.
-    # Dump only specified id if it is given
-    #
-    sig { params(id: T.nilable(Symbol)).void }
-    def dump(id = nil)
-      ldump dump_data(id).inspect
+      puts ''
+      puts 'Please make sure the suffix of the store_id'
+      puts ''
+      puts 'Usage ========================================='
+      puts '1. Use following store id depends on the types:'
+      puts '  :xxx    - Hold single string'
+      puts '  :xxx_A  - Hold Array of string'
+      puts '  :xxx_H  - Hold Key Value pair of string. concat array'
+      puts '  :xxx_HA - Hold Key Value pair of string, push array'
+      puts '  :xxx_HL - Hold Key and Last one Value pair'
+      puts '  :xxx_HHL - Hold Key1 and key2 and last value'
+      puts '  :xxx_HHA - Hold Key1 and key2 and array value'
+      puts '  :xxx_CL - Hold List with Cyclic history'
+      puts ''
+      puts '  Note: let record_kv accept following kind:'
+      puts '        xxx_H, xxx_HL, xxx_HA'
+      puts ''
+      puts '2. Available API'
+      puts '   - compile: To compile given file with datastore data'
+      puts '================================================'
+      puts ''
     end
 
     private

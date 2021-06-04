@@ -69,6 +69,13 @@ module SheepAst
       @kind_name = name
     end
 
+    sig { returns(T.nilable(T::Array[String])) }
+    attr_accessor :ast_include
+
+    sig { returns(T.nilable(T::Array[String])) }
+    attr_accessor :ast_exclude
+
+
     sig {
       params(
         key: String,
@@ -94,6 +101,8 @@ module SheepAst
       @at_head = @options[:at_head]
       @include = @options[:include]
       @not_include = @options[:not_include]
+      @ast_include = @options[:ast_include]
+      @ast_exclude = @options[:ast_exclude]
       @neq = @options[:neq]
       @neq = [@neq] if @neq.is_a? String
       super()
@@ -166,6 +175,17 @@ module SheepAst
           match.ldebug? and match.ldebug 'additional condition is good'
           res = true
         end
+      end
+      return res
+    end
+
+    def self.check_any_condition(match, data)
+      if !match&.additional_cond(data)
+        match.ldebug? and match.ldebug 'additional condition id not good'
+        res = nil
+      else
+        match.ldebug? and match.ldebug 'additional condition is good'
+        res = true
       end
       return res
     end

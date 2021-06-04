@@ -196,6 +196,19 @@ module SheepAst
       logf.call ''
     end
 
+    def dump_store(file)
+      File.write(file, Marshal.dump(@data_store))
+    end
+
+    def load_store(file)
+      str = File.read(file)
+      @data_store = Marshal.load(str)
+    end
+
+    def clear_store
+      @data_store = nil
+    end
+
     # Handle exception
     # It can pass log function to use, Default is pfatal
     #
@@ -319,6 +332,12 @@ module SheepAst
         process_option
       else
        @option = {}
+      end
+
+      if @option[:s]
+        puts 'Skipping analyze'
+        res = AnalyzerCoreReturn.new
+        return res
       end
 
       dump(:pwarn) and return if @option[:d]

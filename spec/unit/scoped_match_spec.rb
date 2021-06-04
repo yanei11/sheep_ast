@@ -369,6 +369,5 @@ describe SheepAst::ScopedMatch do
       core << '__sheep_eof__'
     }
     }.not_to raise_error
-    core.data_store.dump(:test_A)
   end
 end

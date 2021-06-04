@@ -84,8 +84,8 @@ module SheepAst
           ldebug? and ldebug "In condition match. expr = #{data.expr}. condition flag = true. continue"
         else
           ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = false"
-          @condition_flag = false
           @active_match.end_condition(data)
+          down_condition_flag
           # @active_match.matched_end(data)
         end
         @active_match.matched(data)
@@ -102,11 +102,11 @@ module SheepAst
       match = @condition_matches[data.expr]
       if !match.nil?
         ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = true"
-        @condition_flag = true
         @active_match = match
         @active_match.init
         @active_match.start_condition(data)
         @active_match.matched(data)
+        up_condition_flag
         return match
       end
       return nil
@@ -120,11 +120,11 @@ module SheepAst
         test = MatchBase.check_regex_condition(match, data)
         next if test.nil?
 
-        @condition_flag = true
         @active_match = match
         @active_match.init
         @active_match.start_condition(data)
         @active_match.matched(data)
+        up_condition_flag
         return match
       end
       return nil
@@ -141,5 +141,18 @@ module SheepAst
         return true
       end
     end
+
+    def up_condition_flag
+      @condition_flag = true
+      incl = @active_match.ast_include
+      excl = @active_match.ast_exclude
+      condition_up_action(incl, excl)
+    end
+
+    def down_condition_flag
+      @condition_flag = false
+      condition_down_action
+    end
+
   end
 end

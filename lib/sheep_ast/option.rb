@@ -46,6 +46,9 @@ module SheepAst
           '-h', '--help', 'show usage'
         ) { |_v| @option[:h] = true }
         opt.on_tail(
+          '-s', '--skip', 'skip analyze'
+        ) { |_v| @option[:s] = true }
+        opt.on_tail(
           '-v', '--version', 'show version'
         ) { |_v| @option[:v] = true }
       end
