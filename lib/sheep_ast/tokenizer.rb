@@ -258,7 +258,7 @@ module SheepAst
       else
         test = [test]
       end
-      return test #T.cast(test, T::Array[String])
+      return T.unsafe(test)
     end
 
     # TBD

@@ -356,16 +356,16 @@ module SheepAst
         fpath = File.expand_path(file)
         db = @datastore.assign(:_sheep_processed_file_A)
         res = db&.find(fpath)
+        t_file = file.split('/').last
         if !res
           db.add(fpath)
-          t_file = file.split('/').last
           ldump "[INCLUDE] #{t_file}", :green
           return true
         elsif process_indirect_again?
-          ldump "[AGAIN] #{file}"
+          ldump "[AGAIN] #{t_file}"
           return true
         else
-          ldump "[SKIPPED] #{file} is already processed", :yellow
+          ldump "[SKIPPED] #{t_file} is already processed", :yellow
           return false
         end
       end

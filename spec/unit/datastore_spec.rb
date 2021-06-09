@@ -74,8 +74,8 @@ describe SheepAst::DataStore do
      se = SheepAst::StoreElement.new(1, {'test1' => 1, 'test2' => '2'})
      ds.assign(:example_HHL).keeplast('a1', 'b1', se)
      expect(ds.assign(:example_HHL).find('a1', 'b1').data).to eq 1
-     expect(ds.assign(:example_HHL).find('a1', 'b1').meta('test1')).to eq 1
-     expect(ds.assign(:example_HHL).find('a1', 'b1').meta('test2')).to eq '2'
+     expect(ds.assign(:example_HHL).find('a1', 'b1').meta['test1']).to eq 1
+     expect(ds.assign(:example_HHL).find('a1', 'b1').meta['test2']).to eq '2'
      ds.value(:example_HHL).remove
      expect(ds.value(:example_HHL).data).to eq(nil)
    end

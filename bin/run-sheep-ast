@@ -55,11 +55,14 @@ module SheepAst
       begin
         puts "#{prog}> Successfully processed. Call handle_result."
         method(:handle_result).call(core)
-      rescue NameError
+      rescue NameError => e
         puts 'handle_result is not loaded'
+        p e
+        puts e.backtrace
       rescue => e
         puts 'Unknown ERROR abort'
         p e
+        puts e.backtrace
       end
 
       puts "#{prog}> Finish. Thank you."

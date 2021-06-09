@@ -8,6 +8,13 @@ require_relative 'datastore_type_base'
 require 'sorbet-runtime'
 
 module SheepAst
+  # Common method for Data Store Part objects
+  module DataStoreCommonUtil
+    def each(&blk)
+      @data.each(&blk)
+    end
+  end
+
   # Common method for hash variable
   module HashUtil
     include DataStoreTypeBase
@@ -22,19 +29,29 @@ module SheepAst
     def find(key, **options)
       elem = @data[key]
 
-      if elem.nil?
-        if !options[:allow_not_found]
-          application_error "Specified key = #{key} has nil value"
-        end
+      if elem.nil? && !options[:allow_not_found]
+        application_error "Specified key = #{key} has nil value"
       end
 
       return elem
     end
   end
 
+  # Common method for hash in hash variable
   module HashHashUtil
     include DataStoreTypeBase
     extend T::Sig
+
+    sig {
+      params(
+        key1: String,
+        options: T.untyped
+      ).returns(T.nilable(T::Hash[T.any(Symbol, String), @@generic_store_element_type]))
+    }
+    def find_hash(key1, **options)
+      return @data[key1]
+    end
+
     sig {
       params(
         key1: String,
@@ -43,10 +60,10 @@ module SheepAst
       ).returns(T.nilable(@@generic_store_element_type))
     }
     def find(key1, key2, **options)
-      _, elem = find_or_init(key1, key2)
+      elem = try_find(key1, key2)
       if elem.nil?
         application_error "Specified key1 = #{key1}, key2 = #{key2} has nil value."\
-          " Use nilable_find if you accept nil"
+          ' Use nilable_find if you accept nil'
       end
 
       return elem
@@ -60,7 +77,7 @@ module SheepAst
       ).returns(T.nilable(@@generic_store_element_type))
     }
     def nilable_find(key1, key2, **options)
-      _, elem = find_or_init(key1, key2)
+      elem = try_find(key1, key2)
       return elem
     end
 
@@ -78,6 +95,24 @@ module SheepAst
       end
     end
 
+    def try_find(key1, key2)
+      if @data.nil?
+        @data = {}
+      end
+
+      v1 = @data[key1]
+      if v1.nil?
+        return nil
+      end
+
+      v2 = v1[key2]
+      if v2.nil?
+        return nil
+      end
+
+      return v2
+    end
+
     def find_or_init(key1, key2, value = nil)
       if @data.nil?
         @data = {}
@@ -86,7 +121,7 @@ module SheepAst
       v1 = @data[key1]
       if v1.nil?
         d = { key2 => value }
-        e = { key1 => d  }
+        e = { key1 => d }
         @data.merge!(e)
         return false, value
       end
@@ -107,6 +142,7 @@ module SheepAst
     include Log
     include Exception
     include DataStoreTypeBase
+    include DataStoreCommonUtil
 
     sig { void }
     def initialize
@@ -151,6 +187,7 @@ module SheepAst
     include Exception
     include HashUtil
     include DataStoreTypeBase
+    include DataStoreCommonUtil
 
     sig { void }
     def initialize
@@ -183,6 +220,7 @@ module SheepAst
     include Exception
     include HashUtil
     include DataStoreTypeBase
+    include DataStoreCommonUtil
 
     sig { void }
     def initialize
@@ -223,6 +261,7 @@ module SheepAst
     include Exception
     include HashUtil
     include DataStoreTypeBase
+    include DataStoreCommonUtil
 
     sig { void }
     def initialize
@@ -247,10 +286,7 @@ module SheepAst
     include Exception
     include HashHashUtil
     include DataStoreTypeBase
-
-    sig { void }
-    def initialize
-    end
+    include DataStoreCommonUtil
 
     sig {
       params(
@@ -260,7 +296,7 @@ module SheepAst
       ).void
     }
     def keeplast(key1, key2, value)
-      find, _ = find_or_init(key1, key2, value)
+      find, = find_or_init(key1, key2, value)
       if find
         @data[key1][key2] = value
       end
@@ -274,10 +310,7 @@ module SheepAst
     include Exception
     include HashHashUtil
     include DataStoreTypeBase
-
-    sig { void }
-    def initialize
-    end
+    include DataStoreCommonUtil
 
     sig {
       params(

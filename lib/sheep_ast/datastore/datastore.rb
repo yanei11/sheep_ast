@@ -23,7 +23,7 @@ module SheepAst
     sig { params(root: T.nilable(DataStore)).void }
     def initialize(root = nil)
       @all_var = Set.new
-      @ctime = Time.new
+      @_ctime = Time.new
       @history = 5
       @root = root.nil? ? self : root
       # @temp_var = {}
@@ -177,6 +177,23 @@ module SheepAst
       puts ''
     end
 
+    def self.dump_store(file, ins)
+      File.write(file, Marshal.dump(ins))
+    end
+
+    def self.load_store(file)
+      str = File.read(file)
+      Marshal.load(str)
+    end
+
+    def make_elem(value = nil, hash = {})
+      StoreElement.new(value, hash)
+    end
+
+    def self.make_elem(value = nil, hash = {})
+      StoreElement.new(value, hash)
+    end
+
     private
 
     # @api private
@@ -285,7 +302,7 @@ module SheepAst
     end
 
     def ctime_get
-      @ctime
+      @_ctime
     end
   end
 end

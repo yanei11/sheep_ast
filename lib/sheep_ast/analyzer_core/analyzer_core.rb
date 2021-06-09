@@ -197,12 +197,11 @@ module SheepAst
     end
 
     def dump_store(file)
-      File.write(file, Marshal.dump(@data_store))
+      DataStore.dump_store(file, @data_store)
     end
 
     def load_store(file)
-      str = File.read(file)
-      @data_store = Marshal.load(str)
+      @data_store = DataStore.load_store(file)
     end
 
     def clear_store

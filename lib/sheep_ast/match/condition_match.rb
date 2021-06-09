@@ -153,6 +153,5 @@ module SheepAst
       @condition_flag = false
       condition_down_action
     end
-
   end
 end

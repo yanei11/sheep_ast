@@ -75,7 +75,6 @@ module SheepAst
     sig { returns(T.nilable(T::Array[String])) }
     attr_accessor :ast_exclude
 
-
     sig {
       params(
         key: String,

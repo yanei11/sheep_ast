@@ -18,6 +18,7 @@ module SheepAst
 
     def option_on
       @option = {}
+      #rubocop: disable all
       @optparse = OptionParser.new do |opt|
         opt.on(
           '-E array', Array,
@@ -101,11 +102,15 @@ module SheepAst
       end
       config_file = @option[:r]
       if config_file
+        @configure_count = 0
         config_file.each_with_index do |file, index|
           if File.exist?(file)
-            load file
-            alias :"configure_#{index}" :configure
-            @loaded_file << file.split('/').last
+            require file
+            if defined? configure
+              alias :"configure_#{index}" :configure
+              @loaded_file << file.split('/').last
+              @configure_count += 1
+            end
           else
             raise "#{config_file} could not be found at the specified directory."
           end
@@ -142,20 +147,16 @@ module SheepAst
     end
 
     def do_configure(core, option = nil, optparse = nil)
-      count = 0
-      loop do
+      return false if @configure_count.zero?
+
+      (0..@configure_count - 1).each do |count|
         core.set_option(option, optparse)
         method(:"configure_#{count}").call(core)
-        count += 1
       end
-    rescue NameError
-      puts "do_configure: Loaded #{count} config."
-      puts "Loaded files are #{@loaded_file.inspect}"
-      return count != 0
-    rescue => e
-      puts 'Unknown error'
-      p e
-      raise
+
+      puts "#{@optparse.program_name}> Files contains configure is #{@configure_count}"
+      puts "#{@optparse.program_name}> Loaded files are #{@loaded_file.inspect}"
+      return true
     end
   end
 end
