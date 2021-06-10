@@ -13,6 +13,14 @@ module SheepAst
     def each(&blk)
       @data.each(&blk)
     end
+
+    def deep_copy
+      Marshal.load(Marshal.dump(self))
+    end
+
+    def clear
+      @data = nil
+    end
   end
 
   # Common method for hash variable
@@ -139,7 +147,6 @@ module SheepAst
   # Hold Array type value
   class DataStoreArray
     extend T::Sig
-    include Log
     include Exception
     include DataStoreTypeBase
     include DataStoreCommonUtil
@@ -183,7 +190,6 @@ module SheepAst
   # Hold Hash type value. If array is given, it is concat
   class DataStoreHashCat
     extend T::Sig
-    include Log
     include Exception
     include HashUtil
     include DataStoreTypeBase
@@ -216,7 +222,6 @@ module SheepAst
   # Hold Hash type value. If array is given, it is added, not concat
   class DataStoreHashAdd
     extend T::Sig
-    include Log
     include Exception
     include HashUtil
     include DataStoreTypeBase
@@ -257,7 +262,6 @@ module SheepAst
   # Hold Hash type value. It holds only latest one value
   class DataStoreHashLast
     extend T::Sig
-    include Log
     include Exception
     include HashUtil
     include DataStoreTypeBase
@@ -282,7 +286,6 @@ module SheepAst
   # Hold Hash type value. Hold Hash inside Hash. Last one value is only hold
   class DataStoreHashHash
     extend T::Sig
-    include Log
     include Exception
     include HashHashUtil
     include DataStoreTypeBase
@@ -306,7 +309,6 @@ module SheepAst
   # Hold Hash type value. Hold Hash inside Hash. Array value is hold
   class DataStoreHashHashArray
     extend T::Sig
-    include Log
     include Exception
     include HashHashUtil
     include DataStoreTypeBase
