@@ -54,7 +54,9 @@ module SheepAst
 
       begin
         puts "#{prog}> Successfully processed. Call handle_result."
-        method(:handle_result).call(core)
+        if defined? handle_result
+          method(:handle_result).call(core)
+        end
       rescue NameError => e
         puts 'handle_result is not loaded'
         p e

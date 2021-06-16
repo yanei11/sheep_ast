@@ -16,9 +16,7 @@ module SheepAst
     include Exception
     include DataStoreTypeBase
 
-    sig { returns(T.untyped) }
-    attr_accessor :sub_data
-
+    attr_reader :sub_data
     attr_reader :data
     attr_reader :meta
 
@@ -87,11 +85,36 @@ module SheepAst
       @sub_data[key] = value
     end
 
+    def member_with_index(&blk)
+      @sub_data&.each_with_index do |elem, index|
+        blk.call(elem, index)
+      end
+      return nil
+    end
+
     def member(&blk)
       @sub_data&.each do |elem|
         blk.call(elem)
       end
       return nil
+    end
+
+    def merge_sub(store_element)
+      store_element&.member do |elem|
+        add_sub(elem.data, elem.meta)
+      end
+    end
+
+    def delete_sub(index)
+      @sub_data.delete_at(index)
+    end
+
+    def replace_sub(index, sub)
+      @sub_data[index] = sub
+    end
+
+    def clear_sub_all
+      @sub_data = []
     end
   end
 

@@ -58,8 +58,8 @@ module SheepAst
     }
     def check_exact_group_match(data)
       @exact_group_matches.each do |_, a_chain|
-        test = a_chain.check_exact_group_condition(a_chain.keys, data)
-        next if test.nil?
+        test = MatchBase.check_exact_group_condition(a_chain, data)
+        next if !test
 
         a_chain.init
         a_chain.matched(data)

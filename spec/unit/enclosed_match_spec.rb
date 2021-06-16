@@ -14,7 +14,7 @@ describe SheepAst::EnclosedMatch do
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
       ast.within do
@@ -52,7 +52,7 @@ describe SheepAst::EnclosedMatch do
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
       ast.within do
@@ -81,7 +81,7 @@ describe SheepAst::EnclosedMatch do
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         )
       }
       ast.within do
@@ -109,7 +109,7 @@ describe SheepAst::EnclosedMatch do
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         )
       }
       ast.within do

@@ -1,7 +1,6 @@
 # typed: ignore
 # frozen_string_literal:true
 
-require_relative '../log'
 require_relative '../exception'
 require_relative 'store_element'
 require_relative 'datastore_type_base'
@@ -58,6 +57,82 @@ module SheepAst
     }
     def find_hash(key1, **options)
       return @data[key1]
+    end
+
+    def each_element(&blk)
+      @data&.each do |k1, hash|
+        hash&.each do |k2, v|
+          blk.call(k1, k2, v)
+        end
+      end
+    end
+
+    def delete_if_all_elem(&blk)
+      delete_key1 = []
+      delete_key2 = []
+      @data&.each do |k1, hash|
+        hash&.each do |k2, v|
+          if blk.call(k1, k2, v)
+            delete_key2 << [k1, k2]
+          end
+        end
+      end
+
+      if @data
+        delete_key2.each do |elem|
+          hash = @data[elem[0]]
+          hash.delete(elem[1])
+          if hash.size.zero?
+            delete_key1 << elem[0]
+          end
+        end
+        delete_key1.each do |elem|
+          @data.delete(elem)
+        end
+      end
+    end
+
+    def delete_if(key1, &blk)
+      delete_key1 = []
+      delete_key2 = []
+      if @data
+        hash = @data[key1]
+        hash&.each do |k2, v|
+          if blk.call(k2, v)
+            delete_key2 << [key1, k2]
+          end
+        end
+
+        delete_key2.each do |elem|
+          hash = @data[elem[0]]
+          hash.delete(elem[1])
+          if hash.size.zero?
+            delete_key1 << elem[0]
+          end
+        end
+        delete_key1.each do |elem|
+          @data.delete(elem)
+        end
+      end
+    end
+
+    def delete(key1, key2s)
+      res = false
+      if !key2s.is_a? Enumerable
+        key2s = [key2s]
+      end
+
+      if @data
+        hash = @data[key1]
+        key2s.each do |k2|
+          res = hash&.delete(k2)
+        end
+
+        if hash&.size&.zero?
+          @data.delete(key1)
+        end
+      end
+      return res
     end
 
     sig {

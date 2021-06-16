@@ -104,8 +104,6 @@ module SheepAst
       @af.gen(:let, *para, **options)
     end
 
-
-
     # Returns Qualifier object.
     #
     # In the situation that Ast node has action and match to another node like:
@@ -149,6 +147,16 @@ module SheepAst
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def eof
       E(:e, '__sheep_eof__')
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eocf
+      E(:eg, ['__sheep_eoc__', '__sheep_eof__'])
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eoc
+      E(:e, '__sheep_eoc__')
     end
 
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }

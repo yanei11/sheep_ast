@@ -161,6 +161,11 @@ module SheepAst
     sig { params(data: AnalyzeData, save_req: SaveRequest).void }
     def handle_save_request(data, save_req)
       ldebug? and ldebug "handle_save_request save_req = #{save_req.inspect}"
+
+      if !save_req.enter_cb.nil?
+        T.must(data.file_manager).enter_cb_invoke(save_req.enter_cb)
+      end
+
       T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk)) unless save_req.chunk.nil?
       T.must(data.file_manager).register_next_file(T.must(save_req.file)) unless save_req.file.nil?
       T.must(data.file_manager).ast_include_set(save_req.ast_include)
@@ -169,6 +174,7 @@ module SheepAst
       T.must(data.file_manager).put_meta1(save_req.meta1) unless save_req.meta1.nil?
       T.must(data.file_manager).put_meta2(save_req.meta2) unless save_req.meta2.nil?
       T.must(data.file_manager).put_meta3(save_req.meta3) unless save_req.meta3.nil?
+      T.must(data.file_manager).exit_cb_set(save_req.exit_cb) unless save_req.exit_cb.nil?
     end
 
     sig { returns(String) }
@@ -404,8 +410,12 @@ module SheepAst
         end
       end
 
-      if data.expr == '__sheep_eof__'
+      if data.expr == '__sheep_eof__' || data.expr == '__sheep_eoc__'
         eof_validation
+      end
+
+      if data.expr == '__sheep_eof__' && data&.file_info&.file
+        data.file_manager.print_eof(data.file_info.file)
       end
 
       ldebug? and ldebug "Analyze Stages Finished with #{ret.inspect} !", :red
@@ -470,6 +480,7 @@ module SheepAst
       logf.call '## Analyze information ##'
       logf.call 'Processing Data'
       logf.call "- expr = #{@data&.expr}"
+      logf.call "- tokenized line_prev = #{@data&.tokenized_line_prev.inspect}"
       logf.call "- tokenized line = #{@data&.tokenized_line.inspect}"
       logf.call "- line no = #{line_no}"
       logf.call "- index = #{@data&.file_info&.index.inspect}"

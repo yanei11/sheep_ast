@@ -14,7 +14,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
     end
@@ -42,7 +42,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
     end
@@ -69,7 +69,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
     end
@@ -95,7 +95,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           [syn.space],
           [syn.crlf],
           [syn.lf],
-          [syn.eof]
+          [syn.eocf]
         ]
       }
     end

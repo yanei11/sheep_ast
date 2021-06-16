@@ -22,7 +22,7 @@ describe SheepAst::LetInclude do
           _SS(
             _S << E(:e, ' '),
             _S << E(:e, "\n"),
-            _S << E(:eof)
+            _S << E(:eocf)
           )
         }
       }

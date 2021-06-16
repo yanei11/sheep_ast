@@ -26,7 +26,6 @@ module SheepAst
       @_ctime = Time.new
       @history = 5
       @root = root.nil? ? self : root
-      # @temp_var = {}
       super()
     end
 

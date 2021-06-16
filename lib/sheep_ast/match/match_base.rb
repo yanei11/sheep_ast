@@ -150,16 +150,16 @@ module SheepAst
       return m
     end
 
-    def self.check_exact_group_condition(keys, data)
+    def self.check_exact_group_condition(match, data)
       key = data.expr
-      ldebug? and ldebug "check_exact_group_condition for #{T.must(key)}"
-      @keys.each do |item|
+      match.ldebug? and match.ldebug "check_exact_group_condition for #{T.must(key)}"
+      match.keys.each do |item| #rubocop: disable all
         if key == item
-          ldebug? and ldebug 'Found'
+          match.ldebug? and match.ldebug 'Found'
           return true
         end
       end
-      ldebug? and ldebug "Not Found => group keys: #{keys.inspect}"
+      match.ldebug? and match.ldebug "Not Found => group keys: #{match.keys.inspect}"
       return false
     end
 

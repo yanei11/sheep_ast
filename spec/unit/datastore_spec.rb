@@ -14,7 +14,7 @@ describe SheepAst::DataStore do
            [syn.space],
            [syn.crlf],
            [syn.lf],
-           [syn.eof]
+           [syn.eocf]
          ]
        }
        ast.within do
