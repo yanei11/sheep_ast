@@ -156,5 +156,12 @@ module SheepAst
 
       return match
     end
+
+    sig { params(test: T::Boolean).void }
+    def assert(test)
+      unless test
+        application_error 'assertion failed'
+      end
+    end
   end
 end

@@ -10,7 +10,7 @@ module SheepAst
   # Common method for Data Store Part objects
   module DataStoreCommonUtil
     def each(&blk)
-      @data.each(&blk)
+      @data&.each(&blk)
     end
 
     def deep_copy
@@ -29,7 +29,7 @@ module SheepAst
 
     sig {
       params(
-        key: String,
+        key: T.untyped,
         options: T.untyped
       ).returns(T.nilable(@@generic_store_element_type))
     }
@@ -42,6 +42,21 @@ module SheepAst
 
       return elem
     end
+
+    sig {
+      params(
+        key: T.untyped,
+        options: T.untyped
+      ).returns(T.nilable(@@generic_store_element_type))
+    }
+    def nilable_find(key, **options)
+      elem = @data[key]
+      return elem
+    end
+
+    def delete(key)
+      @data.delete(key)
+    end
   end
 
   # Common method for hash in hash variable
@@ -51,7 +66,7 @@ module SheepAst
 
     sig {
       params(
-        key1: String,
+        key1: T.untyped,
         options: T.untyped
       ).returns(T.nilable(T::Hash[T.any(Symbol, String), @@generic_store_element_type]))
     }
@@ -59,7 +74,7 @@ module SheepAst
       return @data[key1]
     end
 
-    def each_element(&blk)
+    def each(&blk)
       @data&.each do |k1, hash|
         hash&.each do |k2, v|
           blk.call(k1, k2, v)
@@ -138,7 +153,7 @@ module SheepAst
     sig {
       params(
         key1: String,
-        key2: String,
+        key2: T.untyped,
         options: T.untyped
       ).returns(T.nilable(@@generic_store_element_type))
     }
@@ -155,7 +170,7 @@ module SheepAst
     sig {
       params(
         key1: String,
-        key2: String,
+        key2: T.untyped,
         options: T.untyped
       ).returns(T.nilable(@@generic_store_element_type))
     }
@@ -223,8 +238,8 @@ module SheepAst
   class DataStoreArray
     extend T::Sig
     include Exception
-    include DataStoreTypeBase
     include DataStoreCommonUtil
+    include DataStoreTypeBase
 
     sig { void }
     def initialize
@@ -237,6 +252,9 @@ module SheepAst
       ).void
     }
     def add(elem)
+      if @data.nil?
+        @data = []
+      end
       @data << elem
     end
 
@@ -255,10 +273,10 @@ module SheepAst
     def find(key)
       @data.each do |elem|
         if elem == key
-          return true
+          return elem
         end
       end
-      return false
+      return nil
     end
   end
 
@@ -266,9 +284,9 @@ module SheepAst
   class DataStoreHashCat
     extend T::Sig
     include Exception
-    include HashUtil
     include DataStoreTypeBase
     include DataStoreCommonUtil
+    include HashUtil
 
     sig { void }
     def initialize
@@ -277,7 +295,7 @@ module SheepAst
 
     sig {
       params(
-        key: String,
+        key: T.untyped,
         value: @@generic_store_type
       ).void
     }
@@ -298,9 +316,9 @@ module SheepAst
   class DataStoreHashAdd
     extend T::Sig
     include Exception
-    include HashUtil
     include DataStoreTypeBase
     include DataStoreCommonUtil
+    include HashUtil
 
     sig { void }
     def initialize
@@ -309,11 +327,15 @@ module SheepAst
 
     sig {
       params(
-        key: String,
+        key: T.untyped,
         value: @@generic_store_type
       ).void
     }
     def add(key, value)
+      if @data.nil?
+        @data = {}
+      end
+
       if !@data.key?(key)
         @data[key] = []
       end
@@ -338,9 +360,9 @@ module SheepAst
   class DataStoreHashLast
     extend T::Sig
     include Exception
-    include HashUtil
     include DataStoreTypeBase
     include DataStoreCommonUtil
+    include HashUtil
 
     sig { void }
     def initialize
@@ -349,11 +371,14 @@ module SheepAst
 
     sig {
       params(
-        key: String,
+        key: T.untyped,
         value: @@generic_store_type
       ).void
     }
     def keeplast(key, value)
+      if @data.nil?
+        @data = {}
+      end
       @data[key] = value
     end
   end
@@ -362,14 +387,14 @@ module SheepAst
   class DataStoreHashHash
     extend T::Sig
     include Exception
-    include HashHashUtil
     include DataStoreTypeBase
     include DataStoreCommonUtil
+    include HashHashUtil
 
     sig {
       params(
         key1: String,
-        key2: String,
+        key2: T.untyped,
         value: @@generic_store_element_type
       ).void
     }
@@ -385,14 +410,14 @@ module SheepAst
   class DataStoreHashHashArray
     extend T::Sig
     include Exception
-    include HashHashUtil
     include DataStoreTypeBase
     include DataStoreCommonUtil
+    include HashHashUtil
 
     sig {
       params(
         key1: String,
-        key2: String,
+        key2: T.untyped,
         value: @@generic_store_element_type
       ).void
     }

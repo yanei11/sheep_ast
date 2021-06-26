@@ -18,7 +18,6 @@ module SheepAst
 
     attr_reader :sub_data
     attr_reader :data
-    attr_reader :meta
 
     sig {
       params(
@@ -32,7 +31,7 @@ module SheepAst
       @meta = hash
     end
 
-    sig { params(value: @@generic_primitive_type).void }
+    sig { params(value: T.nilable(@@generic_primitive_type)).void }
     def keeplast(value)
       @data = value
     end
@@ -59,6 +58,33 @@ module SheepAst
       end
 
       @sub_data << val
+    end
+
+    def find_sub(search, from_index = 0)
+      @sub_data&.each_with_index do |elem, index|
+        if index >= from_index
+          if elem.data == search
+            return elem
+          end
+        end
+      end
+      return nil
+    end
+
+    def find_sub_index(search, from_index = 0)
+      @sub_data&.each_with_index do |elem, index|
+        if index >= from_index
+          if elem.data == search
+            return elem, index
+          end
+        end
+      end
+      return nil, nil
+    end
+
+    def replace_sub(index, value, hash)
+      val = StoreSubElement.new(value, hash)
+      @sub_data[index] = val
     end
 
     def last_sub
@@ -101,7 +127,7 @@ module SheepAst
 
     def merge_sub(store_element)
       store_element&.member do |elem|
-        add_sub(elem.data, elem.meta)
+        add_sub(elem.data, elem.meta_get)
       end
     end
 
@@ -109,12 +135,31 @@ module SheepAst
       @sub_data.delete_at(index)
     end
 
-    def replace_sub(index, sub)
-      @sub_data[index] = sub
-    end
-
     def clear_sub_all
       @sub_data = []
+    end
+
+    def meta(key)
+      @meta[key]
+    end
+
+    def copy_meta
+      @meta.dup
+    end
+
+    def make_copy
+      other = StoreElement.new(@data.dup)
+      other.add_meta(copy_meta)
+      member do |sub|
+        other.add_sub(sub.data.dup, sub.copy_meta)
+      end
+      return other
+    end
+
+    def sub_size
+      size = @sub_data&.size
+      size = 0 if size.nil?
+      return size
     end
   end
 
@@ -125,7 +170,6 @@ module SheepAst
     include Exception
     include DataStoreTypeBase
 
-    attr_reader :meta
     attr_reader :data
 
     sig {
@@ -147,6 +191,18 @@ module SheepAst
     sig { params(hash: T::Hash[T.any(Symbol, String), @@generic_primitive_type]).void }
     def add_meta(hash)
       @meta.merge!(hash)
+    end
+
+    def meta(key)
+      @meta[key]
+    end
+
+    def meta_get
+      @meta
+    end
+
+    def copy_meta
+      @meta.dup
     end
 
     def member(&blk)

@@ -46,9 +46,15 @@ module SheepAst
         opt.on_tail(
           '-h', '--help', 'show usage'
         ) { |_v| @option[:h] = true }
-        opt.on_tail(
+        opt.on(
           '-s', '--skip', 'skip analyze'
         ) { |_v| @option[:s] = true }
+        opt.on(
+          '-m FILE', 'speficy marshal file to restore datastore'
+        ) { |v| @option[:m] = v }
+        opt.on(
+          '-n', '--new', 'dump new file specified by -m option. Not restored in this case'
+        ) { |_v| @option[:n] = true }
         opt.on_tail(
           '-v', '--version', 'show version'
         ) { |_v| @option[:v] = true }

@@ -25,6 +25,7 @@ module SheepAst
       puts "#{prog}>   version: #{SheepAst::VERSION}"
       puts "#{prog}>   ruby version: #{ruby_version}"
       puts "#{prog}>   current dir: #{current_dir}"
+      puts "#{prog}>   argv: #{argv.inspect}"
 
       exit_status = false
       time = nil
@@ -35,8 +36,8 @@ module SheepAst
       if ret
         if !argv.empty?
           time = Benchmark.measure {
+            puts "#{prog}> Do analyze"
             exit_status = core.report(raise: false) {
-              puts "#{prog}> Do analyze"
               core.analyze_file(argv) unless argv.empty?
             }
           }
@@ -55,7 +56,7 @@ module SheepAst
       begin
         puts "#{prog}> Successfully processed. Call handle_result."
         if defined? handle_result
-          method(:handle_result).call(core)
+          method(:handle_result).call(core.data_store)
         end
       rescue NameError => e
         puts 'handle_result is not loaded'

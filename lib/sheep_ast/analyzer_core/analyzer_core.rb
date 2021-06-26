@@ -63,6 +63,8 @@ module SheepAst
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(self, @data_store)
       @eol_validation = false
+      @complete_callbacks = []
+      @init_callbacks = []
       super()
     end
 
@@ -130,11 +132,58 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(files: T::Array[String]).returns(AnalyzerCoreReturn) }
+    sig { params(files: T::Array[String]).void }
     def analyze_file(files)
+      analyze_init
       @files = files
       @file_manager.register_files(files)
-      do_analyze
+      if !do_restore_datastore
+        do_analyze
+        do_dump
+      else
+        lwarn "DataStore is restored from #{@option[:m]}. Skipped analyze files."
+      end
+      complete_given_files
+    end
+
+    def add_complete_cb(cb)
+      @complete_callbacks << cb
+    end
+
+    def complete_given_files
+      @complete_callbacks.each do |cb|
+        t_cb = cb
+        arg = nil
+        if t_cb.is_a? String
+          t_cb, arg = get_func_arg(cb)
+        end
+        let = Let.new
+        if arg.nil?
+          let.cb_action(t_cb, @data_store)
+        else
+          let.cb_action(t_cb, @data_store, arg)
+        end
+      end
+    end
+
+    def add_int_cb(cb)
+      @init_callbacks << cb
+    end
+
+    def analyze_init
+      @init_callbacks.each do |cb|
+        t_cb = cb
+        arg = nil
+        if t_cb.is_a? String
+          t_cb, arg = get_func_arg(cb)
+        end
+        let = Let.new
+        if arg.nil?
+          let.cb_action(t_cb, @data_store)
+        else
+          let.cb_action(t_cb, @data_store, arg)
+        end
+      end
     end
 
     # To add expression to analyze
@@ -321,6 +370,33 @@ module SheepAst
     sig { params(name: String).returns(Stage) }
     def stage(name)
       return @stage_manager.stage_get(name)
+    end
+
+    def do_restore_datastore
+      restore_file = @option[:m]
+      new = @option[:n]
+      if new
+        ldump "New option is specified. DataStore restore is skipped"
+        return false
+      end
+
+      if restore_file
+        load_store(restore_file)
+        return true
+      end
+
+      return false
+    rescue => e
+      lwarn "Exception while loading file #{restore_file}. => #{e.message}"
+      return false
+    end
+
+    def do_dump
+      restore_file = @option[:m]
+      if restore_file
+        ldump "Stored DataStore information to #{restore_file}"
+        dump_store(restore_file)
+      end
     end
 
     # @api private
