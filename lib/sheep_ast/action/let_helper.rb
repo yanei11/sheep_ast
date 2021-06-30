@@ -80,7 +80,7 @@ module SheepAst
           # lprint "#{file} is created after factory created. Nothing to do."
         else
           lfatal "Unexpected timestamp info. #{ctime_get}, "\
-            "file = #{ftime}, test = #{test.inspect}"
+            "file = #{file}, ftime = #{ftime}, test = #{test.inspect}"
           application_error
         end
       end
@@ -97,6 +97,8 @@ module SheepAst
           f.write(res)
         }
       end
+
+      ldump "file is generated to #{file}, by mode: #{mode}, perm: #{perm}"
     end
 
     def ctime_get; end

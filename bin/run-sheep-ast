@@ -32,32 +32,19 @@ module SheepAst
 
       core = SheepAst::AnalyzerCore.new
 
-      ret = do_configure(core, option, optparse)
-      if ret
-        if !argv.empty?
-          time = Benchmark.measure {
-            puts "#{prog}> Do analyze"
-            exit_status = core.report(raise: false) {
-              core.analyze_file(argv) unless argv.empty?
-            }
-          }
-
-          if !exit_status
-            puts 'ERROR: Exception is happened in the analyzer core'
-          end
-        else
-          puts "#{prog}> Files are not given to argv."
-        end
-      end
+      do_configure(core, option, optparse)
+      time = Benchmark.measure {
+        puts "#{prog}> Do analyze"
+        exit_status = core.report(raise: false) {
+          core.analyze_file(argv)
+        }
+      }
 
       puts "#{prog}> Time to process : #{time.real}" unless time.nil?
 
-
       begin
-        puts "#{prog}> Successfully processed. Call handle_result."
-        if defined? handle_result
-          method(:handle_result).call(core.data_store)
-        end
+        puts "#{prog}> Successfully processed. Call result handler."
+        core.handle_result
       rescue NameError => e
         puts 'handle_result is not loaded'
         p e

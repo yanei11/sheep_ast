@@ -82,11 +82,6 @@ module SheepAst
           usage and exit
         end
 
-        if value.nil?
-          puts "datastore> For this datastore type = #{sym}, value must be specified"
-          usage and exit
-        end
-
         instance_variable_set(t_sym, value)
       end
 

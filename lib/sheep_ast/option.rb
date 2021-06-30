@@ -153,10 +153,9 @@ module SheepAst
     end
 
     def do_configure(core, option = nil, optparse = nil)
-      return false if @configure_count.zero?
+      core.set_option(option, optparse)
 
       (0..@configure_count - 1).each do |count|
-        core.set_option(option, optparse)
         method(:"configure_#{count}").call(core)
       end
 
