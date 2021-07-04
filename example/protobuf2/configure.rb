@@ -84,7 +84,7 @@ def configure(core)
       register_syntax('analyze', A(:na)) {
         SS(
           S() << E(:e, "\n"),
-          S() << E(:eof)
+          S() << E(:eocf)
         )
       }
     }

@@ -76,6 +76,9 @@ module SheepAst
           when :encr  then @enclosed_regex_match.new(*para, **options)
           when :any   then @any_match.new('any', *para, **options)
           when :eof   then @exact_match.new('__sheep_eof__', *para, **options)
+          when :eoc   then @exact_match.new('__sheep_eoc__', *para, **options)
+          when :eocf  then @exact_group_match.new(
+            ['__sheep_eoc__', '__sheep_eof__'], *para, **options)
           when :endl  then @scoped_match.new(*(para_arr), **options)
           when :endlr then @scoped_regex_match.new(*(para_arr), **options)
           else

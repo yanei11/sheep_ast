@@ -84,9 +84,9 @@ module SheepAst
         end
         ldebug? and ldebug "Function : #{m}, para = #{para.inspect}", :gold
         if para.nil? || para.empty?
-          ret = T.unsafe(self).method(m).call(key_data, @data_store, **opt)
+          T.unsafe(self).method(m).call(key_data, @data_store, **opt)
         else
-          ret = T.unsafe(self).method(m).call(key_data, @data_store, *para, **opt)
+          T.unsafe(self).method(m).call(key_data, @data_store, *para, **opt)
         end
 
         if @break # rubocop:disable all
@@ -103,6 +103,11 @@ module SheepAst
       ldebug? and ldebug "let end. returns result = #{@ret}", :gold
 
       return @ret
+    end
+
+    sig { params(m: Symbol, ds: DataStore).void }
+    def cb_action(m, ds)
+      T.unsafe(self).method(m).call(ds)
     end
 
     sig { override.returns(String) }
@@ -150,6 +155,13 @@ module SheepAst
       match = T.cast(match_factory.from_id(id_), MatchBase)
 
       return match
+    end
+
+    sig { params(test: T::Boolean).void }
+    def assert(test)
+      unless test
+        application_error 'assertion failed'
+      end
     end
   end
 end

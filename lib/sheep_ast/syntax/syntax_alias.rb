@@ -36,6 +36,26 @@ module SheepAst
       @mf.gen(kind, *para, **options)
     end
 
+    # Returns Match instance.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig {
+      params(
+        kind: Symbol,
+        para: T.untyped,
+        options: T.untyped
+      ).returns(
+        T.any(MatchBase, T::Array[MatchBase])
+      )
+    }
+    def EH(kind, *para, **options)
+      options[:at_head] = true
+      @mf.gen(kind, *para, **options)
+    end
+
     # Holds array of Expressions and Action.
     # It can register it to the tag via block.
     # Please see register_syntax for the usage
@@ -104,8 +124,6 @@ module SheepAst
       @af.gen(:let, *para, **options)
     end
 
-
-
     # Returns Qualifier object.
     #
     # In the situation that Ast node has action and match to another node like:
@@ -149,6 +167,16 @@ module SheepAst
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def eof
       E(:e, '__sheep_eof__')
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eocf
+      E(:eg, ['__sheep_eoc__', '__sheep_eof__'])
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eoc
+      E(:e, '__sheep_eoc__')
     end
 
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }

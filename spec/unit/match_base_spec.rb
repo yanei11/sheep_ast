@@ -37,6 +37,5 @@ describe SheepAst::IndexCondition do
     }
     }.not_to raise_error
     # expect( core.data_store.value(:test) ).to eq('a')
-    core.data_store.dump
   end
 end

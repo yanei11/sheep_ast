@@ -122,7 +122,7 @@ module SheepAst
         match = m.call(data)
         ldebug? and ldebug "Got match #{match.inspect} at #{m.name}" unless match.nil?
 
-        match = nil unless match&.additional_cond(data)
+        # match = nil unless match&.additional_cond(data)
         # if !match.nil? && !match.validate(data)
         #   ldebug? and ldebug 'Additional condition cannot be fullfiled. set nil'
         #   match = nil
@@ -214,6 +214,16 @@ module SheepAst
         res << next_command
       end
       return res
+    end
+
+    def condition_up_action(incl, excl)
+      @my_node_factory.my_manager.stage_manager.condition_incl = incl
+      @my_node_factory.my_manager.stage_manager.condition_excl = excl
+    end
+
+    def condition_down_action
+      @my_node_factory.my_manager.stage_manager.condition_incl = nil
+      @my_node_factory.my_manager.stage_manager.condition_excl = nil
     end
 
     private

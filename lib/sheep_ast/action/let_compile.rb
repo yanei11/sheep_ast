@@ -98,6 +98,7 @@ module SheepAst
 
       template_contents = T.must(raw)[T.must(head_index) + 1..-1]
       erb = ERB.new(template_contents, trim_mode: 1)
+      erb.filename = template_file_
       res = erb.result(binding)
 
       to_file = "#{title}.#{suffix}" if title && suffix
@@ -114,6 +115,7 @@ module SheepAst
       lfatal "Exception was occured inside let_compile. bt = #{bt}"
       lfatal "class = #{e.class}"
       lfatal "message = #{e.message}"
+      lfatal "bt = #{e.backtrace}"
       if !ENV['SHEEP_DEBUG_PRY'].nil?
         lfatal 'Entering pry debug session'
         binding.pry # rubocop: disable all

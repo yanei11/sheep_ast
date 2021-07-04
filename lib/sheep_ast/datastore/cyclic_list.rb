@@ -11,12 +11,10 @@ module SheepAst
   #
   class CyclicList
     extend T::Sig
-    include Log
     include Exception
 
     sig { params(history: Integer).void }
     def initialize(history)
-      super()
       @history = history
       @live_node = {}
       @node_id = 0
@@ -24,8 +22,6 @@ module SheepAst
 
     sig { params(val: T.untyped).void }
     def put(val)
-      ldebug? and ldebug "#{val.inspect} is put"
-
       new = CyclicNode.new
       new.value = val
       new.my_id = @node_id
@@ -50,7 +46,8 @@ module SheepAst
     sig { params(history: Integer).returns(T.untyped) }
     def history(history)
       if history >= @history
-        lwarn 'Input [0..history) value' and return nil
+        puts "Input [0..history) value; history = #{history}"
+        return nil
       end
 
       node_id = @last.my_id
@@ -68,7 +65,6 @@ module SheepAst
       #   node = node&.next
       # end
       #
-      ldebug? and ldebug "#{node.value.inspect} is got"
 
       if node.nil?
         return nil

@@ -97,10 +97,22 @@ module SheepAst
 
       ldebug? and ldebug "To be redirect : #{chunk.inspect}"
 
+      e_cb = options[:enter_cb]
+      if e_cb && !e_cb.is_a?(Enumerable)
+        e_cb = [e_cb]
+      end
+
+      ex_cb = options[:exit_cb]
+      if ex_cb && !ex_cb.is_a?(Enumerable)
+        ex_cb = [ex_cb]
+      end
+
       save_req = SaveRequest.new(
         chunk: chunk,
         ast_include: options[:ast_include],
         ast_exclude: options[:ast_exclude],
+        enter_cb: e_cb,
+        exit_cb: ex_cb,
         namespace: ns_t,
         meta1: meta1,
         meta2: meta2,

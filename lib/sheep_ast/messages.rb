@@ -196,6 +196,7 @@ module SheepAst
     prop :raw_lines, T.nilable(T::Array[String]), default: nil
     prop :tokenized, T.nilable(T::Array[T::Array[String]]), default: nil
     prop :chunk, T.nilable(String), default: nil
+    prop :using_chunk, T.nilable(T::Boolean), default: nil
     prop :line, Integer, default: 0
     prop :max_line, Integer, default: 0
     prop :index, Integer, default: 0
@@ -205,12 +206,15 @@ module SheepAst
     prop :meta3_stack, T::Array[T.nilable(String)], default: []
     prop :ast_include, T.nilable(T::Array[T.any(String, Regexp)]), default: nil
     prop :ast_exclude, T.nilable(T::Array[T.any(String, Regexp)]), default: nil
+    prop :enter_cb, T.nilable(T::Array[T.any(Symbol, String)]), default: nil
+    prop :exit_cb,  T.nilable(T::Array[T.any(Symbol, String)]), default: nil
     prop :new_file_validation, T::Boolean, default: false
 
     def copy(other)
       @file = other.file.dup
       @tokenized = other.tokenized.dup
       @chunk = other.chunk.dup
+      @using_chunk = other.using_chunk.dup
       @line = other.line.dup
       @max_line = other.max_line.dup
       @index = other.index.dup
@@ -220,6 +224,8 @@ module SheepAst
       @meta3_stack = other.meta3_stack.dup
       @ast_include = other.ast_include.dup
       @ast_exclude = other.ast_exclude.dup
+      @enter_cb = other.enter_cb.dup
+      @exit_cb =  other.exit_cb.dup
       @raw_lines = other.raw_lines.dup
       @new_file_validation = other.new_file_validation
       # lprint "#{self.class.name} copy is called. #{inspect}"
@@ -230,6 +236,7 @@ module SheepAst
       @file = nil
       @tokenized = nil
       @chunk = nil
+      @using_chunk = nil
       @line = 0
       @max_line = 0
       @index = 0
@@ -239,6 +246,8 @@ module SheepAst
       @meta3_stack = []
       @ast_include = nil
       @ast_exclude = nil
+      @enter_cb = nil
+      @exit_cb = nil
       @raw_lines = nil
       @new_file_validation = true
     end
@@ -246,12 +255,14 @@ module SheepAst
     sig { returns String }
     def inspect
       "custome inspect <#{self.class.name} object_id = #{object_id}, file = #{@file.inspect},"\
-        " chunk = #{@chunk.inspect},"" line = #{@line.inspect}, max_line = #{@max_line.inspect},"\
+        " chunk = #{@chunk.inspect}, using_chunk = #{@using_chunk.inspect}"\
+        " line = #{@line.inspect}, max_line = #{@max_line.inspect},"\
         " index = #{@index.inspect}, namespace_stack = #{@namespace_stack.inspect},"\
         " meta1_stack = #{@meta1_stack.inspect},"\
         " meta2_stack = #{@meta2_stack.inspect},"\
         " meta3_stack = #{@meta3_stack.inspect},"\
         " ast_include = #{@ast_include.inspect}, ast_exclude = #{@ast_exclude.inspect},"\
+        " enter_cb = #{@enter_cb.inspect}, exit_cb = #{@exit_cb.inspect},"\
         " new_file_validation = #{@new_file_validation.inspect}>"
     end
   end
@@ -261,6 +272,8 @@ module SheepAst
     prop :chunk, T.nilable(T::Array[T::Array[String]]), default: nil
     prop :ast_include, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
     prop :ast_exclude, T.nilable(T.any(String, T::Array[T.any(String, Regexp)])), default: nil
+    prop :enter_cb, T.nilable(T::Array[T.any(Symbol, String)]), default: nil
+    prop :exit_cb,  T.nilable(T::Array[T.any(Symbol, String)]), default: nil
     prop :namespace, T.nilable(String), default: nil
     prop :meta1, T.nilable(String), default: nil
     prop :meta2, T.nilable(String), default: nil
@@ -277,6 +290,7 @@ module SheepAst
     prop :expr, T.nilable(String), default: nil
     prop :is_eol, T.nilable(T::Boolean), default: nil
     prop :tokenized_line, T.nilable(T::Array[String]), default: nil
+    prop :tokenized_line_prev, T.nilable(T::Array[String]), default: nil
     prop :raw_line, T.nilable(String), default: nil
     prop :file_info, T.nilable(FileInfo), default: nil
     prop :file_manager, T.nilable(FileManager), default: nil
@@ -290,6 +304,7 @@ module SheepAst
       @expr = nil
       @is_eol = nil
       @tokenized_line = nil
+      @tokenized_line_prev = nil
       @file_info = nil
       @file_manager = nil
       @stage_manager = nil
@@ -306,7 +321,8 @@ module SheepAst
         " expr = '#{expr.inspect}', is_eol = '#{is_eol.inspect}',"\
         " stack = #{stack.inspect}, stack_symbol = #{stack_symbol.inspect},"\
         " request_next_data = #{request_next_data.inspect}, file_info = #{file_info.inspect},"\
-        " tokenized_line = #{@tokenized_line.inspect}, raw_line = #{@raw_line.inspect}"
+        " tokenized_line = #{@tokenized_line.inspect},"\
+        " tokenized_line_prev = #{@tokenized_line_prev.inspect}"
     end
   end
 end

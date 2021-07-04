@@ -65,6 +65,7 @@ describe SheepAst::Let do
              _S << crlf,
              _S << lf,
              _S << eof,
+             _S << eoc,
           )
         }
       }
@@ -75,7 +76,5 @@ describe SheepAst::Let do
         core.analyze_file(['spec/unit/scoped_match_file/test4.cc'])
       }
     }.not_to raise_error
-    p core.data_store
-    core.data_store.compile('spec/unit/test_files/template2.erb')
   end
 end

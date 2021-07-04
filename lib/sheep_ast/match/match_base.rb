@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative '../log'
@@ -69,6 +69,18 @@ module SheepAst
       @kind_name = name
     end
 
+    sig { returns(T.nilable(T::Array[String])) }
+    attr_accessor :ast_include
+
+    sig { returns(T.nilable(T::Array[String])) }
+    attr_accessor :ast_exclude
+
+    sig { returns(T.nilable(T::Boolean)) }
+    attr_accessor :at_end_cond
+
+    sig { returns(T.nilable(T::Boolean)) }
+    attr_accessor :at_cond_scope
+
     sig {
       params(
         key: String,
@@ -94,8 +106,11 @@ module SheepAst
       @at_head = @options[:at_head]
       @include = @options[:include]
       @not_include = @options[:not_include]
+      @ast_include = @options[:ast_include]
+      @ast_exclude = @options[:ast_exclude]
       @neq = @options[:neq]
       @neq = [@neq] if @neq.is_a? String
+      @at_end_cond = false
       super()
     end
 
@@ -142,16 +157,16 @@ module SheepAst
       return m
     end
 
-    def self.check_exact_group_condition(keys, data)
+    def self.check_exact_group_condition(match, data)
       key = data.expr
-      ldebug? and ldebug "check_exact_group_condition for #{T.must(key)}"
-      @keys.each do |item|
+      match.ldebug? and match.ldebug "check_exact_group_condition for #{T.must(key)}"
+      match.keys.each do |item| #rubocop: disable all
         if key == item
-          ldebug? and ldebug 'Found'
+          match.ldebug? and match.ldebug 'Found'
           return true
         end
       end
-      ldebug? and ldebug "Not Found => group keys: #{keys.inspect}"
+      match.ldebug? and match.ldebug "Not Found => group keys: #{match.keys.inspect}"
       return false
     end
 
@@ -166,6 +181,17 @@ module SheepAst
           match.ldebug? and match.ldebug 'additional condition is good'
           res = true
         end
+      end
+      return res
+    end
+
+    def self.check_any_condition(match, data)
+      if !match&.additional_cond(data)
+        match.ldebug? and match.ldebug 'additional condition id not good'
+        res = nil
+      else
+        match.ldebug? and match.ldebug 'additional condition is good'
+        res = true
       end
       return res
     end

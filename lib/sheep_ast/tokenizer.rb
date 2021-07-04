@@ -1,4 +1,4 @@
-# typed: true
+# typed: ignore
 # frozen_string_literal:true
 
 require_relative 'log'
@@ -22,6 +22,8 @@ module SheepAst
     sig { void }
     def initialize
       @tokenize_stage = []
+      @l_str = []
+      @r_str = []
       super()
     end
 
@@ -181,17 +183,25 @@ module SheepAst
       logf = method(logs)
       logf.call('')
       logf.call('## Tokenizer information start ##')
+      logf.call 'concat enclosed string like following :'
+      @l_str.each_with_index do |_, index|
+        logf.call " - [..., #{@l_str[index]}, a, b, c, #{@r_str[index]}, ...] => [..., #{@l_str[index]}abc#{@r_str[index]}, ...]", :cyan
+      end
+      logf.call('')
+
+      logf.call 'tokenized expressions as following order :'
       @tokenize_stage.each_with_index do |blk, idx|
         args, _, options, token = blk.call(nil, 0)
         token = args.join if !token
         dump_part(idx, args, token, options, logf)
         logf.call ''
       end
+
     end
 
     # @api private
     def dump_part(idx, args, token, options, logf)
-      logf.call "stage#{idx + 1} :"
+      logf.call "stage#{idx + 1}"
       logf.call " - #{args.inspect} is combined to #{token.inspect}", :cyan
       logf.call(' - This is recursively evaluated', :cyan) if options[:recursive]
     end
@@ -232,6 +242,14 @@ module SheepAst
       end
     end
 
+    sig { params(l_str: String, r_str: String, options: T.untyped).void }
+    def concat_inline(l_str, r_str, **options)
+      @concat_enclosed = true
+      @l_str << l_str
+      @r_str << r_str
+      @drop_closure = options[:drop_closure]
+    end
+
     private
 
     sig { params(line: String).returns(T::Array[String]) }
@@ -241,6 +259,12 @@ module SheepAst
         test = T.must(line).scan(/\w+|\W/)
       else
         test = T.must(line).split(@split.call)
+      end
+
+      if @concat_enclosed
+        @l_str.each_with_index do |_, index|
+          test = concat_enclosed(test, @l_str[index], @r_str[index])
+        end
       end
 
       if !@last_word_check.nil?
@@ -258,7 +282,50 @@ module SheepAst
       else
         test = [test]
       end
-      return T.cast(test, T::Array[String])
+      return T.unsafe(test)
+    end
+
+    sig { params(line_array: T::Array[String], l_str: String, r_str: String).returns(T::Array[String]) }
+    def concat_enclosed(line_array, l_str, r_str)
+      new_array = line_array
+      loop do
+        test = new_array.dup
+        new_array = concat_enclosed_part(new_array, l_str, r_str)
+        break if test == new_array
+      end
+
+      return new_array
+    end
+
+    sig { params(line_array: T::Array[String], l_str: String, r_str: String).returns(T::Array[String]) }
+    def concat_enclosed_part(line_array, l_str, r_str)
+      first_index = line_array.index(l_str)
+      return line_array if first_index.nil?
+
+      last_index = line_array[first_index + 1..-1].index(r_str)
+      return line_array if last_index.nil?
+
+
+      drop = @drop_closure
+      if drop
+        if last_index == 0
+          # In this case, it means there are no enclosed elements.
+          # This is special case
+          drop = false
+        end
+      end
+
+      if drop
+        new_array = line_array[0..first_index - 1] +
+          [line_array[(first_index + 1)..(first_index + last_index)].join] +
+          line_array[(first_index + last_index + 2)..-1]
+      else
+        new_array = line_array[0..first_index - 1] +
+          [line_array[(first_index)..(first_index + last_index + 1)].join] +
+          line_array[(first_index + last_index + 2)..-1]
+      end
+
+      return new_array
     end
 
     # TBD

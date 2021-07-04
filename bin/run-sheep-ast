@@ -25,41 +25,34 @@ module SheepAst
       puts "#{prog}>   version: #{SheepAst::VERSION}"
       puts "#{prog}>   ruby version: #{ruby_version}"
       puts "#{prog}>   current dir: #{current_dir}"
+      puts "#{prog}>   argv: #{argv.inspect}"
 
       exit_status = false
       time = nil
 
       core = SheepAst::AnalyzerCore.new
 
-      ret = do_configure(core, option, optparse)
-      if ret
-        if !argv.empty?
-          time = Benchmark.measure {
-            exit_status = core.report(raise: false) {
-              puts "#{prog}> Do analyze"
-              core.analyze_file(argv) unless argv.empty?
-            }
-          }
-
-          if !exit_status
-            puts 'ERROR: Exception is happened in the analyzer core'
-          end
-        else
-          puts "#{prog}> Files are not given to argv."
-        end
-      end
+      do_configure(core, option, optparse)
+      time = Benchmark.measure {
+        puts "#{prog}> Do analyze"
+        exit_status = core.report(raise: false) {
+          core.analyze_file(argv)
+        }
+      }
 
       puts "#{prog}> Time to process : #{time.real}" unless time.nil?
 
-
       begin
-        puts "#{prog}> Successfully processed. Call handle_result."
-        method(:handle_result).call(core)
-      rescue NameError
+        puts "#{prog}> Successfully processed. Call result handler."
+        core.handle_result
+      rescue NameError => e
         puts 'handle_result is not loaded'
+        p e
+        puts e.backtrace
       rescue => e
         puts 'Unknown ERROR abort'
         p e
+        puts e.backtrace
       end
 
       puts "#{prog}> Finish. Thank you."

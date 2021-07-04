@@ -5,6 +5,7 @@ require_relative 'log'
 require_relative 'exception'
 require_relative 'messages'
 require_relative 'node_buf'
+require_relative 'ast_manager'
 
 module SheepAst
   # Factory object to create Node
@@ -20,13 +21,17 @@ module SheepAst
     sig { returns(Node) }
     attr_reader :root_node
 
-    sig { void }
-    def initialize
+    sig { returns(AstManager) }
+    attr_reader :my_manager
+
+    sig { params(mgr: AstManager).void }
+    def initialize(mgr)
       super()
       @root_node = Node.new(0)
       @root_node.my_tag = :root
       @root_node.parent_node = @root_node
       @tag_node_db = {}
+      @my_manager = mgr
       create_id(@root_node)
       @root_node.my_node_factory = self
       init

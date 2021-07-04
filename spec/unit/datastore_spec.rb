@@ -14,7 +14,7 @@ describe SheepAst::DataStore do
            [syn.space],
            [syn.crlf],
            [syn.lf],
-           [syn.eof]
+           [syn.eocf]
          ]
        }
        ast.within do
@@ -77,6 +77,6 @@ describe SheepAst::DataStore do
      expect(ds.assign(:example_HHL).find('a1', 'b1').meta('test1')).to eq 1
      expect(ds.assign(:example_HHL).find('a1', 'b1').meta('test2')).to eq '2'
      ds.value(:example_HHL).remove
-     expect(ds.value(:example_HHL).data).to eq({})
+     expect(ds.value(:example_HHL).data).to eq(nil)
    end
 end

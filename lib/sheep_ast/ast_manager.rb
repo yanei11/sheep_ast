@@ -5,6 +5,7 @@ require_relative 'exception'
 require_relative 'log'
 require_relative 'sheep_obj'
 require_relative 'messages'
+require_relative 'stage_manager'
 require_relative 'node'
 require_relative 'node_buf'
 require_relative 'syntax/syntax'
@@ -32,6 +33,9 @@ module SheepAst
 
     sig { returns(MatchFactory) }
     attr_accessor :match_factory
+
+    sig { returns(StageManager) }
+    attr_accessor :stage_manager
 
     sig { returns(String) }
     def inspect
@@ -63,7 +67,7 @@ module SheepAst
       @domain = name_arr[0]
       @name = name_arr[1]
       @full_name = name
-      @node_factory = SheepAst::NodeFactory.new
+      @node_factory = SheepAst::NodeFactory.new(self)
       @data_store = data_store
       @match_factory = match_factory
       setup

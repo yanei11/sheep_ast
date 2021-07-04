@@ -1,4 +1,4 @@
-# typed: true
+# typed: false
 # frozen_string_literal:true
 
 require 'set'
@@ -121,12 +121,14 @@ module SheepAst
           ldebug? and ldebug 'reached to the new line. get next line.'
           expr, is_eol = feed_expr(feed_line, true)
         elsif @file_info.line == @file_info.max_line
-          if !@file_info.file.nil?
+          if @file_info.file && !@file_info.using_chunk
+            # end of file
             ldebug? and ldebug 'EOF', :red
             expr = '__sheep_eof__'
-            # else
-            # ldebug? and ldebug 'EOC', :red
-            # expr = '__sheep_eoc__'
+          elsif @file_info.using_chunk
+            # end of chunk
+            ldebug? and ldebug 'EOC', :red
+            expr = '__sheep_eoc__'
           end
         else
           ldebug? and ldebug 'Bug route?'
@@ -156,6 +158,7 @@ module SheepAst
       @analyze_data.expr = expr
       @analyze_data.is_eol = is_eol
       @analyze_data.tokenized_line = @file_info.tokenized[@file_info.line]
+      @analyze_data.tokenized_line_prev = @file_info.tokenized[@file_info.line - 1]
       @analyze_data.file_info = @file_info
       @analyze_data.file_manager = self
       @analyze_data.request_next_data = RequestNextData::Next
@@ -184,7 +187,9 @@ module SheepAst
         file = @reg_files.shift
         return false if file.nil?
 
-        marc_process_main(file)
+        ret = marc_process_main(file)
+        next if !ret
+
         tokenized, line_count, raw_lines = @tokenizer.tokenize(file)
 
         # strategy: when file is empty or something,
@@ -226,6 +231,7 @@ module SheepAst
       @file_info.file = file
       @file_info.file = 'no file info found' if file.nil?
       @file_info.tokenized = chunk
+      @file_info.using_chunk = true
       @file_info.max_line = chunk.size
     end
 
@@ -262,6 +268,8 @@ module SheepAst
 
     sig { returns(T.nilable(FileInfo)) }
     def restore_info
+      invoke_cb(@file_info.exit_cb, @datastore) unless @file_info.exit_cb.nil?
+
       info = @resume_info.pop
       ldebug? and ldebug "restore_info, info = #{info.inspect}"
       # ldump '[RESUME ] restore info from Resume stack.' unless info.nil?
@@ -276,6 +284,42 @@ module SheepAst
       ldebug? and ldebug "Resumed info process!! resume_stack = #{@resume_info.length}"\
         " for info = #{info.inspect}, for analyze_data = #{@analyze_data.inspect}", :indianred
       return info
+    end
+
+    sig { params(callback: T::Array[T.any(Symbol, String)]).void }
+    def enter_cb_invoke(callback)
+      invoke_cb(callback, @datastore)
+    end
+
+    sig { params(callback: T::Array[T.any(Symbol, String)], datastore: DataStore).void }
+    def invoke_cb(callback, datastore)
+      callback.each do |cb|
+        t_cb = cb
+        arg = nil
+        if t_cb.is_a? String
+          t_cb, arg = get_func_arg(cb)
+        end
+        let = Let.new
+        if arg.nil?
+          let.cb_action(t_cb, datastore)
+        else
+          let.cb_action(t_cb, datastore, arg)
+        end
+      end
+    end
+
+    sig { params(callback: String).returns([Symbol, T.nilable(String)]) }
+    def get_func_arg(callback)
+      first = callback.index('(')
+      last  = callback.index(')')
+
+      if first.nil? || last.nil? || last < first
+        return callback, nil
+      end
+
+      func  = callback[0..first - 1]
+      arg   = callback[first + 1..last - 1]
+      return func.to_sym, arg
     end
 
     sig { params(namespace: T.nilable(String)).void }
@@ -306,6 +350,11 @@ module SheepAst
       ldebug? and ldebug "putting meta3 = #{meta3.inspect}, and stack is #{@file_info.meta3_stack.inspect}"
     end
 
+    sig { params(callback: T.nilable(T::Array[T.any(String, Symbol)])).void }
+    def exit_cb_set(callback)
+      @file_info.exit_cb = callback
+    end
+
     sig {
       params(
         inc: T.nilable(
@@ -330,11 +379,12 @@ module SheepAst
       @file_info.ast_exclude = exc
     end
 
+    sig { returns(T.nilable(T::Array[FileInfo])) }
     def resume_data
       @resume_info
     end
 
-    sig { params(file: String).void }
+    sig { params(file: String).returns(T::Boolean) }
     def marc_process_main(file)
       if File.exist?(file)
         fpath = File.expand_path(file)
@@ -343,11 +393,19 @@ module SheepAst
         if !res
           db.add(fpath)
           ldump "[PROCESS] #{file}", :cyan
+          return true
         else
-          lfatal "Same file is entried -> #{file}"
-          application_error
+          # application_error "Same file is entried -> #{file}"
+          ldump "[SKIPPED] Main given file: #{file} is already processed", :red
+          return false
         end
       end
+    end
+
+    sig { params(file: String).void }
+    def print_eof(file)
+      t_file = file.split('/').last
+      ldump "[FINISHD] #{t_file} is finished", :magenta
     end
 
     sig { params(file: String).returns(T.nilable(T::Boolean)) }
@@ -356,21 +414,22 @@ module SheepAst
         fpath = File.expand_path(file)
         db = @datastore.assign(:_sheep_processed_file_A)
         res = db&.find(fpath)
+        t_file = file.split('/').last
         if !res
           db.add(fpath)
-          t_file = file.split('/').last
           ldump "[INCLUDE] #{t_file}", :green
           return true
         elsif process_indirect_again?
-          ldump "[AGAIN] #{file}"
+          ldump "[AGAIN] #{t_file}"
           return true
         else
-          ldump "[SKIPPED] #{file} is already processed", :yellow
+          ldump "[SKIPPED] #{t_file} is already processed", :yellow
           return false
         end
       end
     end
 
+    sig { returns(T::Boolean) }
     def process_indirect_again?
       false
     end

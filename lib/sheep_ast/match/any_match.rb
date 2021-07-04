@@ -69,13 +69,16 @@ module SheepAst
       params(data: AnalyzeData).returns(T.nilable(MatchBase))
     }
     def check_any_match(data)
-      match = @any_matches['any']
-      return nil if match.nil?
+      @any_matches.each do |_, a_chain|
+        test = MatchBase.check_any_condition(a_chain, data)
+        next if test.nil?
 
-      match.init
-      match.matched(data)
-      # match.matched_end(data)
-      return match
+        a_chain.init
+        a_chain.matched(data)
+        # a_chain.matched_end(data)
+        return a_chain
+      end
+      return nil
     end
   end
 end

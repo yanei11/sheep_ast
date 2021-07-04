@@ -12,6 +12,7 @@ require_relative '../fof'
 require_relative '../option'
 require_relative 'node_operation'
 require_relative 'action_operation'
+require_relative '../datastore/compile'
 require 'optparse'
 require 'pry'
 
@@ -34,6 +35,7 @@ module SheepAst
     include NodeOperation
     include ActionOperation
     include Option
+    include DataStoreCompile
 
     # @api private
     sig { returns(StageManager) }
@@ -63,6 +65,8 @@ module SheepAst
       @file_manager = FileManager.new(@stage_manager, @tokenizer, @data_store)
       @fof = FoF.new(self, @data_store)
       @eol_validation = false
+      @complete_callbacks = []
+      @init_callbacks = []
       super()
     end
 
@@ -120,6 +124,15 @@ module SheepAst
       return ast
     end
 
+    def add_handle_result(&blk)
+      @result_blk = blk
+    end
+
+    sig { void }
+    def handle_result
+      @result_blk&.call(self, @data_store)
+    end
+
     # To add file paths to anayze
     #
     # @raise
@@ -130,11 +143,65 @@ module SheepAst
     #
     # @note report function is used with this
     #
-    sig { params(files: T::Array[String]).returns(AnalyzerCoreReturn) }
+    sig { params(files: T.nilable(T::Array[String])).void }
     def analyze_file(files)
+      analyze_init
       @files = files
       @file_manager.register_files(files)
-      do_analyze
+      if !do_restore_datastore
+        if !files.nil? && !files.empty?
+          do_analyze
+          do_dump
+        else
+          lwarn 'There is no given files'
+        end
+      else
+        lwarn "DataStore is restored from #{@option[:m]}. Skipped analyze files."
+        do_option
+      end
+      complete_given_files
+    end
+
+    def add_complete_cb(callback)
+      @complete_callbacks << callback
+    end
+
+    sig { void }
+    def complete_given_files
+      @complete_callbacks.each do |cb|
+        t_cb = cb
+        arg = nil
+        if t_cb.is_a? String
+          t_cb, arg = get_func_arg(cb)
+        end
+        let = Let.new
+        if arg.nil?
+          let.cb_action(t_cb, @data_store)
+        else
+          let.cb_action(t_cb, @data_store, arg)
+        end
+      end
+    end
+
+    def add_int_cb(callback)
+      @init_callbacks << callback
+    end
+
+    sig { void }
+    def analyze_init
+      @init_callbacks.each do |cb|
+        t_cb = cb
+        arg = nil
+        if t_cb.is_a? String
+          t_cb, arg = get_func_arg(cb)
+        end
+        let = Let.new
+        if arg.nil?
+          let.cb_action(t_cb, @data_store)
+        else
+          let.cb_action(t_cb, @data_store, arg)
+        end
+      end
     end
 
     # To add expression to analyze
@@ -194,6 +261,21 @@ module SheepAst
       end
       logf.call ''
       logf.call ''
+    end
+
+    sig { params(file: String).void }
+    def dump_store(file)
+      DataStore.dump_store(file, @data_store)
+    end
+
+    sig { params(file: String).void }
+    def load_store(file)
+      @data_store = DataStore.load_store(file)
+    end
+
+    sig { void }
+    def clear_store
+      @data_store = nil
     end
 
     # Handle exception
@@ -304,6 +386,15 @@ module SheepAst
       @eol_validation = false
     end
 
+    sig { void }
+    def do_dump
+      restore_file = @option[:m]
+      if restore_file
+        ldump "Stored DataStore information to #{restore_file}"
+        dump_store(restore_file)
+      end
+    end
+
     private
 
     sig { params(name: String).returns(Stage) }
@@ -311,14 +402,46 @@ module SheepAst
       return @stage_manager.stage_get(name)
     end
 
-    # @api private
-    #
-    sig { returns(AnalyzerCoreReturn) }
-    def do_analyze
+    sig { returns(T::Boolean) }
+    def do_restore_datastore
+      do_option
+      restore_file = @option[:m]
+      new = @option[:n]
+      if new
+        ldump "New option is specified. DataStore restore is skipped"
+        return false
+      end
+
+      if restore_file
+        ldump "restoring database from #{restore_file}"
+        load_store(restore_file)
+        return true
+      end
+
+      return false
+    rescue => e
+      lwarn "Exception while loading file #{restore_file}. => #{e.message}, bt => #{e.backtrace}"
+      return false
+    end
+
+    sig { void }
+    def do_option
       if !ENV['SHEEP_RSPEC']
         process_option
       else
        @option = {}
+      end
+    end
+
+    # @api private
+    #
+    sig { returns(AnalyzerCoreReturn) }
+    def do_analyze
+      do_option
+      if @option[:s]
+        puts 'Skipping analyze'
+        res = AnalyzerCoreReturn.new
+        return res
       end
 
       dump(:pwarn) and return if @option[:d]
@@ -370,11 +493,16 @@ module SheepAst
 
     sig { void }
     def process_option
+      if @did_process_option
+        return
+      else
+        @did_process_option = true
+      end
+
       if !@option
         option_on
         option_parse(ARGV)
       end
-
       @option[:D]&.each do |item|
         if item.include?('=')
           key = item.split('=').first
@@ -385,11 +513,11 @@ module SheepAst
         end
       end
 
-      sheep_dir_path_set(@option[:I]) if @option[:I]
-      sheep_include_file_filter_set(@option[:F]) if @option[:F]
-      sheep_exclude_dir_path_set(@option[:E]) if @option[:E]
-      sheep_outdir_set(@option[:o]) if @option[:o]
-      sheep_template_dir_path_set(@option[:t]) if @option[:t]
+      sheep_dir_path_set(@option[:I])
+      sheep_include_file_filter_set(@option[:F])
+      sheep_exclude_dir_path_set(@option[:E])
+      sheep_outdir_set(@option[:o])
+      sheep_template_dir_path_set(@option[:t])
     end
   end
 end

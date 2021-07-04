@@ -15,7 +15,7 @@ describe 'revert ast' do
             space,
             crlf,
             lf,
-            eof
+            eocf
           )
         }
       }
@@ -50,7 +50,7 @@ describe 'revert ast' do
             space,
             crlf,
             lf,
-            eof
+            eocf
           )
         }
       }
@@ -87,7 +87,7 @@ describe 'revert ast' do
             space,
             crlf,
             lf,
-            eof
+            eocf
           )
         }
       }
@@ -120,7 +120,7 @@ describe 'revert ast' do
             space,
             crlf,
             lf,
-            eof
+            eocf
           )
         }
       }
