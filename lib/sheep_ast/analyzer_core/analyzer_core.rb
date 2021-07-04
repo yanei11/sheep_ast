@@ -124,6 +124,21 @@ module SheepAst
       return ast
     end
 
+    def config_syntax(name, klass = AstManager, &blk)
+      if !name_defined?(name)
+        ast = klass.new(name, @data_store, @fof.match_factory)
+        create_id(ast, name)
+        syn = SheepAst::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
+        blk.call(syn)
+        @stage_manager.add_stage(ast)
+      else
+        ast = from_name(name)
+        syn = SheepAst::Syntax.new(ast, @fof.match_factory, @fof.action_factory)
+        blk.call(syn)
+      end
+      return ast
+    end
+
     def add_handle_result(&blk)
       @result_blk = blk
     end
@@ -157,7 +172,10 @@ module SheepAst
         end
       else
         lwarn "DataStore is restored from #{@option[:m]}. Skipped analyze files."
-        do_option
+
+        # Here we need to load option again.
+        # Since datastore is loaded, loaded config maybe overwrited
+        do_option(true)
       end
       complete_given_files
     end
@@ -424,9 +442,15 @@ module SheepAst
       return false
     end
 
-    sig { void }
-    def do_option
+    sig { params(again: T::Boolean).void }
+    def do_option(again = false)
       if !ENV['SHEEP_RSPEC']
+        if @did_process_option
+          return unless again
+        else
+          @did_process_option = true
+        end
+
         process_option
       else
        @option = {}
@@ -493,12 +517,6 @@ module SheepAst
 
     sig { void }
     def process_option
-      if @did_process_option
-        return
-      else
-        @did_process_option = true
-      end
-
       if !@option
         option_on
         option_parse(ARGV)

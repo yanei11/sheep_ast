@@ -145,6 +145,19 @@ module SheepAst
       end
     end
 
+    def register_tree(*param, **option)
+      action = option[:all_action]
+      if action
+        register_syntax(action) {
+          param
+        }
+      else
+        register_syntax {
+          param
+        }
+      end
+    end
+
     private
 
     def depth(array)
