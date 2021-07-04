@@ -28,11 +28,13 @@ module SheepAst
       compile(nil, datastore, template_file, **options)
     end
 
+    sig { void }
     def initialize
       @_ctime = Time.new
       super
     end
 
+    sig { returns(Time) }
     def ctime_get
       @_ctime
     end

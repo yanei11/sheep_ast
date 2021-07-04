@@ -1,4 +1,4 @@
-# typed:true
+# typed: true
 # frozen_string_literal:true
 
 require_relative 'match_base'
@@ -85,8 +85,7 @@ module SheepAst
         else
           ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = false"
           @active_match.end_condition(data)
-          down_condition_flag
-          # @active_match.matched_end(data)
+          down_condition_flag(@active_match)
         end
         @active_match.matched(data)
       else
@@ -99,14 +98,14 @@ module SheepAst
       params(data: AnalyzeData).returns(T.nilable(ConditionMatch))
     }
     def check_condition_match(data)
-      match = @condition_matches[data.expr]
+      match = MatchBase.check_exact_condition(@condition_matches, data.expr, data)
       if !match.nil?
         ldebug? and ldebug "matched. expr = #{data.expr}. condition flag = true"
         @active_match = match
         @active_match.init
         @active_match.start_condition(data)
         @active_match.matched(data)
-        up_condition_flag
+        up_condition_flag(match)
         return match
       end
       return nil
@@ -124,7 +123,7 @@ module SheepAst
         @active_match.init
         @active_match.start_condition(data)
         @active_match.matched(data)
-        up_condition_flag
+        up_condition_flag(match)
         return match
       end
       return nil
@@ -142,16 +141,18 @@ module SheepAst
       end
     end
 
-    def up_condition_flag
+    sig { params(match: MatchBase).void }
+    def up_condition_flag(match)
       @condition_flag = true
       incl = @active_match.ast_include
       excl = @active_match.ast_exclude
-      condition_up_action(incl, excl)
+      T.unsafe(self).condition_up_action(incl, excl)
     end
 
-    def down_condition_flag
+    sig { params(match: MatchBase).void }
+    def down_condition_flag(match)
       @condition_flag = false
-      condition_down_action
+      T.unsafe(self).condition_down_action
     end
   end
 end

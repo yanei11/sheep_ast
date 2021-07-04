@@ -9,14 +9,18 @@ require 'sorbet-runtime'
 module SheepAst
   # Common method for Data Store Part objects
   module DataStoreCommonUtil
+    extend T::Sig
+
     def each(&blk)
       @data&.each(&blk)
     end
 
+    sig { returns(T.untyped) }
     def deep_copy
       Marshal.load(Marshal.dump(self))
     end
 
+    sig { void }
     def clear
       @data = nil
     end

@@ -1,4 +1,4 @@
-# typed: true
+# typed: ignore
 # frozen_string_literal: true
 
 require_relative 'exception'
@@ -162,19 +162,16 @@ module SheepAst
     def handle_save_request(data, save_req)
       ldebug? and ldebug "handle_save_request save_req = #{save_req.inspect}"
 
-      if !save_req.enter_cb.nil?
-        T.must(data.file_manager).enter_cb_invoke(save_req.enter_cb)
-      end
-
-      T.must(data.file_manager).register_next_chunk(T.must(save_req.chunk)) unless save_req.chunk.nil?
-      T.must(data.file_manager).register_next_file(T.must(save_req.file)) unless save_req.file.nil?
-      T.must(data.file_manager).ast_include_set(save_req.ast_include)
-      T.must(data.file_manager).ast_exclude_set(save_req.ast_exclude)
-      T.must(data.file_manager).put_namespace(save_req.namespace) unless save_req.namespace.nil?
-      T.must(data.file_manager).put_meta1(save_req.meta1) unless save_req.meta1.nil?
-      T.must(data.file_manager).put_meta2(save_req.meta2) unless save_req.meta2.nil?
-      T.must(data.file_manager).put_meta3(save_req.meta3) unless save_req.meta3.nil?
-      T.must(data.file_manager).exit_cb_set(save_req.exit_cb) unless save_req.exit_cb.nil?
+      data.file_manager.enter_cb_invoke(save_req.enter_cb) unless save_req.enter_cb.nil?
+      data.file_manager.register_next_chunk(save_req.chunk) unless save_req.chunk.nil?
+      data.file_manager.register_next_file(save_req.file) unless save_req.file.nil?
+      data.file_manager.ast_include_set(save_req.ast_include)
+      data.file_manager.ast_exclude_set(save_req.ast_exclude)
+      data.file_manager.put_namespace(save_req.namespace) unless save_req.namespace.nil?
+      data.file_manager.put_meta1(save_req.meta1) unless save_req.meta1.nil?
+      data.file_manager.put_meta2(save_req.meta2) unless save_req.meta2.nil?
+      data.file_manager.put_meta3(save_req.meta3) unless save_req.meta3.nil?
+      data.file_manager.exit_cb_set(save_req.exit_cb) unless save_req.exit_cb.nil?
     end
 
     sig { returns(String) }

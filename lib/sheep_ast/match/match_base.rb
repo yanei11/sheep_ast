@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative '../log'
@@ -75,6 +75,12 @@ module SheepAst
     sig { returns(T.nilable(T::Array[String])) }
     attr_accessor :ast_exclude
 
+    sig { returns(T.nilable(T::Boolean)) }
+    attr_accessor :at_end_cond
+
+    sig { returns(T.nilable(T::Boolean)) }
+    attr_accessor :at_cond_scope
+
     sig {
       params(
         key: String,
@@ -104,6 +110,7 @@ module SheepAst
       @ast_exclude = @options[:ast_exclude]
       @neq = @options[:neq]
       @neq = [@neq] if @neq.is_a? String
+      @at_end_cond = false
       super()
     end
 

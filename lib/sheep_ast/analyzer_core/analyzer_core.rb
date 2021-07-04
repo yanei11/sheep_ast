@@ -128,6 +128,7 @@ module SheepAst
       @result_blk = blk
     end
 
+    sig { void }
     def handle_result
       @result_blk&.call(self, @data_store)
     end
@@ -149,7 +150,6 @@ module SheepAst
       @file_manager.register_files(files)
       if !do_restore_datastore
         if !files.nil? && !files.empty?
-          do_option
           do_analyze
           do_dump
         else
@@ -162,10 +162,11 @@ module SheepAst
       complete_given_files
     end
 
-    def add_complete_cb(cb)
-      @complete_callbacks << cb
+    def add_complete_cb(callback)
+      @complete_callbacks << callback
     end
 
+    sig { void }
     def complete_given_files
       @complete_callbacks.each do |cb|
         t_cb = cb
@@ -182,10 +183,11 @@ module SheepAst
       end
     end
 
-    def add_int_cb(cb)
-      @init_callbacks << cb
+    def add_int_cb(callback)
+      @init_callbacks << callback
     end
 
+    sig { void }
     def analyze_init
       @init_callbacks.each do |cb|
         t_cb = cb
@@ -261,14 +263,17 @@ module SheepAst
       logf.call ''
     end
 
+    sig { params(file: String).void }
     def dump_store(file)
       DataStore.dump_store(file, @data_store)
     end
 
+    sig { params(file: String).void }
     def load_store(file)
       @data_store = DataStore.load_store(file)
     end
 
+    sig { void }
     def clear_store
       @data_store = nil
     end
@@ -381,6 +386,7 @@ module SheepAst
       @eol_validation = false
     end
 
+    sig { void }
     def do_dump
       restore_file = @option[:m]
       if restore_file
@@ -396,7 +402,9 @@ module SheepAst
       return @stage_manager.stage_get(name)
     end
 
+    sig { returns(T::Boolean) }
     def do_restore_datastore
+      do_option
       restore_file = @option[:m]
       new = @option[:n]
       if new
@@ -416,6 +424,7 @@ module SheepAst
       return false
     end
 
+    sig { void }
     def do_option
       if !ENV['SHEEP_RSPEC']
         process_option
@@ -428,6 +437,7 @@ module SheepAst
     #
     sig { returns(AnalyzerCoreReturn) }
     def do_analyze
+      do_option
       if @option[:s]
         puts 'Skipping analyze'
         res = AnalyzerCoreReturn.new
@@ -483,6 +493,12 @@ module SheepAst
 
     sig { void }
     def process_option
+      if @did_process_option
+        return
+      else
+        @did_process_option = true
+      end
+
       if !@option
         option_on
         option_parse(ARGV)

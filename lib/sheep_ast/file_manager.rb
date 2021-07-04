@@ -1,4 +1,4 @@
-# typed: true
+# typed: false
 # frozen_string_literal:true
 
 require 'set'
@@ -379,6 +379,7 @@ module SheepAst
       @file_info.ast_exclude = exc
     end
 
+    sig { returns(T.nilable(T::Array[FileInfo])) }
     def resume_data
       @resume_info
     end
@@ -401,6 +402,7 @@ module SheepAst
       end
     end
 
+    sig { params(file: String).void }
     def print_eof(file)
       t_file = file.split('/').last
       ldump "[FINISHD] #{t_file} is finished", :magenta
@@ -427,6 +429,7 @@ module SheepAst
       end
     end
 
+    sig { returns(T::Boolean) }
     def process_indirect_again?
       false
     end

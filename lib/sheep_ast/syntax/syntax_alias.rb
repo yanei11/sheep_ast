@@ -36,6 +36,26 @@ module SheepAst
       @mf.gen(kind, *para, **options)
     end
 
+    # Returns Match instance.
+    # Please see register_syntax for the usage
+    #
+    # @see Syntax#register_syntax
+    #
+    # rubocop:disable all
+    sig {
+      params(
+        kind: Symbol,
+        para: T.untyped,
+        options: T.untyped
+      ).returns(
+        T.any(MatchBase, T::Array[MatchBase])
+      )
+    }
+    def EH(kind, *para, **options)
+      options[:at_head] = true
+      @mf.gen(kind, *para, **options)
+    end
+
     # Holds array of Expressions and Action.
     # It can register it to the tag via block.
     # Please see register_syntax for the usage
