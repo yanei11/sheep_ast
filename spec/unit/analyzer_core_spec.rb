@@ -137,10 +137,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     core.config_ast('default.test1') do |ast, syn, mf, af|
       syn.register_syntax('ignore', syn.A(:na)) {
         syn._SS(
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eocf]
+          syn.space,
+          syn.crlf,
+          syn.lf,
+          syn.eocf
         )
       }
       ast.within do 
@@ -167,10 +167,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     core.config_ast('default.test1') do |ast, syn, mf, af|
       syn.register_syntax('ignore', syn.A(:na)) {
         syn._SS(
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eocf]
+          syn.space,
+          syn.crlf,
+          syn.lf,
+          syn.eocf
         )
       }
       ast.within do 
@@ -197,10 +197,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     core.config_ast('default.test1') do |ast, syn, mf, af|
       syn.register_syntax('ignore', syn.A(:na)) {
         [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eocf]
+          syn.space,
+          syn.crlf,
+          syn.lf,
+          syn.eocf
         ]
       }
       ast.within do 
@@ -228,10 +228,10 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
     core.config_ast('default.test1') do |ast, syn, mf, af|
       syn.register_syntax('ignore', syn.A(:na)) {
         [
-          [syn.space],
-          [syn.crlf],
-          [syn.lf],
-          [syn.eocf]
+          syn.space,
+          syn.crlf,
+          syn.lf,
+          syn.eocf
         ]
       }
       ast.within do

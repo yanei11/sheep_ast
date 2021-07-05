@@ -11,10 +11,10 @@ describe SheepAst::DataStore do
      core.config_ast('default.test1') do |ast, syn, mf, af|
        syn.register_syntax('ignore', syn.A(:na)) {
          [
-           [syn.space],
-           [syn.crlf],
-           [syn.lf],
-           [syn.eocf]
+           syn.space,
+           syn.crlf,
+           syn.lf,
+           syn.eocf
          ]
        }
        ast.within do

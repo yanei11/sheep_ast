@@ -33,7 +33,7 @@ module SheepAst
       )
     }
     def E(kind, *para, **options)
-      @mf.gen(kind, *para, **options)
+      S() << @mf.gen(kind, *para, **options)
     end
 
     # Returns Match instance.
@@ -51,9 +51,9 @@ module SheepAst
         T.any(MatchBase, T::Array[MatchBase])
       )
     }
-    def EH(kind, *para, **options)
+    def H(kind, *para, **options)
       options[:at_head] = true
-      @mf.gen(kind, *para, **options)
+      S() << @mf.gen(kind, *para, **options)
     end
 
     # Holds array of Expressions and Action.
@@ -237,5 +237,6 @@ module SheepAst
       return para
     end
 
+    alias L LET
   end
 end
