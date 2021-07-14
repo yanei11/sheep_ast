@@ -71,7 +71,7 @@ module SheepAst
           T::Array[MatchBase]
         )),
       ).returns(
-        T::Array[T.any(MatchBase, ActionBase)]
+        T.untyped
       )
     }
     def S(index = :root, **options, &blk)
@@ -104,7 +104,7 @@ module SheepAst
     # Please see register_syntax for the usage
     #
     # @see Syntax#register_syntax
-    sig { params(para: T.untyped, options: T.untyped).returns(T::Array[T.any(MatchBase, ActionBase)]) }
+    sig { params(para: T.untyped, options: T.untyped).returns(T.untyped) }
     def SS(*para, **options)
       return T.unsafe(self)._SS(*para, **options)
     end
@@ -175,8 +175,18 @@ module SheepAst
     end
 
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eolcf
+      E(:eg, ['__sheep_eoc__', '__sheep_eof__', '__sheep_eol__'])
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
     def eoc
       E(:e, '__sheep_eoc__')
+    end
+
+    sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }
+    def eol
+      E(:e, '__sheep_eol__')
     end
 
     sig { returns T.any(T::Array[SheepAst::MatchBase], SheepAst::MatchBase) }

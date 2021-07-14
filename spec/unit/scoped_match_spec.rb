@@ -14,7 +14,7 @@ describe SheepAst::ScopedMatch do
           syn.space,
           syn.crlf,
           syn.lf,
-          syn.eocf
+          syn.eolcf
         ]
       }
       ast.within do
@@ -73,7 +73,7 @@ describe SheepAst::ScopedMatch do
           syn._S << syn.space,
           syn._S << syn.crlf,
           syn._S << syn.lf,
-          syn._S << syn.eocf
+          syn._S << syn.eolcf
         ]
       }
       ast.within do
@@ -169,7 +169,7 @@ describe SheepAst::ScopedMatch do
          _SS(
             _S << crlf,
             _S << lf,
-            _S << eocf,
+            _S << eolcf,
          )
         }
       }
@@ -217,7 +217,7 @@ describe SheepAst::ScopedMatch do
           _SS(
              _S << crlf,
              _S << lf,
-             _S << eocf,
+             _S << eolcf,
           )
         }
       }
@@ -278,7 +278,7 @@ describe SheepAst::ScopedMatch do
           _SS(
              _S << crlf,
              _S << lf,
-             _S << eocf,
+             _S << eolcf,
           )
         }
       }
@@ -329,7 +329,7 @@ describe SheepAst::ScopedMatch do
           _SS(
              _S << crlf,
              _S << lf,
-             _S << eocf,
+             _S << eolcf,
           )
         }
       }

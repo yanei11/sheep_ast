@@ -57,7 +57,7 @@ def configure(core)
         SS(
           S() << crlf,
           S() << lf,
-          S() << eocf
+          S() << eolcf
         )
       }
     }

@@ -171,7 +171,7 @@ module SheepAst
           lwarn 'There is no given files'
         end
       else
-        lwarn "DataStore is restored from #{@option[:m]}. Skipped analyze files."
+        lwarn 'DataStore is restored. Skipped analyze files.'
 
         # Here we need to load option again.
         # Since datastore is loaded, loaded config maybe overwrited
@@ -404,9 +404,12 @@ module SheepAst
       @eol_validation = false
     end
 
-    sig { void }
-    def do_dump
-      restore_file = @option[:m]
+    sig { params(index: Integer).void }
+    def do_dump(index = 1)
+      arr = @option[:m]
+      restore_file = nil
+      restore_file = arr[index - 1] if arr
+
       if restore_file
         ldump "Stored DataStore information to #{restore_file}"
         dump_store(restore_file)
@@ -423,7 +426,9 @@ module SheepAst
     sig { returns(T::Boolean) }
     def do_restore_datastore
       do_option
-      restore_file = @option[:m]
+      restore_file = nil
+      restore_file_arr = @option[:m]
+      restore_file = restore_file_arr[0] if restore_file_arr
       new = @option[:n]
       if new
         ldump "New option is specified. DataStore restore is skipped"
@@ -438,8 +443,7 @@ module SheepAst
 
       return false
     rescue => e
-      lwarn "Exception while loading file #{restore_file}. => #{e.message}, bt => #{e.backtrace}"
-      return false
+      application_error "Exception while loading file #{restore_file}. => #{e.message}"
     end
 
     sig { params(again: T::Boolean).void }

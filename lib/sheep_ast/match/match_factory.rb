@@ -60,7 +60,7 @@ module SheepAst
 
       para_arr = para
       if kind == :endl || kind == :endlr
-        para_arr = [para[0], "\n", para[1..-1]].flatten
+        para_arr = [para[0], '__sheep_eol__', para[1..-1]].flatten
         options[:end_match_index] = 1
       end
 
@@ -77,10 +77,13 @@ module SheepAst
           when :any   then @any_match.new('any', *para, **options)
           when :eof   then @exact_match.new('__sheep_eof__', *para, **options)
           when :eoc   then @exact_match.new('__sheep_eoc__', *para, **options)
+          when :eol   then @exact_match.new('__sheep_eol__', *para, **options)
           when :eocf  then @exact_group_match.new(
             ['__sheep_eoc__', '__sheep_eof__'], *para, **options)
-          when :endl  then @scoped_match.new(*(para_arr), **options)
-          when :endlr then @scoped_regex_match.new(*(para_arr), **options)
+          when :eolcf  then @exact_group_match.new(
+            ['__sheep_eol__', '__sheep_eoc__', '__sheep_eof__'], *para, **options)
+          # when :endl  then @scoped_match.new(*(para_arr), **options)
+          # when :endlr then @scoped_regex_match.new(*(para_arr), **options)
           else
             application_error 'unknown match'
           end

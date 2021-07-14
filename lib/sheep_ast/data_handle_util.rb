@@ -101,7 +101,7 @@ module SheepAst
 
       return nil if test_expr.nil?
 
-      if newline.nil? && test_expr == "\n"
+      if newline.nil? && test_expr == '__sheep_eol__'
         @newline_count += 1
       end
 

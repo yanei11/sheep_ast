@@ -50,7 +50,7 @@ module SheepAst
           '-s', '--skip', 'skip analyze'
         ) { |_v| @option[:s] = true }
         opt.on(
-          '-m FILE', 'speficy marshal file to restore datastore'
+          '-m files', Array, 'speficy marshal file to restore datastore'
         ) { |v| @option[:m] = v }
         opt.on(
           '-n', '--new', 'dump new file specified by -m option. Not restored in this case'

@@ -32,7 +32,7 @@ core.config_ast('default.main') do |_ast, syn|
       match = line_matched(data)
       str = "#{data.file_info.file}:".blue
       str += match.flatten.join
-      puts str
+      puts str.gsub('__sheep_eol__', '')
     end
   }
 end

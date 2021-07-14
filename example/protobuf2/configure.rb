@@ -54,15 +54,9 @@ def configure(core)
 
   core.config_ast('enum.parser') do |_ast, syn|
     syn.within {
-      register_syntax('analyze') {
-        SS(
-          S() << E(:any, at_head: true) << E(:any, repeat: 2) << E(:e, ';')\
-              << A(
-                :let,
-                action2
-              )
-        )
-      }
+      register_tree(
+          H(:any, neq: ["\n", '__sheep_eol__']) << E(:any, repeat: 2) << E(:e, ';') << LET(action2)
+      )
     }
   end
 
@@ -71,9 +65,9 @@ def configure(core)
       register_syntax('analyze') {
         SS(
           S() << E(:e, 'message') << E(:any) << E(:sc, '{', '}') \
-              << A(:let, [:redirect, :_3, 2..-2, dry_run: dry1, namespace: :_2, ast_include: ['default', 'message']]),
-          S() << E(:e, 'enum') << E(:any) << E(:sc, '{', '}') \
-              << A(:let, [:redirect, :_3, 2..-2, dry_run: dry2, namespace: :_2, ast_include: ['enum']])
+              << A(:let, [:redirect, :_3,  dry_run: dry1, namespace: :_2, ast_include: ['default', 'message']]),
+          S() << E(:e, 'enum') << E(:any, neq: '__sheep_eol__') << E(:sc, '{', '}') \
+              << A(:let, [:redirect, :_3, dry_run: dry2, namespace: :_2, ast_include: ['enum']])
         )
       }
     }
@@ -84,7 +78,7 @@ def configure(core)
       register_syntax('analyze', A(:na)) {
         SS(
           S() << E(:e, "\n"),
-          S() << E(:eocf)
+          S() << E(:eolcf)
         )
       }
     }
