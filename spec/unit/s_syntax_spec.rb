@@ -15,7 +15,7 @@ describe 's_syntax' do
             space,
             crlf,
             lf,
-            eocf
+            eolcf
           )
         }
       }
@@ -46,7 +46,7 @@ describe 's_syntax' do
             space,
             crlf,
             lf,
-            eocf
+            eolcf
           )
         }
       }
@@ -77,7 +77,7 @@ describe 's_syntax' do
             space,
             crlf,
             lf,
-            eocf
+            eolcf
           )
         }
       }
@@ -110,7 +110,7 @@ describe 's_syntax' do
             space,
             crlf,
             lf,
-            eocf
+            eolcf
           )
         }
       }

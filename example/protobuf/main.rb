@@ -80,7 +80,7 @@ core.config_ast('always.continue') do |_ast, syn|
     register_syntax('analyze', A(:na)) {
       SS(
         S() << E(:e, "\n"),
-        S() << E(:eof)
+        S() << E(:eolcf)
       )
     }
   }

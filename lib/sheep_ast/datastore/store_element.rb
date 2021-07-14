@@ -41,13 +41,19 @@ module SheepAst
       @meta.merge!(hash)
     end
 
+    sig { params(hash: T::Hash[T.any(Symbol, String), T.untyped]).void }
+    def replace_meta(hash)
+      @meta = {}
+      @meta.merge!(hash)
+    end
+
     sig {
       params(
         value: T.nilable(@@generic_primitive_type),
-        hash: T::Hash[String, @@generic_primitive_type]
-      ).void
+        hash: T.untyped
+      ).returns(StoreSubElement)
     }
-    def add_sub(value, hash)
+    def add_sub(value = nil, hash = {})
       val = StoreSubElement.new(value, hash)
       if @sub_data.nil?
         @sub_data = []
@@ -58,6 +64,7 @@ module SheepAst
       end
 
       @sub_data << val
+      return val
     end
 
     sig {
@@ -93,13 +100,23 @@ module SheepAst
     sig {
       params(
         index: Integer,
-        value: T.nilable(@@generic_primitive_type),
-        hash: T::Hash[String, @@generic_primitive_type]
+        val: T.nilable(@@generic_primitive_type)
       ).void
     }
-    def replace_sub(index, value, hash)
-      val = StoreSubElement.new(value, hash)
+    def replace_sub(index, val)
       @sub_data[index] = val
+    end
+
+    sig {
+      params(
+        key: @@generic_primitive_type,
+        val: T.nilable(@@generic_primitive_type),
+        from_index: Integer
+      ).void
+    }
+    def replace_sub_for_key(key, val, from_index = 0)
+      _, idx = find_sub_index(key, from_index)
+      @sub_data[idx] = val
     end
 
     sig { returns(T.nilable(T.nilable(StoreSubElement))) }
@@ -237,6 +254,13 @@ module SheepAst
     }
     def copy_meta
       @meta.dup
+    end
+
+    sig { returns(StoreElement) }
+    def make_copy
+      other = StoreSubElement.new(@data.dup)
+      other.add_meta(copy_meta)
+      return other
     end
 
     def member(&blk)

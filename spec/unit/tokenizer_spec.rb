@@ -7,8 +7,22 @@ require 'sheep_ast'
 
 describe SheepAst::Tokenizer do  # rubocop: disable all
   let(:basepath) { Dir.pwd }
-  let(:ok_str) { [["a", " ", "b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["123", " ", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{", "+", "*", "}", "<", ">", "?", "_", "\n"]] } # rubocop:disable all
-  let(:ok_str2) { [["a b", " ", "c", " ", "d", "\n"], ["1", " ", "2", " ", "3", " ", "4", "\n"], ["111", "456", "\n"], ["abc", " ", "def", "\n"], ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n"], ["`", "{+*", "}", "<>", "?", "_", "\n"]] } # rubocop: disable all
+  let(:ok_str) { [
+    ["a", " ", "b", " ", "c", " ", "d", "\n", "__sheep_eol__"],
+    ["1", " ", "2", " ", "3", " ", "4", "\n", "__sheep_eol__"],
+    ["123", " ", "456", "\n", "__sheep_eol__"],
+    ["abc", " ", "def", "\n", "__sheep_eol__"],
+    ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n", "__sheep_eol__"],
+    ["`", "{", "+", "*", "}", "<", ">", "?", "_", "\n", "__sheep_eol__"]
+  ] } # rubocop:disable all
+  let(:ok_str2) { [
+    ["a b", " ", "c", " ", "d", "\n", "__sheep_eol__"],
+    ["1", " ", "2", " ", "3", " ", "4", "\n", "__sheep_eol__"],
+    ["111", "456", "\n", "__sheep_eol__"],
+    ["abc", " ", "def", "\n", "__sheep_eol__"],
+    ["!", "\"", "#", "$", "%", "&", "'", "(", ")", "=", "~", "|", "\n", "__sheep_eol__"],
+    ["`", "{+*", "}", "<>", "?", "_", "\n", "__sheep_eol__"]]
+  }
   let(:tok) { SheepAst::Tokenizer.new }
   it 'can tokenize' do
     buf, max_line = tok.tokenize(basepath + '/spec/unit/test_files/test3.txt')
@@ -92,7 +106,7 @@ abc def
     # p buf
     tok.use_split_rule { tok.split_space_only }
     buf, _max_line = tok << "Hello, world. Now 2020/12/14 1:43 \n Hello again"
-    expect(buf).to eq([["Hello,", "world.", "Now", "2020/12/14", "1:43", "\n"], ["Hello", "again"]])
+    expect(buf).to eq([["Hello,", "world.", "Now", "2020/12/14", "1:43", "\n", "__sheep_eol__"], ["Hello", "again"]])
     # p buf
   end
 end

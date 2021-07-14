@@ -14,7 +14,7 @@ describe SheepAst::IndexCondition do
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
       syn.register_syntax('match', syn.A(:let, [:record, :test, :_1])) {
-        syn._S << syn.E(:e, 'a', index_cond: syn.idx('i', 'j', offset: 4))
+        syn._S << syn.E(:e, 'a', index_cond: syn.idx('i', 'j', offset: 5))
       }
     end
 
@@ -45,7 +45,7 @@ describe SheepAst::IndexCondition do
 
     core.config_ast('default.test2') do |ast, syn, mf, af|
       syn.register_syntax('match', syn.A(:let, [:record, :test, :_1])) {
-        syn._S << syn.E(:e, 'a', index_cond: [syn.idx('b', offset: 1), syn.idx('k', offset: 6)])
+        syn._S << syn.E(:e, 'a', index_cond: [syn.idx('b', offset: 1), syn.idx('k', offset: 7)])
       }
     end
 

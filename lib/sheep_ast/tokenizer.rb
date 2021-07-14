@@ -157,6 +157,11 @@ module SheepAst
           raw_buf << line
         end
       end
+
+      if file_buf[-1][-2] != "\n"
+        file_buf[-1].delete_at(-1)
+      end
+
       return file_buf, line_count, raw_buf
     end
 
@@ -169,6 +174,11 @@ module SheepAst
         line_count += 1
         file_buf.push(shaping(scan(line)))
       end
+
+      if file_buf[-1][-2] != "\n"
+        file_buf[-1].delete_at(-1)
+      end
+
       return file_buf, line_count
     end
 
@@ -261,6 +271,8 @@ module SheepAst
         test = T.must(line).split(@split.call)
       end
 
+      test << '__sheep_eol__' unless test.nil?
+
       if @concat_enclosed
         @l_str.each_with_index do |_, index|
           test = concat_enclosed(test, @l_str[index], @r_str[index])
@@ -282,6 +294,7 @@ module SheepAst
       else
         test = [test]
       end
+
       return T.unsafe(test)
     end
 

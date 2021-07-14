@@ -52,7 +52,7 @@ describe SheepAst::Qualifier do
           _SS(
              _S << crlf,
              _S << lf,
-             _S << eocf,
+             _S << eolcf,
           )
         }
       }

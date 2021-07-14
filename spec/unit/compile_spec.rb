@@ -64,8 +64,7 @@ describe SheepAst::Let do
           _SS(
              _S << crlf,
              _S << lf,
-             _S << eof,
-             _S << eoc,
+             _S << eolcf,
           )
         }
       }

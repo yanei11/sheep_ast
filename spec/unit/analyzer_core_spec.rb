@@ -110,7 +110,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           syn._S << syn.space,
           syn._S << syn.crlf,
           syn._S << syn.lf,
-          syn._S << syn.eocf
+          syn._S << syn.eolcf
         )
       }
       ast.within do 
@@ -140,7 +140,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           syn.space,
           syn.crlf,
           syn.lf,
-          syn.eocf
+          syn.eolcf
         )
       }
       ast.within do 
@@ -170,7 +170,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           syn.space,
           syn.crlf,
           syn.lf,
-          syn.eocf
+          syn.eolcf
         )
       }
       ast.within do 
@@ -200,7 +200,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           syn.space,
           syn.crlf,
           syn.lf,
-          syn.eocf
+          syn.eolcf
         ]
       }
       ast.within do 
@@ -231,7 +231,7 @@ describe SheepAst::AnalyzerCore do # rubocop: disable all
           syn.space,
           syn.crlf,
           syn.lf,
-          syn.eocf
+          syn.eolcf
         ]
       }
       ast.within do

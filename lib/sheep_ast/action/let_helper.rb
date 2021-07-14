@@ -213,7 +213,7 @@ module SheepAst
       if options[:raw]
         [chunk]
       else
-        chunk.slice_after("\n").to_a
+        chunk.slice_after('__sheep_eol__').to_a
       end
     end
 
